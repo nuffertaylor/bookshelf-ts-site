@@ -1,24 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { ResponsiveHeader } from './ResponsiveHeader';
+import {Create} from './pages/Create';
+import {Curate} from './pages/Curate';
+import {Landing} from './pages/Landing';
+import {Leaderboard} from './pages/Leaderboard';
+import {Login} from './pages/Login';
+import {Upload} from './pages/Upload';
+import './bs.css'
 
 function App() {
+  const [currentStatus, check_login] = useState("login");
+  const [centerWidget, setCenterWidget] = useState(<Landing/>);
+  const headerClick = (active : String) => {
+    switch(active){
+      case "/create":
+        setCenterWidget(<Create/>);
+        break;
+      case "/contribute":
+        setCenterWidget(<Upload/>);
+        break;
+      case "/curate":
+        setCenterWidget(<Curate/>);
+        break;
+      case "/leaderboard":
+        setCenterWidget(<Leaderboard/>);
+        break;
+      case "/login":
+        setCenterWidget(<Login/>);
+        break;
+    }
+  
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ResponsiveHeader 
+      links={
+        [{ link: "/create", label: "create" },
+        { link: "/contribute", label: "contribute" },
+        { link: "/curate", label: "curate" },
+        { link: "/leaderboard", label: "leaderboard" },
+        { link: "/" + currentStatus, label: currentStatus }
+        ]}
+      callback = {headerClick}
+        />
+      <div className="bs_main_tile">
+        <div className="bs_main_box">
+          {centerWidget}
+        </div>
+      </div>
     </div>
   );
 }
