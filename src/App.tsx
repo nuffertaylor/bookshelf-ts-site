@@ -8,6 +8,7 @@ import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
 import {Upload} from './pages/Upload';
 import './bs.css'
+import { JsxElement } from 'typescript';
 
 function App() {
   const [currentStatus, check_login] = useState("login");
@@ -15,7 +16,7 @@ function App() {
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
-        setCenterWidget(<Create/>);
+        setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
         break;
       case "/contribute":
         setCenterWidget(<Upload/>);
@@ -30,8 +31,10 @@ function App() {
         setCenterWidget(<Login/>);
         break;
     }
-  
   };
+  const changeCenterWidget = (widget : any) => {
+    setCenterWidget(widget);
+  }
   return (
     <div className="App">
       <ResponsiveHeader 
