@@ -1,10 +1,43 @@
+import { stringify } from "querystring";
+import {onlyNumbers} from "../utilities";
 import React from "react";
 
 function encodeImageFileAsURL(){
 
 }
+interface uploadForm {
+  title:string,
+  book_id:string,
+  dimensions:string,
+  pubDate?:string,
+  authorName?:string,
+  genre?:string
+}
 
 export function Upload(){
+  const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
+
+  const [formState, setFormState] = React.useState<uploadForm>({title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""});
+  const handleChange = (event : any)=>{
+    setFormState((s)=>{
+      type ObjectKey = keyof typeof s;
+      let i = event.target.id as ObjectKey;
+      s[i] = event.target.value;
+      return s;
+    });
+  };
+  const submit = ()=>{
+    if(!onlyNumbers(formState.book_id)){
+      alert("invalid goodreads book id!");
+      document.getElementById("book_id")?.focus();
+      return;
+    }
+    if(!validDimensions(formState.dimensions)) {
+      alert("invalid dimension input, should be in format 1 x 2 x 3");
+      document.getElementById("dimensions")?.focus();
+      return;
+    }
+  }
   return(
     <div className="upload_activity">
       <div className="spine_preview">
@@ -14,13 +47,13 @@ export function Upload(){
       <div className="form_elements">
         <input id="imageInput" type="file" accept="image/*" onChange={encodeImageFileAsURL} hidden />
         <label htmlFor="imageInput" className="bs_button" id="upload_img_override_btn">Choose File</label>
-        <input className="bs_text_input" id="title" type="text" placeholder="title" />
-        <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" />
-        <input className="bs_text_input" id="authorName" type="text" placeholder="author's name" />
-        <input className="bs_text_input" id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" />
-        <input className="bs_text_input" id="pubDate" type="text" placeholder="year published" />
-        <input className="bs_text_input" id="genre" type="text" placeholder="genre" />
-        <button className="bs_button" type="submit" id="uploadButton">Upload</button>
+        <input className="bs_text_input" id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} />
+        <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} />
+        <input className="bs_text_input" id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} />
+        <input className="bs_text_input" id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
+        <input className="bs_text_input" id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} />
+        <input className="bs_text_input" id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} />
+        <button className="bs_button" type="submit" id="uploadButton" onClick={submit}>Upload</button>
       </div>
     </div>
   );

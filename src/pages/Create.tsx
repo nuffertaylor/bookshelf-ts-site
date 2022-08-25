@@ -12,10 +12,6 @@ interface CreateProps {
 }
 
 export function Create({ widgetCallback, props }: CreateProps){
-  const userIdRef = useRef(null);
-  const shelfNameRef = useRef(null);
-
-
   const sendGetRequestToServer = async function (method : string, querystr : string, callback : Function){
     var xhttp = new XMLHttpRequest();
     var path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;
