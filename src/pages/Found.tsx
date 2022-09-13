@@ -1,4 +1,3 @@
-import { integer } from 'aws-sdk/clients/cloudfront';
 import React from 'react';
 import {Loading} from "./Loading";
 import { YourShelf } from './YourShelf';
@@ -12,7 +11,7 @@ interface genshelfRequest {
   bookList : Array<Object>
 }
 interface genshelfResponse {
-  statusCode : integer,
+  statusCode : number,
   body : string
 }
 
