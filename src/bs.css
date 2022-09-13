@@ -16,7 +16,19 @@
     width:100%;
   }
 }
-
+.mantine-Header-root{
+  margin-bottom: 30px !important;
+}
+a.nostyle:link {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+a.nostyle:visited {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
 .bs_main_box {
   width: 100%;
   padding:20px;
@@ -262,8 +274,9 @@ text-align:center;
   width:100%;
   margin-top:10px;
 }
-.display_shelf{
-  max-width:400px;
+.display_shelf {
+  max-width: 350px;
+  margin-bottom: 15px;
 }
 .bs_shelf_buttons {
   text-align: center;
