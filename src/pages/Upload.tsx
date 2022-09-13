@@ -1,5 +1,5 @@
 import { stringify } from "querystring";
-import {onlyNumbers} from "../utilities";
+import { getCookie, loggedIn, onlyNumbers } from "../utilities";
 import React from "react";
 
 function encodeImageFileAsURL(){
@@ -37,6 +37,21 @@ export function Upload(){
       document.getElementById("dimensions")?.focus();
       return;
     }
+    if(!loggedIn()){
+      alert("must be logged in to submit new spine");
+      return;
+    }
+    const data = {
+      title : formState.title,
+      book_id : formState.book_id,
+      dimensions : formState.dimensions,
+      pubDate : formState.pubDate,
+      authorName : formState.authorName,
+      genre : formState.genre,
+      // image : b64Image,
+      username : getCookie("username"),
+      authtoken : getCookie("authtoken")
+    };
   }
   return(
     <div className="upload_activity">

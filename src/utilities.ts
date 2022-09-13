@@ -5,10 +5,10 @@ export function getCookie(cname : string) {
   let ca = decodedCookie.split(';');
   for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) == ' ') {
+    while (c.charAt(0) === ' ') {
       c = c.substring(1);
     }
-    if (c.indexOf(name) == 0) {
+    if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
     }
   }
@@ -25,7 +25,7 @@ export function setCookie(cname : string, cvalue : string) {
 export function getLocalIPAddress(callback : Function) {
   var oReq = new XMLHttpRequest();
   oReq.onreadystatechange = function(err){
-    if (oReq.readyState == 4 && oReq.status == 200){
+    if (oReq.readyState === 4 && oReq.status === 200){
       let res = oReq.responseText.replace('?', '').replace('(','').replace(')','').replace(';','');
       callback(JSON.parse(res)["ip"]);
     }
@@ -51,4 +51,11 @@ export function getRequest(path : string, callback : any){
   httpGet.onreadystatechange = callback;
   httpGet.open("GET", path, true);
   httpGet.send();
+}
+
+export function loggedIn(){
+  let u = getCookie("username");
+  let a = getCookie("authtoken");
+  if(u === null || a === null) return false;
+  return true;
 }

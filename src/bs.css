@@ -1,5 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Albert+Sans&family=Water+Brush&display=swap');
 
+*{
+  box-sizing: border-box;
+}
+#root {
+  width:100%;
+}
+.bs_main_tile {
+  width: 400px;
+  width:400px;
+  height:100%;
+}
+@media only screen and (max-width: 400px) {
+.bs_main_tile {
+    width:100%;
+  }
+}
+
 .bs_main_box {
   width: 100%;
   padding:20px;
@@ -27,7 +44,7 @@ body {
   cursor: pointer;
   user-select: none;
   font-family: "Albert Sans", Verdana, sans-serif;
-    background: #085df8;
+  background: #085df8;
   color: white;
 }
 .bs_landing{
@@ -45,8 +62,8 @@ body {
   border: 2px solid #eaeaea;
   border-radius: 20px;
   margin-bottom: 20px;
-  width: 215px;
-  height: 20px;
+  width: 265px;
+  height: 45px;
   font-weight: bold;
   font-family: "Albert Sans", Verdana, sans-serif;
 }
@@ -121,8 +138,8 @@ body {
   border: 2px solid #eaeaea;
   border-radius: 20px;
   margin-bottom: 20px;
-  width: 215px;
-  height: 20px;
+  width: 265px;
+  height: 45px;
   font-family: 'Albert Sans', Verdana, sans-serif;
   font-weight: 600;
   
