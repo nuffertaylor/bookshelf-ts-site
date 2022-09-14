@@ -1,5 +1,5 @@
 import React from 'react';
-import {Found} from "./Found";
+import {Found, foundBook, book, bookContainer} from "./Found";
 import {Loading} from "./Loading";
 
 interface CreateProps {
@@ -29,8 +29,8 @@ export function Create({ widgetCallback, props }: CreateProps){
     widgetCallback(<Loading/>);
     sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
       const resObj = JSON.parse(res);
-      const found : Array<Object> = resObj["body"]["found"];
-      const unfound : Array<Object> = resObj["body"]["unfound"];
+      const found : Array<foundBook> = resObj["body"]["found"];
+      const unfound : Array<bookContainer> = resObj["body"]["unfound"];
       widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback}/>);
     });
   };

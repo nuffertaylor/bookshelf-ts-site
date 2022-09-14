@@ -1,10 +1,11 @@
 import React from 'react';
 import {Loading} from "./Loading";
+import { UnfoundUpload } from './UnfoundUpload';
 import { YourShelf } from './YourShelf';
 
-interface FoundProps {
-  found : Array<Object>, 
-  unfound ?: Array<Object>,
+export interface FoundProps {
+  found : Array<foundBook>, 
+  unfound ?: Array<bookContainer>,
   widgetCallback : Function
 }
 interface genshelfRequest {
@@ -13,6 +14,26 @@ interface genshelfRequest {
 interface genshelfResponse {
   statusCode : number,
   body : string
+}
+export interface book {
+  author : string,
+  book_id : string,
+  title : string,
+  isbn ?: string,
+  isbn13 ?: string,
+  pubDate ?: string
+}
+
+export interface foundBook extends book {
+  dimensions : string,
+  domColor ?: string,
+  fileName : string,
+  genre ?: string,
+  submitter : string
+}
+
+export interface bookContainer {
+  book : book
 }
 
 
@@ -32,9 +53,9 @@ export function Found({found, unfound, widgetCallback} : FoundProps){
 
   const go = ()=>{
     widgetCallback(<Loading/>);
-    let booklist = found;
+    let booklist : Array<book> = found;
       if((document.getElementById("fakeSpines") as HTMLInputElement)?.checked && unfound) {
-        booklist.push(...unfound);
+        unfound.forEach(u=>booklist.push(u.book));
       }
       var data = {
         bookList : booklist
@@ -46,13 +67,28 @@ export function Found({found, unfound, widgetCallback} : FoundProps){
       });
   };
 
+  const createUnfoundUpload =()=>{
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback}/>);
+  }
+
   return(
     <div className="found_spine_box">
       <div className="found_spine_head">Found {found.length} Spines</div>
-      <input type="checkbox" id="generate_fakes"/>
-      <label htmlFor="generate_fakes">generate fake spines</label>
+      {unfound && unfound.length > 0 &&
+      <div>
+        <div className="unfound_spine_subhead">Missing {unfound.length} Spines</div>
+        <input type="checkbox" id="generate_fakes"/>
+        <label htmlFor="generate_fakes">generate fake spines</label>
+      </div>
+      }
       <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button" onClick={go}>Go</button></div>
+        <button className="bs_adaptive_button" onClick={go}>Generate</button>
+      </div>
+      {unfound && unfound.length > 0 &&
+      <div className="bs_button_wrapper">
+        <button className="bs_adaptive_button bs_gray" onClick={createUnfoundUpload}>Upload Missing Spines</button>
+      </div>
+      }
     </div>
   );
 }

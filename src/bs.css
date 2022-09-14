@@ -29,6 +29,9 @@ a.nostyle:visited {
   color: inherit;
   cursor: auto;
 }
+.bs_gray {
+  background: #888888 !important;
+}
 .bs_main_box {
   width: 100%;
   padding:20px;
@@ -329,4 +332,59 @@ text-align:center;
 }
 .title_row{
   font-weight:700;
+}
+
+.unfound_box{
+  width:350px;
+  max-height:70%;
+  overflow-y:auto;
+}
+.unfound_row{
+  width:100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom:10px;
+}
+.bs_upload_unfound {
+  background: #085df8;
+  color: white;
+  width:90px;
+  margin-right:0;
+  margin-left:auto;
+  display:block;
+}
+.bs_unfound_book_title {
+  margin-left:0;
+  margin-right:auto;
+  display:block;
+  font-style: italic;
+}
+
+.bs_unfound_title{
+  font-weight: 600;
+  font-size:20px;
+  text-align:center;
+}
+.bs_title_arrow{
+  width:100%;
+  display:grid;
+  grid-template-columns: .5fr 2fr .5fr;
+}
+.arrow {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-top: 2px solid #000;
+  border-right: 2px solid #000;
+  cursor: pointer;
+  user-select: none;
+}
+.arrow-left {
+  transform: rotate(-135deg);
+  margin-left:5px;
+  margin-top:5px;
+}
+.unfound_spine_subhead{
+  margin-bottom: 5px;
 }
