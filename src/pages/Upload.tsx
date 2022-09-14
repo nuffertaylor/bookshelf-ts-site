@@ -1,9 +1,13 @@
-import { stringify } from "querystring";
-import { getCookie, loggedIn, onlyNumbers } from "../utilities";
 import React from "react";
+import { getCookie, loggedIn, onlyNumbers } from "../utilities";
+import { book } from "../types/interfaces";
 
 function encodeImageFileAsURL(){
 
+}
+interface uploadProps{
+  widgetCallback : Function,
+  prefill ?: book
 }
 interface uploadForm {
   title:string,
@@ -11,10 +15,11 @@ interface uploadForm {
   dimensions:string,
   pubDate?:string,
   authorName?:string,
-  genre?:string
+  genre?:string,
 }
 
-export function Upload(){
+export function Upload({widgetCallback, prefill} : uploadProps){
+  console.log(prefill);
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
 
   const [formState, setFormState] = React.useState<uploadForm>({title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""});

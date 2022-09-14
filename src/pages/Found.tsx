@@ -2,6 +2,7 @@ import React from 'react';
 import {Loading} from "./Loading";
 import { UnfoundUpload } from './UnfoundUpload';
 import { YourShelf } from './YourShelf';
+import { book, bookContainer, foundBook } from '../types/interfaces';
 
 export interface FoundProps {
   found : Array<foundBook>, 
@@ -15,27 +16,6 @@ interface genshelfResponse {
   statusCode : number,
   body : string
 }
-export interface book {
-  author : string,
-  book_id : string,
-  title : string,
-  isbn ?: string,
-  isbn13 ?: string,
-  pubDate ?: string
-}
-
-export interface foundBook extends book {
-  dimensions : string,
-  domColor ?: string,
-  fileName : string,
-  genre ?: string,
-  submitter : string
-}
-
-export interface bookContainer {
-  book : book
-}
-
 
 export function Found({found, unfound, widgetCallback} : FoundProps){
   const sendPostRequestToServer = async function (method : string, data : genshelfRequest, callback : Function) {

@@ -9,6 +9,7 @@ import {Login} from './pages/Login';
 import {Upload} from './pages/Upload';
 import './bs.css'
 import { JsxElement } from 'typescript';
+import { FetchGoodreads } from './pages/FetchGoodreads';
 
 function App() {
   const [currentStatus, check_login] = useState("login");
@@ -19,7 +20,7 @@ function App() {
         setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
         break;
       case "/contribute":
-        setCenterWidget(<Upload/>);
+        setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
         break;
       case "/curate":
         setCenterWidget(<Curate/>);
