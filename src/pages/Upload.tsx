@@ -2,9 +2,6 @@ import React from "react";
 import { getCookie, loggedIn, onlyNumbers } from "../utilities";
 import { book } from "../types/interfaces";
 
-function encodeImageFileAsURL(){
-
-}
 interface uploadProps{
   widgetCallback : Function,
   prefill ?: book
@@ -19,10 +16,37 @@ interface uploadForm {
 }
 
 export function Upload({widgetCallback, prefill} : uploadProps){
-  console.log(prefill);
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
-
-  const [formState, setFormState] = React.useState<uploadForm>({title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""});
+  
+  let disable_title = false, disable_book_id = false, disable_author = false, disable_pubDate = false, disable_genre = false;
+  let defaultFormState : uploadForm = {title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""}
+  if(prefill) {
+    defaultFormState = {title : prefill.title, book_id : prefill.book_id, dimensions : "", pubDate : prefill.pubDate, authorName : prefill.author, genre : prefill.genre};
+     //use !! to convert non-empty string to true
+    disable_title = !!prefill.title;
+    disable_book_id = !!prefill.book_id;
+    disable_author = !!prefill.author;
+    disable_pubDate = !!prefill.pubDate;
+    disable_genre = !!prefill.genre;
+  }
+  const [formState, setFormState] = React.useState<uploadForm>(defaultFormState);
+  const [b64Image, setB64Image] = React.useState<string>();
+  const [display_uploaded, set_display_uploaded] = React.useState<boolean>(false);
+  const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    if(!event.target.files || event.target.files.length == 0) return;
+    const file : File = event.target.files[0];
+    // document.getElementById('displayImage').src = window.URL.createObjectURL(file);
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      if(typeof reader.result === "string") {
+        setB64Image(reader.result);
+        set_display_uploaded(true);
+      } else {
+        alert("something went wrong with that file upload, please try again.");
+      }
+    }
+    reader.readAsDataURL(file);
+  }
   const handleChange = (event : any)=>{
     setFormState((s)=>{
       type ObjectKey = keyof typeof s;
@@ -61,18 +85,18 @@ export function Upload({widgetCallback, prefill} : uploadProps){
   return(
     <div className="upload_activity">
       <div className="spine_preview">
-        <div className="no_img_selected">?</div>
-        <img src="" alt="uploaded_img" className="uploaded_img" style={{display:"none"}} />
+        {!display_uploaded && <div className="no_img_selected">?</div>}
+        {display_uploaded && <img src={b64Image} alt="uploaded_img" className="uploaded_img" id="uploaded_img" />}
       </div>
       <div className="form_elements">
         <input id="imageInput" type="file" accept="image/*" onChange={encodeImageFileAsURL} hidden />
         <label htmlFor="imageInput" className="bs_button" id="upload_img_override_btn">Choose File</label>
-        <input className="bs_text_input" id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} />
-        <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} />
-        <input className="bs_text_input" id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} />
+        <input className="bs_text_input" id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
+        <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id} />
+        <input className="bs_text_input" id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} disabled={disable_author}/>
         <input className="bs_text_input" id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
-        <input className="bs_text_input" id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} />
-        <input className="bs_text_input" id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} />
+        <input className="bs_text_input" id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>
+        <input className="bs_text_input" id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} disabled={disable_genre}/>
         <button className="bs_button" type="submit" id="uploadButton" onClick={submit}>Upload</button>
       </div>
     </div>

@@ -9,7 +9,7 @@ export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
     let book_title = book.book.title;
     if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
     return (
-      <div>
+      <div key={nextId()}>
         <div key={nextId()} className="unfound_row">
           <span className="bs_unfound_book_title" key={nextId()}>{book_title}</span>
           <button className="bs_button bs_upload_unfound" key={nextId()} onClick={openUpload}>Upload</button>

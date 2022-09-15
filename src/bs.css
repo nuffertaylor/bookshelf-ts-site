@@ -144,6 +144,7 @@ body {
   place-items:center;
   font-size:80px;
   color:white;
+  user-select: none;
 }
 .uploaded_img{
   max-height:500px;
