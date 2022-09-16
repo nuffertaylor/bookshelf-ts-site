@@ -27,7 +27,7 @@ export function getLocalIPAddress(callback : Function) {
   oReq.onreadystatechange = function(err){
     if (oReq.readyState === 4 && oReq.status === 200){
       let res = oReq.responseText.replace('?', '').replace('(','').replace(')','').replace(';','');
-      callback(JSON.parse(res)["ip"]);
+      callback(JSON.parse(res)["ip"] as string);
     }
   }
   oReq.open("GET", "https://api.ipify.org?format=jsonp&callback=?");
@@ -71,3 +71,17 @@ export const sendGetRequestToServer = async function (method : string, querystr 
   xhttp.open("GET", path, true);
   xhttp.send();
 }
+
+export const sendPostRequestToServer = async function(method : string, data : object, callback : Function)
+{
+  const httpPost = new XMLHttpRequest();
+  const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method;
+  let json_data = JSON.stringify(data);
+  httpPost.onreadystatechange = (err) => {
+    if (httpPost.readyState == 4) callback(httpPost.responseText);
+  };
+  // Set the content type of the request to json since that's what's being sent
+  httpPost.open("POST", path, true);
+  httpPost.setRequestHeader('Content-Type', 'application/json');
+  httpPost.send(json_data);
+};
