@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { ResponsiveHeader } from './ResponsiveHeader';
 import {Create} from './pages/Create';
-// import {Curate} from './pages/Curate';
+import {Curate} from './pages/Curate';
 import {Landing} from './pages/Landing';
 import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
@@ -10,6 +10,7 @@ import './bs.css'
 import { FetchGoodreads } from './pages/FetchGoodreads';
 import { getCookie } from './utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
+import { Loading } from './pages/Loading';
 
 function App() {
   const [currentStatus, setStatus] = useState(getCookie("authtoken") ? "profile" : "login");
@@ -25,11 +26,14 @@ function App() {
         if(currentStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
         else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget}/>);
         break;
-      // case "/curate":
-      //   setCenterWidget(<Curate/>);
-      //   break;
+      case "/curate":
+        setCenterWidget(<Curate/>);
+        break;
       case "/leaderboard":
         setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
+        break;
+      case "/loading":
+        setCenterWidget(<Loading/>);
         break;
       case "/login":
         setCenterWidget(<Login widgetCallback={changeCenterWidget}/>);
@@ -50,6 +54,7 @@ function App() {
         { link: "/contribute", label: "contribute" },
         // { link: "/curate", label: "curate" },
         { link: "/leaderboard", label: "leaderboard" },
+        // { link: "/loading", label: "loading" },
         { link: "/" + currentStatus, label: currentStatus }
         ]}
       callback = {headerClick}
