@@ -1,11 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { getLocalIPAddress, sendPostRequestToServer, setCookie} from '../utilities';
 import { Leaderboard } from './Leaderboard';
 import { Loading } from './Loading';
-import { Register } from './Register';
 
-
+interface loginregisterRequest {
+  requestType : string, //"login" | "register",
+  username : string,
+  password : string,
+  ip : string,
+  email ?: string
+}
 interface loginregisterResponse {
   statusCode : 200,
   body: {
@@ -14,28 +19,35 @@ interface loginregisterResponse {
   }
 }
 
+interface loginProps extends defaultProps {
+  startState ?: string
+}
+
 //TODO: Add register functionality to this component
-export function Login({widgetCallback} : defaultProps){
-  const currentState = "login"; //later make this a react state so it's either "login" or "register"
+export function Login({widgetCallback, startState = "login"} : loginProps){
+  const [currentState, setState] = useState(startState);
 
   const submitLoginRegister = ()=>{
     let username = (document.getElementById("username") as HTMLInputElement)?.value;
     let password = (document.getElementById("password")as HTMLInputElement)?.value;
+    let email = (document.getElementById("email") as HTMLInputElement)?.value;
     let failedChecks = [];
     if(!username) { failedChecks.push("username"); }
     if(!password) { failedChecks.push("password"); }
+    if(currentState==="register" && !email) { failedChecks.push("email"); }
     if(failedChecks.length > 0) {
       failedChecks.forEach(s=>document.getElementById(s)?.classList.add("bs_failed_input"));
       return;
     }
     widgetCallback(<Loading />)
     getLocalIPAddress((ip : string) => {
-      var data = {
+      let data : loginregisterRequest = {
         requestType : currentState,
         username : username,
         password : password,
-        ip: ip
+        ip : ip
       };
+      if(currentState==="register") data.email = email;
       sendPostRequestToServer("loginregister", data, (res : string)=>{
         const parsed_res : loginregisterResponse = JSON.parse(res);
         if(parsed_res.statusCode == 200){
@@ -52,12 +64,15 @@ export function Login({widgetCallback} : defaultProps){
       });
     });
   }
-  const flip_to_register = ()=>{widgetCallback(<Register widgetCallback={widgetCallback}/>)};
+  const flip_state = ()=>{currentState==="login" ? setState("register") : setState("login")};
   return(
     <div className="bs_input_section">
+      {currentState === "register" &&
+      <input type="text" placeholder="email" id="email" className="bs_text_input" />
+      }
       <input type="text" placeholder="username" className="bs_text_input" id="username"/>
       <input type="password" placeholder="password" className="bs_text_input" id="password"/>
-      <span className="bs_registerlogin_flip" onClick={flip_to_register}>Don't have an account? Register one here.</span>
+      <span className="bs_registerlogin_flip" onClick={flip_state}>Don't have an account? Register one here.</span>
       <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>Login</button>
     </div>
   )
