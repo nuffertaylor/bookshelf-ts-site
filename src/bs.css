@@ -123,6 +123,8 @@ body {
 }
 .emoji_rater{
   font-size:2em;
+}
+.pointer_no_select{
   cursor:pointer;
   user-select:none;
 }

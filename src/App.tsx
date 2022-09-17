@@ -13,10 +13,10 @@ import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 
 function App() {
-  const [currentStatus, setStatus] = useState(getCookie("authtoken") ? "profile" : "login");
   //base login status on existence of cookie. when cookie is expired, so is authtoken.
+  const [currentStatus, setStatus] = useState(getCookie("authtoken") ? "profile" : "login");
 
-  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{}}/>);
+  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
@@ -28,6 +28,9 @@ function App() {
         break;
       case "/curate":
         setCenterWidget(<Curate/>);
+        break;
+      case "/landing":
+        setCenterWidget(<Landing widgetCallback={setCenterWidget}/>);
         break;
       case "/leaderboard":
         setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);

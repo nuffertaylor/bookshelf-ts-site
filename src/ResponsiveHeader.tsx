@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Header, Container, Group, Burger, Paper, Transition } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
-import {Upload} from './pages/Upload';
+import { Landing } from './pages/Landing';
 
 const HEADER_HEIGHT = 60;
 
@@ -84,12 +84,13 @@ interface HeaderResponsiveProps {
 
 export function ResponsiveHeader({ links, callback}: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useBooleanToggle(false);
-  const [active, setActive] = useState(links[0].link);
+  const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
 
   const items = links.map((link) => (
     <a
       key={link.label}
+      id={link.link.substring(1)}
       href={link.link}
       className={cx(classes.link, { [classes.linkActive]: active === link.link })}
       onClick={(event) => {
@@ -106,10 +107,11 @@ export function ResponsiveHeader({ links, callback}: HeaderResponsiveProps) {
       callback(active);
   }, [active]);
 
+  const open_landing = ()=>{ callback("/landing")};
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
-        <span>📚 My Bookshelf</span>
+        <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
