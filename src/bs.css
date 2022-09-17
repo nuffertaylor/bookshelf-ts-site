@@ -62,11 +62,18 @@ body {
   background: #085df8;
   color: white;
 }
+.bs_half_button {
+  width:120px !important;
+  margin-left:10px;
+}
 .bs_landing{
   display:grid;
   align-items:center;
   grid-template-rows: repeat(3, 1fr);
   text-align:center;
+}
+.bs_needsauth{
+  grid-template-rows: repeat(2, 1fr) !important;
 }
 .bs_input_section {
   display: grid;
@@ -388,4 +395,17 @@ text-align:center;
 }
 .unfound_spine_subhead{
   margin-bottom: 5px;
+}
+.bs_registerlogin_flip{
+  font-size: 12px;
+  margin-bottom: 15px;
+  margin-top: -5px;
+  color: #085df8;
+  cursor:pointer;
+}
+.bs_registerlogin_flip:hover{
+  color: #053ea8;
+}
+.bs_failed_input{
+  border-color:red;
 }

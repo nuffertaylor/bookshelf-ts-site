@@ -1,8 +1,8 @@
 import React from 'react'
+import { defaultProps } from '../types/interfaces';
 
-export function Landing(){
+export function Landing({widgetCallback} : defaultProps){
   return(
-
     <div className="bs_landing">
       <div className="landing_text">create a virtual bookshelf</div>
       <div>

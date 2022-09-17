@@ -8,17 +8,22 @@ import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
 import './bs.css'
 import { FetchGoodreads } from './pages/FetchGoodreads';
+import { getCookie } from './utilities';
+import NeedAuthentication from './pages/NeedAuthentication';
 
 function App() {
-  const [currentStatus, check_login] = useState("login");
-  const [centerWidget, setCenterWidget] = useState(<Landing/>);
+  const [currentStatus, setStatus] = useState(getCookie("authtoken") ? "profile" : "login");
+  //base login status on existence of cookie. when cookie is expired, so is authtoken.
+
+  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{}}/>);
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
         setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
         break;
       case "/contribute":
-        setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
+        if(currentStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
+        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget}/>);
         break;
       // case "/curate":
       //   setCenterWidget(<Curate/>);
@@ -28,6 +33,9 @@ function App() {
         break;
       case "/login":
         setCenterWidget(<Login widgetCallback={changeCenterWidget}/>);
+        break;
+      case "/profile": //TODO: for now we'll just use leaderboard page, but create custom profile page
+        setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
         break;
     }
   };
