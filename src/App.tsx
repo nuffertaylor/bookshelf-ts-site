@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { ResponsiveHeader } from './ResponsiveHeader';
 import {Create} from './pages/Create';
-import {Curate} from './pages/Curate';
+// import {Curate} from './pages/Curate';
 import {Landing} from './pages/Landing';
 import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
-import {Upload} from './pages/Upload';
 import './bs.css'
-import { JsxElement } from 'typescript';
 import { FetchGoodreads } from './pages/FetchGoodreads';
 
 function App() {
@@ -22,14 +20,14 @@ function App() {
       case "/contribute":
         setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
         break;
-      case "/curate":
-        setCenterWidget(<Curate/>);
-        break;
+      // case "/curate":
+      //   setCenterWidget(<Curate/>);
+      //   break;
       case "/leaderboard":
-        setCenterWidget(<Leaderboard/>);
+        setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
         break;
       case "/login":
-        setCenterWidget(<Login/>);
+        setCenterWidget(<Login widgetCallback={changeCenterWidget}/>);
         break;
     }
   };
@@ -42,7 +40,7 @@ function App() {
       links={
         [{ link: "/create", label: "create" },
         { link: "/contribute", label: "contribute" },
-        { link: "/curate", label: "curate" },
+        // { link: "/curate", label: "curate" },
         { link: "/leaderboard", label: "leaderboard" },
         { link: "/" + currentStatus, label: currentStatus }
         ]}

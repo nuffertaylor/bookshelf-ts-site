@@ -1,6 +1,7 @@
 import React from 'react';
+import { defaultProps } from '../types/interfaces';
 
-export function Leaderboard(){
+export function Leaderboard({widgetCallback} : defaultProps){
   return(
   <div className="leaderboard_box">
     <div className="leaderboard_row title_row">

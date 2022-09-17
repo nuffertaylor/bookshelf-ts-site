@@ -1,16 +1,14 @@
 import React from 'react';
 import {Found} from "./Found";
-import { book, bookContainer, foundBook } from '../types/interfaces';
+import { book, bookContainer, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
 import {sendGetRequestToServer} from "../utilities";
 
-interface CreateProps {
-  props ?: 
-  {
+interface CreateProps extends defaultProps{
+  props ?: {
     userid : string,
     shelfname : string
   }
-  widgetCallback : Function
 }
 
 export function Create({ widgetCallback, props }: CreateProps){

@@ -1,9 +1,8 @@
 import React from "react";
 import { getCookie, loggedIn, onlyNumbers } from "../utilities";
-import { book } from "../types/interfaces";
+import { book, defaultProps } from "../types/interfaces";
 
-interface uploadProps{
-  widgetCallback : Function,
+interface uploadProps extends defaultProps{
   prefill ?: book
 }
 interface uploadForm {

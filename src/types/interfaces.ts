@@ -17,3 +17,7 @@ export interface foundBook extends book {
 export interface bookContainer {
   book : book
 }
+
+export interface defaultProps {
+  widgetCallback : Function
+}

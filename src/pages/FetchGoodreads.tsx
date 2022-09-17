@@ -1,18 +1,15 @@
 import React from 'react';
 import {Loading} from './Loading';
 import {validUrl, onlyDigits, sendGetRequestToServer} from '../utilities';
-import { book } from "../types/interfaces";
+import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
 
-interface FetchGoodreadsProps {
-  widgetCallback : Function
-}
 interface getgrbookdetailsResponse{
   statusCode : number,
   body : book
 }
 
-export function FetchGoodreads({widgetCallback} : FetchGoodreadsProps){
+export function FetchGoodreads({widgetCallback} : defaultProps){
   const getBookData = ()=>{
     const bs_url_input = document.getElementById("bs_url_input") as HTMLInputElement;
     if(!bs_url_input) {
