@@ -20,11 +20,12 @@ interface loginregisterResponse {
 }
 
 interface loginProps extends defaultProps {
+  setLoginStatus : Function,
   startState ?: string
 }
 
 //TODO: Add register functionality to this component
-export function Login({widgetCallback, startState = "login"} : loginProps){
+export function Login({widgetCallback,setLoginStatus, startState = "login"} : loginProps){
   const [currentState, setState] = useState(startState);
 
   const submitLoginRegister = ()=>{
@@ -54,12 +55,13 @@ export function Login({widgetCallback, startState = "login"} : loginProps){
           alert("Welcome " + parsed_res.body.username + "!");
           setCookie("username", parsed_res.body.username);
           setCookie("authtoken", parsed_res.body.authtoken);
+          setLoginStatus("profile");
           //For now we callback to the leaderboard page
           widgetCallback(<Leaderboard widgetCallback={widgetCallback}/>);
         }
         else {
           alert(parsed_res.body);
-          widgetCallback(<Login widgetCallback={widgetCallback} />);
+          widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
         }
       });
     });

@@ -14,7 +14,7 @@ import { Loading } from './pages/Loading';
 
 function App() {
   //base login status on existence of cookie. when cookie is expired, so is authtoken.
-  const [currentStatus, setStatus] = useState(getCookie("authtoken") ? "profile" : "login");
+  const [loginStatus, setLoginStatus] = useState(getCookie("authtoken") ? "profile" : "login");
 
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
   const headerClick = (active : String) => {
@@ -23,8 +23,8 @@ function App() {
         setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
         break;
       case "/contribute":
-        if(currentStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
-        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget}/>);
+        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
+        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget} setLoginStatus={setLoginStatus}/>);
         break;
       case "/curate":
         setCenterWidget(<Curate/>);
@@ -39,7 +39,7 @@ function App() {
         setCenterWidget(<Loading/>);
         break;
       case "/login":
-        setCenterWidget(<Login widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Login widgetCallback={changeCenterWidget} setLoginStatus={ setLoginStatus }/>);
         break;
       case "/profile": //TODO: for now we'll just use leaderboard page, but create custom profile page
         setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
@@ -58,9 +58,9 @@ function App() {
         // { link: "/curate", label: "curate" },
         { link: "/leaderboard", label: "leaderboard" },
         // { link: "/loading", label: "loading" },
-        { link: "/" + currentStatus, label: currentStatus }
+        { link: "/" + loginStatus, label: loginStatus }
         ]}
-      callback = {headerClick}
+        widgetCallback = {headerClick}
         />
       <div className="bs_main_tile">
         <div className="bs_main_box">

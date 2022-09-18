@@ -2,10 +2,13 @@ import React from 'react';
 import { defaultProps } from '../types/interfaces';
 import { Login } from './Login';
 
+interface needAuthenticationProps extends defaultProps {
+  setLoginStatus : Function
+}
 
-export default function NeedAuthentication({widgetCallback} : defaultProps){
-  const flip_to_login = ()=>{widgetCallback(<Login widgetCallback={widgetCallback} startState="login"/>)};
-  const flip_to_register = ()=>{widgetCallback(<Login widgetCallback={widgetCallback} startState="register"/>)};
+export default function NeedAuthentication({ widgetCallback, setLoginStatus } : needAuthenticationProps){
+  const flip_to_login = ()=>{widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="login"/>)};
+  const flip_to_register = ()=>{widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="register"/>)};
   return(
     <div className="bs_landing bs_needsauth">
       <div className="landing_text">Login or register to contribute</div>
