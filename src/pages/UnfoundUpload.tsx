@@ -5,7 +5,7 @@ import nextId from "react-id-generator";
 
 export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
   const UnfoundRow = function(book : any){
-    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book.book}/>)};
+    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book.book} origin={<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback}/>}/>)};
     let book_title = book.book.title;
     if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
     return (

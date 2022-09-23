@@ -51,7 +51,7 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
       if(currentState==="register") data.email = email;
       sendPostRequestToServer("loginregister", data, (res : string)=>{
         const parsed_res : loginregisterResponse = JSON.parse(res);
-        if(parsed_res.statusCode == 200){
+        if(parsed_res.statusCode === 200){
           alert("Welcome " + parsed_res.body.username + "!");
           setCookie("username", parsed_res.body.username);
           setCookie("authtoken", parsed_res.body.authtoken);
