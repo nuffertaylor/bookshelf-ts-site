@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { getLocalIPAddress, sendPostRequestToServer, setCookie} from '../utilities';
-import { Leaderboard } from './Leaderboard';
+import { Profile } from './Profile';
 import { Loading } from './Loading';
 
 interface loginregisterRequest {
@@ -56,8 +56,7 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
           setCookie("username", parsed_res.body.username);
           setCookie("authtoken", parsed_res.body.authtoken);
           setLoginStatus("profile");
-          //For now we callback to the leaderboard page
-          widgetCallback(<Leaderboard widgetCallback={widgetCallback}/>);
+          widgetCallback(<Profile widgetCallback={widgetCallback}/>);
         }
         else {
           alert(parsed_res.body);

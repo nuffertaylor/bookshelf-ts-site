@@ -101,7 +101,7 @@ export function Upload({widgetCallback, prefill, origin} : uploadProps){
   const returnToPrevPage = ()=>{widgetCallback(origin);};
   return(
     <div className="upload_super_container">
-      <div className="bs_title_arrow" style={{marginBottom : "10px"}}>
+      <div className="bs_title_arrow">
         <span className="arrow arrow-left" onClick={returnToPrevPage}></span>
         <span className="bs_unfound_title">Upload Spine</span>
       </div>

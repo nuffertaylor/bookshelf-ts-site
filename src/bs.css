@@ -383,6 +383,7 @@ text-align:center;
   width:100%;
   display:grid;
   grid-template-columns: .5fr 2fr .5fr;
+  margin-bottom:10px;
 }
 .arrow {
   display: inline-block;
@@ -397,6 +398,12 @@ text-align:center;
   transform: rotate(-135deg);
   margin-left:5px;
   margin-top:5px;
+}
+.arrow-bottom {
+  transform: rotate(135deg);
+}
+.arrow-right {
+  transform: rotate(45deg);
 }
 .unfound_spine_subhead{
   margin-bottom: 5px;
@@ -413,4 +420,42 @@ text-align:center;
 }
 .bs_failed_input{
   border-color:red;
+}
+
+.bs_profile_title{
+  width:100%;
+  margin-bottom:20px;
+  text-align: center;
+}
+.bs_gr_id_row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  place-items:center;
+  margin-bottom:20px;
+}
+.bs_logout_button{
+  width:80%;
+  background:#999999;
+  color:white;
+}
+.bs_submissions_row{
+  width:100%;
+  display:grid;
+  grid-template-columns: 2.5fr .5fr;
+  margin-bottom:20px;
+}
+.bs_gr_id_input{
+  width:80%;
+  margin-bottom:0;
+}
+.bs_enter_button {
+  background: #085df8;
+  color: white;
+}
+.bs_gr_id_button{
+  width:80%;
+}
+.bs_center_grid{
+  display:grid;
+  place-items:center;
 }

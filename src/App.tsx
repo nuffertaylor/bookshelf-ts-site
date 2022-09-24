@@ -11,6 +11,7 @@ import { FetchGoodreads } from './pages/FetchGoodreads';
 import { getCookie } from './utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
+import { Profile } from './pages/Profile';
 
 function App() {
   //base login status on existence of cookie. when cookie is expired, so is authtoken.
@@ -42,7 +43,7 @@ function App() {
         setCenterWidget(<Login widgetCallback={changeCenterWidget} setLoginStatus={ setLoginStatus }/>);
         break;
       case "/profile": //TODO: for now we'll just use leaderboard page, but create custom profile page
-        setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Profile widgetCallback={changeCenterWidget}/>);
         break;
     }
   };
