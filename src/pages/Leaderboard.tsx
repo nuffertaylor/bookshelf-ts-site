@@ -20,8 +20,8 @@ export function Leaderboard({widgetCallback} : defaultProps){
       let classes = "leaderboard_row"
       if(v.username === cur_user) classes += " title_row";
       return(
-        <div>
-          <div className={classes} key={v.username + i.toString()}>
+        <div key={v.username + i.toString()}>
+          <div className={classes}>
             <span className="leaderboard_rank">{i+1}</span>
             <span className="leaderboard_name">{v.username}</span>
             <span className="leaderboard_score">{v.spines}</span>
