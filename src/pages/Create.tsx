@@ -2,7 +2,7 @@ import React from 'react';
 import {Found} from "./Found";
 import { book, bookContainer, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
-import {sendGetRequestToServer} from "../utilities";
+import {getCookie, sendGetRequestToServer} from "../utilities";
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -12,6 +12,8 @@ interface CreateProps extends defaultProps{
 }
 
 export function Create({ widgetCallback, props }: CreateProps){
+  const gr_id = getCookie("goodreads_id");
+
   const getGRShelf = (userid : string, shelfname : string)=>{
     let querystr = "userid=" + userid + "&shelfname=" + shelfname;
     widgetCallback(<Loading/>);
@@ -45,7 +47,7 @@ export function Create({ widgetCallback, props }: CreateProps){
 
   return (
   <div className="bs_input_section">
-    <input type="text" placeholder="goodreads user id" className="bs_text_input" id="userid" />
+    <input type="text" placeholder="goodreads user id" className="bs_text_input" id="userid" defaultValue={gr_id}/>
     <input type="text" placeholder="shelfname" className="bs_text_input" id="shelfname"/>
     <button id="bs_enter_button" className="bs_button" onClick={generate}>GENERATE</button>
   </div>

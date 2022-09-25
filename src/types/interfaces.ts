@@ -21,3 +21,15 @@ export interface bookContainer {
 export interface defaultProps {
   widgetCallback : Function
 }
+
+export interface user {
+  username : string,
+  hashedPassword : string,
+  email : string,
+  authtoken : string,
+  expiry : number,
+  salt : string,
+  ip : string,
+  banned : boolean,
+  goodreads_id : string
+}

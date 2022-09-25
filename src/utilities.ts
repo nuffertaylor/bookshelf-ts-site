@@ -12,14 +12,22 @@ export function getCookie(cname : string) {
       return c.substring(name.length, c.length);
     }
   }
-  return null;
+  return "";
 }
+
 const NUM_DAYS_STAY_LOGGEDIN = 7;
 export function setCookie(cname : string, cvalue : string) {
   const d = new Date();
   d.setTime(d.getTime() + (NUM_DAYS_STAY_LOGGEDIN * 24 * 60 * 60 * 1000));
   let expires = "expires="+d.toUTCString();
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+export function deleteCookie(name : string) {
+  if(getCookie(name)) {
+    document.cookie = name + "=" +
+    ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  }
 }
 
 export function getLocalIPAddress(callback : Function) {

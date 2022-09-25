@@ -399,7 +399,7 @@ text-align:center;
   margin-left:5px;
   margin-top:5px;
 }
-.arrow-bottom {
+.arrow-down {
   transform: rotate(135deg);
 }
 .arrow-right {
@@ -443,6 +443,8 @@ text-align:center;
   display:grid;
   grid-template-columns: 2.5fr .5fr;
   margin-bottom:20px;
+  user-select: none;
+  cursor:pointer;
 }
 .bs_gr_id_input{
   width:80%;

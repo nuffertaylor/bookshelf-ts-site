@@ -15,7 +15,8 @@ interface loginregisterResponse {
   statusCode : 200,
   body: {
     username : string,
-    authtoken : string
+    authtoken : string,
+    goodreads_id ?: string
   }
 }
 
@@ -55,6 +56,7 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
           alert("Welcome " + parsed_res.body.username + "!");
           setCookie("username", parsed_res.body.username);
           setCookie("authtoken", parsed_res.body.authtoken);
+          if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
           setLoginStatus("profile");
           widgetCallback(<Profile widgetCallback={widgetCallback}/>);
         }
