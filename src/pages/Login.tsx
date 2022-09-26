@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { defaultProps } from '../types/interfaces';
-import { getLocalIPAddress, sendPostRequestToServer, setCookie} from '../utilities';
+import { sendPostRequestToServer, setCookie} from '../utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 
@@ -8,7 +8,6 @@ interface loginregisterRequest {
   requestType : string, //"login" | "register",
   username : string,
   password : string,
-  ip : string,
   email ?: string
 }
 interface loginregisterResponse {
@@ -42,29 +41,26 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
       return;
     }
     widgetCallback(<Loading />)
-    getLocalIPAddress((ip : string) => {
-      let data : loginregisterRequest = {
-        requestType : currentState,
-        username : username,
-        password : password,
-        ip : ip
-      };
-      if(currentState==="register") data.email = email;
-      sendPostRequestToServer("loginregister", data, (res : string)=>{
-        const parsed_res : loginregisterResponse = JSON.parse(res);
-        if(parsed_res.statusCode === 200){
-          alert("Welcome " + parsed_res.body.username + "!");
-          setCookie("username", parsed_res.body.username);
-          setCookie("authtoken", parsed_res.body.authtoken);
-          if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
-          setLoginStatus("profile");
-          widgetCallback(<Profile widgetCallback={widgetCallback}/>);
-        }
-        else {
-          alert(parsed_res.body);
-          widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
-        }
-      });
+    let data : loginregisterRequest = {
+      requestType : currentState,
+      username : username,
+      password : password,
+    };
+    if(currentState==="register") data.email = email;
+    sendPostRequestToServer("loginregister", data, (res : string)=>{
+      const parsed_res : loginregisterResponse = JSON.parse(res);
+      if(parsed_res.statusCode === 200){
+        alert("Welcome " + parsed_res.body.username + "!");
+        setCookie("username", parsed_res.body.username);
+        setCookie("authtoken", parsed_res.body.authtoken);
+        if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
+        setLoginStatus("profile");
+        widgetCallback(<Profile widgetCallback={widgetCallback}/>);
+      }
+      else {
+        alert(parsed_res.body);
+        widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
+      }
     });
   }
   const flip_state = ()=>{currentState==="login" ? setState("register") : setState("login")};

@@ -30,18 +30,6 @@ export function deleteCookie(name : string) {
   }
 }
 
-export function getLocalIPAddress(callback : Function) {
-  var oReq = new XMLHttpRequest();
-  oReq.onreadystatechange = function(err){
-    if (oReq.readyState === 4 && oReq.status === 200){
-      let res = oReq.responseText.replace('?', '').replace('(','').replace(')','').replace(';','');
-      callback(JSON.parse(res)["ip"] as string);
-    }
-  }
-  oReq.open("GET", "https://api.ipify.org?format=jsonp&callback=?");
-  oReq.send();
-}
-
 export function validUrl(url : string){
   return /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(url);
 }
