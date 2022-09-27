@@ -81,3 +81,7 @@ export const sendPostRequestToServer = async function(method : string, data : ob
   httpPost.setRequestHeader('Content-Type', 'application/json');
   httpPost.send(json_data);
 };
+
+export function capitalizeFirstLetter(string : string) : string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

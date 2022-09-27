@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { defaultProps } from '../types/interfaces';
-import { sendPostRequestToServer, setCookie} from '../utilities';
+import { capitalizeFirstLetter, sendPostRequestToServer, setCookie} from '../utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 
@@ -26,7 +26,10 @@ interface loginProps extends defaultProps {
 
 //TODO: Add register functionality to this component
 export function Login({widgetCallback,setLoginStatus, startState = "login"} : loginProps){
+  const login_flip_text = "Don't have an account? Register one here.";
+  const register_flip_text = "Already have an account? Login here.";
   const [currentState, setState] = useState(startState);
+  const [flip_text, set_flip_text] = useState<string>(startState === "login" ? login_flip_text : register_flip_text);
 
   const submitLoginRegister = ()=>{
     let username = (document.getElementById("username") as HTMLInputElement)?.value;
@@ -63,7 +66,17 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
       }
     });
   }
-  const flip_state = ()=>{currentState==="login" ? setState("register") : setState("login")};
+  const flip_state = ()=>{
+    if(currentState==="login") {
+      setState("register");
+      set_flip_text(register_flip_text);
+    }
+    else {
+      setState("login");
+      set_flip_text(login_flip_text);
+    }
+  };
+
   return(
     <div className="bs_input_section">
       {currentState === "register" &&
@@ -71,8 +84,8 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
       }
       <input type="text" placeholder="username" className="bs_text_input" id="username"/>
       <input type="password" placeholder="password" className="bs_text_input" id="password"/>
-      <span className="bs_registerlogin_flip" onClick={flip_state}>Don't have an account? Register one here.</span>
-      <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>Login</button>
+      <span className="bs_registerlogin_flip" onClick={flip_state}>{flip_text}</span>
+      <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>{capitalizeFirstLetter(currentState)}</button>
     </div>
   )
 }
