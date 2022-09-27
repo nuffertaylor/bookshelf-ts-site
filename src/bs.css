@@ -461,3 +461,11 @@ text-align:center;
   display:grid;
   place-items:center;
 }
+.custom-select{
+  display:block;
+  margin:auto;
+}
+.bs_disabled{
+  cursor:not-allowed;
+  filter:grayscale(1);
+}
