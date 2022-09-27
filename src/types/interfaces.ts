@@ -6,7 +6,10 @@ export interface book {
   isbn13 ?: string,
   pubDate ?: string,
   numPages ?: string,
-  genre ?: string
+  genre ?: string,
+  user_read_at? : string,
+  average_rating ?: string,
+  user_rating ?: string
 }
 export interface foundBook extends book {
   dimensions : string,
