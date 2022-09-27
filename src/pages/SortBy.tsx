@@ -90,8 +90,6 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         //redirect to another page
         return;
     }
-    console.log(booklist);
-    return;
     generateShelf();
   }
 
