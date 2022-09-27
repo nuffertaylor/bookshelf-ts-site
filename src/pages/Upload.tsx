@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utilities";
+import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
 

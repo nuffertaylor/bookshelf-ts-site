@@ -12,6 +12,7 @@
     "@types/node": "^16.11.38",
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
+    "color-util": "^2.2.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-id-generator": "^3.0.2",

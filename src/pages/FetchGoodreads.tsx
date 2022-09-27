@@ -1,6 +1,6 @@
 import React from 'react';
 import {Loading} from './Loading';
-import {validUrl, onlyDigits, sendGetRequestToServer} from '../utilities';
+import {validUrl, onlyDigits, sendGetRequestToServer} from '../utils/utilities';
 import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
 

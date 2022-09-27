@@ -17,10 +17,10 @@ export function Found({found, unfound, widgetCallback} : FoundProps){
 
   const openSortBy = ()=>{
     widgetCallback(<Loading/>);
-    let booklist : Array<book> = found;
-    if((document.getElementById("fakeSpines") as HTMLInputElement)?.checked && unfound) {
-      unfound.forEach(u=>booklist.push(u.book));
-    }
+    let booklist : Array<foundBook> = found;
+    // if((document.getElementById("generate_fakes") as HTMLInputElement)?.checked && unfound) {
+    //   unfound.forEach(u=>booklist.push(u.book as foundBook));
+    // }
     widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
   }
 

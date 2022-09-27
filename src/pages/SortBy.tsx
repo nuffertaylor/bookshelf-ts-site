@@ -1,15 +1,16 @@
-import React, { MouseEventHandler, useState } from 'react';
-import { book, defaultProps } from '../types/interfaces';
+import React, { useState } from 'react';
+import { defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { sendPostRequestToServer } from '../utilities';
+import { sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
+import { sort_by_color } from '../utils/colorSort';
 
 interface sortByProps extends defaultProps{
-  booklist : Array<book>
+  booklist : Array<foundBook>
 }
 interface genshelfRequest {
-  bookList : Array<Object>
+  bookList : Array<foundBook>
 }
 interface genshelfResponse {
   statusCode : number,
@@ -21,7 +22,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
   const [disabledClass, setDisabledClass] = useState<string>("bs_disabled");
 
-  const alphabetize_list_by_author= (list : Array<book>) => {
+  const alphabetize_list_by_author= (list : Array<foundBook>) => {
     const get_first_name = (name : string) => {
       let l = name.split(' ');
       return l[0];
@@ -49,7 +50,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
-  const alphabetize_list_by_title = (list : Array<book>) => {
+  const alphabetize_list_by_title = (list : Array<foundBook>) => {
     const remove_first_article = (title : string) => {
       const articles = ["the", "a", "an"];
       let sp = title.split(' ');
@@ -67,24 +68,36 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
+  const sort_books_by_color = (books : Array<foundBook>) => {
+    let colors : Array<string> = books.map(b => b.domColor ? b.domColor : "");
+    let sortedColors = sort_by_color(colors);
+    let sortedBooklist : Array<foundBook> = sortedColors.flatMap(c => {
+      for(let i = 0; i < books.length; i++)
+        if(books[i].domColor === c) return books[i]
+        return []
+    });
+    return sortedBooklist;
+  }
+
   const submit_main_click = ()=>{
     if(selectValue === null) return;
     switch(selectValue){
       case "Author":
         booklist = alphabetize_list_by_author(booklist);
         break;
-      case "Title":
-        booklist = alphabetize_list_by_title(booklist);
+      case "Average Rating":
         break;
-      case "Year":
+      case "Color":
+        booklist = sort_books_by_color(booklist)
         break;
       case "Date Read":
         break;
-      case "Color":
+      case "Title":
+        booklist = alphabetize_list_by_title(booklist);
         break;
       case "User Rating":
         break;
-      case "Average Rating":
+      case "Year":
         break;
       case "Sort Manually":
         //redirect to another page
@@ -95,7 +108,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
   const generateShelf = ()=>{
     widgetCallback(<Loading/>);
-    const data = {
+    const data : genshelfRequest = {
       bookList : booklist
     }
     sendPostRequestToServer("genshelf", data, (res : string)=>{

@@ -8,7 +8,7 @@ import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
 import './bs.css'
 import { FetchGoodreads } from './pages/FetchGoodreads';
-import { getCookie } from './utilities';
+import { getCookie } from './utils/utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 import { Profile } from './pages/Profile';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { defaultProps } from '../types/interfaces';
-import { getCookie, sendGetRequestToServer } from '../utilities';
+import { getCookie, sendGetRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 
 interface rank{

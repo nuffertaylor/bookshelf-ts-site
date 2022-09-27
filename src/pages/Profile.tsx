@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defaultProps, user } from '../types/interfaces';
-import { deleteCookie, getCookie, onlyNumbers, sendPostRequestToServer, setCookie } from '../utilities';
+import { deleteCookie, getCookie, onlyNumbers, sendPostRequestToServer, setCookie } from '../utils/utilities';
 
 interface setusergridRes{
   statusCode : number,

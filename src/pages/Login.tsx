@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { defaultProps } from '../types/interfaces';
-import { capitalizeFirstLetter, sendPostRequestToServer, setCookie} from '../utilities';
+import { capitalizeFirstLetter, sendPostRequestToServer, setCookie} from '../utils/utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 
