@@ -15,6 +15,7 @@ import { Profile } from './pages/Profile';
 
 function App() {
   //base login status on existence of cookie. when cookie is expired, so is authtoken.
+  //TODO: on load, send request to check if authtoken has expired (happens also if they login elsewhere). log them out if so
   const [loginStatus, setLoginStatus] = useState(getCookie("authtoken") ? "profile" : "login");
 
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);

@@ -2,7 +2,8 @@ import React, { ReactElement } from "react";
 import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
-
+// @ts-ignore
+import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 interface uploadProps extends defaultProps{
   prefill ?: book,
   origin : ReactElement
@@ -34,9 +35,9 @@ export function Upload({widgetCallback, prefill, origin} : uploadProps){
   const [b64Image, setB64Image] = React.useState<string>("");
   const [display_uploaded, set_display_uploaded] = React.useState<boolean>(false);
   const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    //TODO: Only allow PNG and JPG/JPEG files, and restrict the file size to something like 5mb
     if(!event.target.files || event.target.files.length === 0) return;
     const file : File = event.target.files[0];
-    // document.getElementById('displayImage').src = window.URL.createObjectURL(file);
     var reader = new FileReader();
     reader.onloadend = function() {
       if(typeof reader.result === "string") {
@@ -76,27 +77,36 @@ export function Upload({widgetCallback, prefill, origin} : uploadProps){
       return;
     }
     widgetCallback(<Loading/>)
-    const data = {
-      title : formState.title,
-      book_id : formState.book_id,
-      authorName : formState.authorName,
-      dimensions : formState.dimensions,
-      genre : formState.genre,
-      pubDate : formState.pubDate,
-      isbn : prefill?.isbn ? prefill.isbn : "",
-      isbn13 : prefill?.isbn13 ? prefill.isbn13 : "",
-      image : b64Image,
-      username : getCookie("username"),
-      authtoken : getCookie("authtoken"),
-    };
-    sendPostRequestToServer("spine", data, (res : string) => {
-      //empty callback for calcdomcolor. we just need to send the request to get the calculation going on the server
-      sendPostRequestToServer("calcdomcolor", JSON.parse(res), ()=>{});
-
-      alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
-      widgetCallback(origin);
-
-    });
+    let tempImage = new Image();
+    tempImage.src = b64Image;
+    tempImage.onload = ()=>{
+      const colorThief = new ColorThief();
+      const res = colorThief.getColor(tempImage);
+      const convertRGBArrToHex = (arr : Array<number>) => {
+        let str = "#";
+        arr.forEach(d => str = str.concat(d.toString(16)));
+        return str;
+      };
+      const domColor = convertRGBArrToHex(res);
+      const data = {
+        title : formState.title,
+        book_id : formState.book_id,
+        authorName : formState.authorName,
+        dimensions : formState.dimensions,
+        genre : formState.genre,
+        pubDate : formState.pubDate,
+        isbn : prefill?.isbn ? prefill.isbn : "",
+        isbn13 : prefill?.isbn13 ? prefill.isbn13 : "",
+        image : b64Image,
+        username : getCookie("username"),
+        authtoken : getCookie("authtoken"),
+        domColor : domColor
+      };
+      sendPostRequestToServer("spine", data, (res : string) => {
+        alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
+        widgetCallback(origin);
+      });
+  }
   };
   const returnToPrevPage = ()=>{widgetCallback(origin);};
   return(
