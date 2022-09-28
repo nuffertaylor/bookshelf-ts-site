@@ -16,13 +16,16 @@ export function Leaderboard({widgetCallback} : defaultProps){
   const cur_user = getCookie("username");
   sendGetRequestToServer("leaderboard", "", (res : string)=>{
     const parsed_res : leaderboard_res = JSON.parse(res);
+    let counter = 0, prevSpines = 0;
     const ranks = parsed_res.body.map((v, i) => {
       let classes = "leaderboard_row"
       if(v.username === cur_user) classes += " title_row";
+      if(prevSpines !== v.spines) counter += 1;
+      prevSpines = v.spines;
       return(
         <div key={v.username + i.toString()}>
           <div className={classes}>
-            <span className="leaderboard_rank">{i+1}</span>
+            <span className="leaderboard_rank">{counter}</span>
             <span className="leaderboard_name">{v.username}</span>
             <span className="leaderboard_score">{v.spines}</span>
           </div>
