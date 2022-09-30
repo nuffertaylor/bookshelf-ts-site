@@ -12,6 +12,7 @@ export interface book {
   user_rating ?: string
 }
 export interface foundBook extends book {
+  upload_id : string,
   dimensions : string,
   domColor ?: string,
   fileName : string,

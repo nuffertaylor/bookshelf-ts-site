@@ -15,6 +15,7 @@
     "color-util": "^2.2.3",
     "colorthief": "npm:@pioug/colorthief@^3.0.1",
     "react": "^18.1.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.1.0",
     "react-id-generator": "^3.0.2",
     "react-scripts": "5.0.1",
@@ -44,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.2"
   }
 }

@@ -5,6 +5,8 @@ import { sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
+import { DragAndDropList } from './DragAndDropList';
+import { SortManual } from './SortManual';
 
 interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
@@ -100,7 +102,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       case "Year":
         break;
       case "Sort Manually":
-        //redirect to another page
+        widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist}/>)
         return;
     }
     generateShelf();
