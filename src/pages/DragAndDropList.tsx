@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStyles, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DraggableLocation } from 'react-beautiful-dnd';
 import { foundBook } from '../types/interfaces';
 
 const useStyles = createStyles((theme) => ({
@@ -30,15 +30,20 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface dragAndDropListProps {
-  data: foundBook[];
+  data: foundBook[],
+  updateParent : Function
 }
 
-export function DragAndDropList({ data }: dragAndDropListProps) {
+export function DragAndDropList({ data, updateParent }: dragAndDropListProps) {
   const { classes, cx } = useStyles();
   const [state, handlers] = useListState(data);
+  useEffect(()=>{
+    updateParent(state);
+  }, [state]);
 
+  //TODO: fix css formatting of each card
   const items = state.map((item, index) => (
-    <Draggable key={item.upload_id} index={index} draggableId={item.upload_id}>
+    <Draggable index={index} draggableId={item.upload_id} key={item.upload_id}>
       {(provided, snapshot) => (
         <div
           className={cx(classes.item, { [classes.itemDragging]: snapshot.isDragging })}
@@ -48,10 +53,10 @@ export function DragAndDropList({ data }: dragAndDropListProps) {
         >
           <div style={{background : item.domColor, width:"25px", height:"25px"}}></div>
           <div>
-          <Text>{item.title.length > 25 ? item.title.substring(0,25) + "..." : item.title}</Text>
-          <Text color="dimmed" size="sm">
-            Author: {item.author} • Published: {item.pubDate}
-          </Text>
+            <Text>{item.title.length > 25 ? item.title.substring(0,25) + "..." : item.title}</Text>
+            <Text color="dimmed" size="sm">
+              Author: {item.author} • Published: {item.pubDate}
+            </Text>
           </div>
         </div>
       )}

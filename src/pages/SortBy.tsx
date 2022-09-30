@@ -102,16 +102,16 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       case "Year":
         break;
       case "Sort Manually":
-        widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist}/>)
+        widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
         return;
     }
-    generateShelf();
+    generateShelf(booklist);
   }
 
-  const generateShelf = ()=>{
+  const generateShelf = (bl : foundBook[])=>{
     widgetCallback(<Loading/>);
     const data : genshelfRequest = {
-      bookList : booklist
+      bookList : bl
     }
     sendPostRequestToServer("genshelf", data, (res : string)=>{
       const resObj : genshelfResponse = JSON.parse(res);
