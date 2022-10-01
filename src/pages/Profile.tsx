@@ -26,11 +26,16 @@ export function Profile({widgetCallback} : defaultProps){
     const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
     const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
     const SPINE_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
-    //TODO: add handling for if foundbooks is 0
-    //TODO: ADD CSS FORMATTING TO THE RETURNED SUBMITTED SPINE LIST
+
+    if(foundBooks.length === 0){
+      setSubmissionsSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
+      return;
+    }
+    
     const built = foundBooks.map(b => 
-    <div>
+    <div key={b.upload_id}>
       <a href={SPINE_PREFIX + b.fileName}>{b.title}</a>
+      <div style={{marginTop:"10px"}} className="bs_box_line"></div>
     </div>)
     setSubmissionsSection(built);
   });
