@@ -18,6 +18,24 @@ interface genshelfResponse {
   body : string
 }
 
+export const alphabetize_list_by_title = (list : Array<foundBook>) => {
+  const remove_first_article = (title : string) => {
+    const articles = ["the", "a", "an"];
+    let sp = title.split(' ');
+    const first_word = sp.shift();
+    if(first_word && articles.includes(first_word.toLowerCase()))
+      return sp.join(' ');
+    return title;
+  };
+  return list.sort((a, b) => {
+    const x = remove_first_article(a.title);
+    const y = remove_first_article(b.title);
+    if(x < y) return -1;
+    if(x > y) return 1;
+    return 0;
+  });
+};
+
 export function SortBy({widgetCallback, booklist} : sortByProps){
   const [selectValue, setSelectValue] = useState<string | null>(null);
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
@@ -47,24 +65,6 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
       //names are essentially identical
       //at this point, see if we can sort by series
-      return 0;
-    });
-  };
-
-  const alphabetize_list_by_title = (list : Array<foundBook>) => {
-    const remove_first_article = (title : string) => {
-      const articles = ["the", "a", "an"];
-      let sp = title.split(' ');
-      const first_word = sp.shift();
-      if(first_word && articles.includes(first_word.toLowerCase()))
-        return sp.join(' ');
-      return title;
-    };
-    return list.sort((a, b) => {
-      const x = remove_first_article(a.title);
-      const y = remove_first_article(b.title);
-      if(x < y) return -1;
-      if(x > y) return 1;
       return 0;
     });
   };

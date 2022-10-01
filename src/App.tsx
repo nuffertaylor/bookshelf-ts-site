@@ -19,6 +19,7 @@ function App() {
   const [loginStatus, setLoginStatus] = useState(getCookie("authtoken") ? "profile" : "login");
 
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
+  
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
@@ -48,9 +49,12 @@ function App() {
         break;
     }
   };
+
   const changeCenterWidget = (widget : any) => {
     setCenterWidget(widget);
   }
+
+  //TODO: Add footer with relevant links (about, how-to, buy me coffee)
   return (
     <div className="App">
       <ResponsiveHeader 

@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { defaultProps, user } from '../types/interfaces';
-import { deleteCookie, getCookie, onlyNumbers, sendPostRequestToServer, setCookie } from '../utils/utilities';
+import { defaultProps, foundBook, user } from '../types/interfaces';
+import { deleteCookie, getCookie, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
+import { Loading } from './Loading';
+import { alphabetize_list_by_title } from './SortBy';
 
 interface setusergridRes{
   statusCode : number,
   body : user
+}
+interface getbookspinesbysubmitterResponse{
+  statusCode : number,
+  body : foundBook[]
 }
 
 export function Profile({widgetCallback} : defaultProps){
@@ -14,6 +20,20 @@ export function Profile({widgetCallback} : defaultProps){
   const [yourBookshelvesArrow, setYourBookshelvesArrow] = useState("arrow-right");
   const gr_id = getCookie("goodreads_id");
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
+  const [submissionsSection, setSubmissionsSection] = useState([<Loading/>]);
+  const [shelvesSection, setShelvesSection] = useState([<Loading/>]);
+  sendGetRequestToServer("getbookspinesbysubmitter", "username=".concat(username), (res:string)=>{
+    const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
+    const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
+    const SPINE_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+    //TODO: add handling for if foundbooks is 0
+    //TODO: ADD CSS FORMATTING TO THE RETURNED SUBMITTED SPINE LIST
+    const built = foundBooks.map(b => 
+    <div>
+      <a href={SPINE_PREFIX + b.fileName}>{b.title}</a>
+    </div>)
+    setSubmissionsSection(built);
+  });
 
   const flipArrow = (prev:string)=>{
     if(prev==="arrow-right") return "arrow-down";
@@ -73,9 +93,15 @@ export function Profile({widgetCallback} : defaultProps){
         <span>Your Spine Submissions</span>
         <span className={"arrow " + yourSubmissionsArrow}></span>
       </div>
+      <div style={{display : yourSubmissionsArrow === "arrow-right" ? "none" : "block"}}>
+        {submissionsSection}
+      </div>
       <div className="bs_submissions_row" onClick={flipBookshelves}>
         <span>Your Saved Virtual Bookshelves</span>
         <span className={"arrow " + yourBookshelvesArrow}></span>
+      </div>
+      <div style={{display : yourBookshelvesArrow === "arrow-right" ? "none" : "block"}}>
+        {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
         <input type="text" placeholder="goodreads id" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
