@@ -5,7 +5,6 @@ import { sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
-import { DragAndDropList } from './DragAndDropList';
 import { SortManual } from './SortManual';
 
 interface sortByProps extends defaultProps{

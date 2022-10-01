@@ -51,10 +51,10 @@ export function DragAndDropList({ data, updateParent }: dragAndDropListProps) {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <div style={{background : item.domColor, width:"25px", height:"25px"}}></div>
-          <div>
-            <Text>{item.title.length > 25 ? item.title.substring(0,25) + "..." : item.title}</Text>
-            <Text color="dimmed" size="sm">
+          <div style={{background : item.domColor, minWidth:"25px", minHeight:"25px"}}></div>
+          <div style={{width:"100%", marginLeft:"10px"}}>
+            <Text style={{fontWeight:700}}>{item.title.length > 25 ? item.title.substring(0,25) + "..." : item.title}</Text>
+            <Text color="dimmed" size="sm" style={{fontStyle:"italic"}}>
               Author: {item.author} • Published: {item.pubDate}
             </Text>
           </div>
