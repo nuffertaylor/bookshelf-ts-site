@@ -19,12 +19,17 @@ export function Profile({widgetCallback} : defaultProps){
     if(prev==="arrow-right") return "arrow-down";
     return "arrow-right";
   }
+
+  //TODO: Get user's spine submissions
   const flipSubmissions = ()=>{
     setYourSubmissionsArrow(flipArrow);
   }
+
+  //TODO: get user's saved bookshelves 
   const flipBookshelves = ()=>{
     setYourBookshelvesArrow(flipArrow);
   }
+
   const changeId = ()=>{
     let val = (document.getElementById("new_gr_id") as HTMLInputElement)?.value;
     if(!val) {

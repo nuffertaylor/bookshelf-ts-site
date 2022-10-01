@@ -43,7 +43,7 @@ function App() {
       case "/login":
         setCenterWidget(<Login widgetCallback={changeCenterWidget} setLoginStatus={ setLoginStatus }/>);
         break;
-      case "/profile": //TODO: for now we'll just use leaderboard page, but create custom profile page
+      case "/profile":
         setCenterWidget(<Profile widgetCallback={changeCenterWidget}/>);
         break;
     }

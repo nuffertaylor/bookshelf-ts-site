@@ -24,7 +24,6 @@ interface loginProps extends defaultProps {
   startState ?: string
 }
 
-//TODO: Add register functionality to this component
 export function Login({widgetCallback,setLoginStatus, startState = "login"} : loginProps){
   const login_flip_text = "Don't have an account? Register one here.";
   const register_flip_text = "Already have an account? Login here.";

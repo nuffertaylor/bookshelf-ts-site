@@ -41,7 +41,6 @@ export function DragAndDropList({ data, updateParent }: dragAndDropListProps) {
     updateParent(state);
   }, [state]);
 
-  //TODO: fix css formatting of each card
   const items = state.map((item, index) => (
     <Draggable index={index} draggableId={item.upload_id} key={item.upload_id}>
       {(provided, snapshot) => (

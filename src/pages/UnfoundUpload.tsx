@@ -2,6 +2,7 @@ import React from 'react';
 import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
+import { Title } from './Title';
 
 export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
   const UnfoundRow = function(book : any){
@@ -22,12 +23,7 @@ export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
   const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback}/>)};
   return(
     <div className="unfound_box">
-      <div id={nextId()} className="unfound_row">
-        <div className="bs_title_arrow">
-          <span className="arrow arrow-left" onClick={returnToPrevPage}></span>
-          <span className="bs_unfound_title">Unfound Books</span>
-        </div>
-      </div>
+      <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>
       {unfoundMapped}
     </div>
   );

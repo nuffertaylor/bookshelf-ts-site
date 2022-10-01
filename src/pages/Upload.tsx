@@ -4,6 +4,7 @@ import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
+import { Title } from "./Title";
 interface uploadProps extends defaultProps{
   prefill ?: book,
   origin : ReactElement
@@ -111,10 +112,7 @@ export function Upload({widgetCallback, prefill, origin} : uploadProps){
   const returnToPrevPage = ()=>{widgetCallback(origin);};
   return(
     <div className="upload_super_container">
-      <div className="bs_title_arrow">
-        <span className="arrow arrow-left" onClick={returnToPrevPage}></span>
-        <span className="bs_unfound_title">Upload Spine</span>
-      </div>
+      <Title title="Upload Spine" backArrowOnClick={returnToPrevPage}/>
       <div className="upload_activity">
         <div className="spine_preview">
           {!display_uploaded && <div className="no_img_selected">?</div>}
