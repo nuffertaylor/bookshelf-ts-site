@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defaultProps, foundBook, user } from '../types/interfaces';
+import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { deleteCookie, getCookie, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
 import { alphabetize_list_by_title } from './SortBy';
@@ -12,6 +12,10 @@ interface getbookspinesbysubmitterResponse{
   statusCode : number,
   body : foundBook[]
 }
+interface getownershelvesResponse{
+  statusCode : number,
+  body : shelfImage[]
+}
 
 export function Profile({widgetCallback} : defaultProps){
   const username = getCookie("username");
@@ -22,22 +26,44 @@ export function Profile({widgetCallback} : defaultProps){
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
   const [submissionsSection, setSubmissionsSection] = useState([<Loading/>]);
   const [shelvesSection, setShelvesSection] = useState([<Loading/>]);
+  const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+
+  //async load submissions section
   sendGetRequestToServer("getbookspinesbysubmitter", "username=".concat(username), (res:string)=>{
     const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
     const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
-    const SPINE_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 
     if(foundBooks.length === 0){
       setSubmissionsSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
       return;
     }
-    
+
     const built = foundBooks.map(b => 
-    <div key={b.upload_id}>
-      <a href={SPINE_PREFIX + b.fileName}>{b.title}</a>
-      <div style={{marginTop:"10px"}} className="bs_box_line"></div>
-    </div>)
+      <div key={b.upload_id}>
+        <a href={IMG_URL_PREFIX + b.fileName}>{b.title}</a>
+        <div style={{marginTop:"10px"}} className="bs_box_line"></div>
+      </div>
+    );
     setSubmissionsSection(built);
+  });
+
+  //async load shelves section
+  sendGetRequestToServer("getownershelves", "username=".concat(username), (res:string)=>{
+    const parsedRes : getownershelvesResponse = JSON.parse(res);
+    const shelfImages : shelfImage[] = parsedRes.body;
+    if(shelfImages.length === 0){
+      setShelvesSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
+      return;
+    }
+
+    //TODO: ADD CSS TO DISPLAY THESE SHELVES IN A GRID
+    //TODO: ADD AN OPTION TO DELETE SHELVES FROM YOUR PROFILE
+    const built = shelfImages.map(s => 
+      <div>
+        <img src={IMG_URL_PREFIX + s.filename} style={{height:"100px"}}/>
+      </div>
+    );
+    setShelvesSection(built);
   });
 
   const flipArrow = (prev:string)=>{
@@ -45,7 +71,6 @@ export function Profile({widgetCallback} : defaultProps){
     return "arrow-right";
   }
 
-  //TODO: Get user's spine submissions
   const flipSubmissions = ()=>{
     setYourSubmissionsArrow(flipArrow);
   }

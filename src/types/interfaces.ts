@@ -26,6 +26,13 @@ export interface defaultProps {
   widgetCallback : Function
 }
 
+export interface shelfImage {
+  upload_id : string,
+  filename : string,
+  timestamp : number,
+  owner : string
+}
+
 export interface user {
   username : string,
   hashedPassword : string,

@@ -27,6 +27,7 @@ export const alphabetize_list_by_title = (list : Array<foundBook>) => {
       return sp.join(' ');
     return title;
   };
+  if(!list) return list;
   return list.sort((a, b) => {
     const x = remove_first_article(a.title);
     const y = remove_first_article(b.title);
@@ -131,7 +132,17 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     <div className="found_spine_head">Sort by</div>
     <div className="custom-select" style={{width:"200px"}}>
     <Select
-        data={['Default Sort', 'Author', 'Title', 'Year', 'Date Read', 'Color', 'User Rating', 'Average Rating', 'Sort Manually']}
+        data={[
+          'Default Sort',
+          'Author',
+          'Title',
+          // 'Year',
+          // 'Date Read',
+          'Color',
+          // 'User Rating',
+          // 'Average Rating',
+          'Sort Manually'
+        ]}
         placeholder="Select Sort Method"
         value={selectValue}
         onChange={alterSelectValue}
