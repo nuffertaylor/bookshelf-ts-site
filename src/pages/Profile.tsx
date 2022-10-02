@@ -24,47 +24,57 @@ export function Profile({widgetCallback} : defaultProps){
   const [yourBookshelvesArrow, setYourBookshelvesArrow] = useState("arrow-right");
   const gr_id = getCookie("goodreads_id");
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
-  const [submissionsSection, setSubmissionsSection] = useState([<Loading/>]);
-  const [shelvesSection, setShelvesSection] = useState([<Loading/>]);
+  const loading = [<Loading/>];
+  const [submissionsSection, setSubmissionsSection] = useState(loading);
+  const [shelvesSection, setShelvesSection] = useState(loading);
+  const [loadedSubmissions, setLoadedSubmissions] = useState(false);
+  const [loadedShelves, setLoadedShelves] = useState(false);
   const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 
   //async load submissions section
-  sendGetRequestToServer("getbookspinesbysubmitter", "username=".concat(username), (res:string)=>{
-    const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
-    const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
+  const async_load_submissions = () => {
+    sendGetRequestToServer("getbookspinesbysubmitter", "username=".concat(username), (res:string)=>{
+      const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
+      const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
 
-    if(foundBooks.length === 0){
-      setSubmissionsSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
-      return;
-    }
+      if(!foundBooks || foundBooks.length === 0){
+        setSubmissionsSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
+        return;
+      }
 
-    const built = foundBooks.map(b => 
-      <div key={b.upload_id}>
-        <a href={IMG_URL_PREFIX + b.fileName}>{b.title}</a>
-        <div style={{marginTop:"10px"}} className="bs_box_line"></div>
-      </div>
-    );
-    setSubmissionsSection(built);
-  });
+      const built = foundBooks.map(b => 
+        <div key={b.upload_id}>
+          <a href={IMG_URL_PREFIX + b.fileName}>{b.title}</a>
+          <div style={{marginTop:"10px"}} className="bs_box_line"></div>
+        </div>
+      );
+      setSubmissionsSection(built);
+      setLoadedSubmissions(true);
+    });
+  };
 
   //async load shelves section
-  sendGetRequestToServer("getownershelves", "username=".concat(username), (res:string)=>{
-    const parsedRes : getownershelvesResponse = JSON.parse(res);
-    const shelfImages : shelfImage[] = parsedRes.body;
-    if(shelfImages.length === 0){
-      setShelvesSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
-      return;
-    }
+  const async_load_shelves = ()=>{
+    sendGetRequestToServer("getownershelves", "username=".concat(username), (res:string)=>{
+      const parsedRes : getownershelvesResponse = JSON.parse(res);
+      const shelfImages : shelfImage[] = parsedRes.body;
 
-    //TODO: ADD CSS TO DISPLAY THESE SHELVES IN A GRID
-    //TODO: ADD AN OPTION TO DELETE SHELVES FROM YOUR PROFILE
-    const built = shelfImages.map(s => 
-      <div>
-        <img src={IMG_URL_PREFIX + s.filename} style={{height:"100px"}}/>
-      </div>
-    );
-    setShelvesSection(built);
-  });
+      if(!shelfImages || shelfImages.length === 0){
+        setShelvesSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
+        return;
+      }
+
+      //TODO: ADD CSS TO DISPLAY THESE SHELVES IN A GRID
+      //TODO: ADD AN OPTION TO DELETE SHELVES FROM YOUR PROFILE
+      const built = shelfImages.map(s => 
+        <div>
+          <img src={IMG_URL_PREFIX + s.filename} style={{height:"100px"}}/>
+        </div>
+      );
+      setShelvesSection(built);
+      setLoadedShelves(true);
+    });
+  };
 
   const flipArrow = (prev:string)=>{
     if(prev==="arrow-right") return "arrow-down";
@@ -73,11 +83,12 @@ export function Profile({widgetCallback} : defaultProps){
 
   const flipSubmissions = ()=>{
     setYourSubmissionsArrow(flipArrow);
+    if(!loadedSubmissions) async_load_submissions();
   }
 
-  //TODO: get user's saved bookshelves 
   const flipBookshelves = ()=>{
     setYourBookshelvesArrow(flipArrow);
+    if(!loadedShelves) async_load_shelves();
   }
 
   const changeId = ()=>{
