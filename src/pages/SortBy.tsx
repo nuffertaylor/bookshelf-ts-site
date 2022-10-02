@@ -18,7 +18,7 @@ interface genshelfResponse {
   body : string
 }
 
-export const alphabetize_list_by_title = (list : Array<foundBook>) => {
+const alphbetize_by_title_algo = (a : foundBook, b : foundBook) => {
   const remove_first_article = (title : string) => {
     const articles = ["the", "a", "an"];
     let sp = title.split(' ');
@@ -27,14 +27,16 @@ export const alphabetize_list_by_title = (list : Array<foundBook>) => {
       return sp.join(' ');
     return title;
   };
+  const x = remove_first_article(a.title).trim();
+  const y = remove_first_article(b.title).trim();
+  if(x < y) return -1;
+  if(x > y) return 1;
+  return 0;
+}
+
+export const alphabetize_list_by_title = (list : Array<foundBook>) => {
   if(!list) return list;
-  return list.sort((a, b) => {
-    const x = remove_first_article(a.title);
-    const y = remove_first_article(b.title);
-    if(x < y) return -1;
-    if(x > y) return 1;
-    return 0;
-  });
+  return list.sort((a, b) => alphbetize_by_title_algo(a, b));
 };
 
 export function SortBy({widgetCallback, booklist} : sortByProps){
@@ -42,7 +44,29 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
   const [disabledClass, setDisabledClass] = useState<string>("bs_disabled");
 
-  const alphabetize_list_by_author= (list : Array<foundBook>) => {
+  const alphabetize_list_by_author = (list : Array<foundBook>)=> {
+    const sort_by_series = (a : string, b : string) : -1 | 0 | 1 => {
+      if(a.charAt(a.length-1) !== ')' || b.charAt(b.length-1) !== ')') return 0;
+      const find_index_of_opening_prin = (s : string) => {
+        for(let i = s.length-1; i > 0; i--){
+          let closing_prin_counter = 0;
+          if(s.charAt(i) === ')') closing_prin_counter += 1;
+          else if(s.charAt(i) === '(') closing_prin_counter -= 1;
+          if(closing_prin_counter === 0) return i;
+        }
+        return -1;
+      };
+      const indexA = find_index_of_opening_prin(a);
+      const indexB = find_index_of_opening_prin(b);
+      //if either index is -1, we know something went wrong finding the opening parenthesis
+      if(indexA === -1 || indexB === -1) return 0;
+
+      const seriesA = a.substring(indexA);
+      const seriesB = b.substring(indexB);
+      if(seriesA < seriesB) return -1;
+      if(seriesA > seriesB) return 1;
+      return 0;
+    };
     const get_first_name = (name : string) => {
       let l = name.split(' ');
       return l[0];
@@ -64,9 +88,13 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       if(nameA < nameB) return -1;
       if(nameA > nameB) return 1;
 
-      //names are essentially identical
+      //names are identical
       //at this point, see if we can sort by series
-      return 0;
+      const res = sort_by_series(a.title, b.title);
+      if(res !== 0) return res;
+
+      //if they aren't in a series, just sort by title
+      return alphbetize_by_title_algo(a, b);
     });
   };
 
