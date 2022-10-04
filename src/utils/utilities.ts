@@ -55,26 +55,25 @@ export function loggedIn(){
   if(u === null || a === null) return false;
   return true;
 }
-
+//TODO: EVERYTHING THAT CALLS THIS NEEDS TO HANDLE NON-200 RETURNS
 export const sendGetRequestToServer = async function (method : string, querystr : string, callback : Function){
   var xhttp = new XMLHttpRequest();
   var path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;
   xhttp.onreadystatechange = function() {
-      if (this.readyState === 4 && this.status === 200) {
-        callback(xhttp.responseText);
-      } //TODO handle other status codes
+      if(this.readyState === 4) callback(xhttp.responseText);
   };
   xhttp.open("GET", path, true);
   xhttp.send();
 }
 
+//TODO: EVERYTHING THAT CALLS THIS NEEDS TO HANDLE NON-200 RETURNS
 export const sendPostRequestToServer = async function(method : string, data : object, callback : Function)
 {
   const httpPost = new XMLHttpRequest();
   const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method;
   let json_data = JSON.stringify(data);
   httpPost.onreadystatechange = (err) => {
-    if (httpPost.readyState === 4) callback(httpPost.responseText);
+    if(httpPost.readyState === 4) callback(httpPost.responseText);
   };
   // Set the content type of the request to json since that's what's being sent
   httpPost.open("POST", path, true);

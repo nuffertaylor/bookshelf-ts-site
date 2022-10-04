@@ -16,7 +16,7 @@ export function FetchGoodreads({widgetCallback} : defaultProps){
       alert("You have to provide a URL or Book ID to continue!");
       return;
     }
-    const bs_url : string = bs_url_input.value;
+    const bs_url : string = bs_url_input.value.split('?')[0];
     if(!validUrl(bs_url) && !onlyDigits(bs_url)) {
       alert("invalid URL/Book ID provided. Please try again");
       return;
