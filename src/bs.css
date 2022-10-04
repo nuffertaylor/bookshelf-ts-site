@@ -471,13 +471,25 @@ text-align:center;
 }
 .shelf_image_element_container{
   width: 100px;
-  height:200px;
+  height:225px;
   display: grid;
   place-items: center;
-  background:#D3D3D3;
+  background:#eaeaea;
   border-radius:10px;
   box-shadow: #696969;
 }
 .shelf_image_element_img{
   width:75px;
+}
+.hide{
+  display: none;
+}
+.shelves_section_grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(auto-fill, 240px);
+}
+.shelf_image_date{
+  font-weight:600;
+  margin-top: 5px;
 }

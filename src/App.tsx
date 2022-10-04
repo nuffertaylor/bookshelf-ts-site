@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { ResponsiveHeader } from './ResponsiveHeader';
 import {Create} from './pages/Create';
@@ -13,6 +13,7 @@ import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 import { Profile } from './pages/Profile';
 
+//TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 function App() {
   //base login status on existence of cookie. when cookie is expired, so is authtoken.
   //TODO: on load, send request to check if authtoken has expired (happens also if they login elsewhere). log them out if so

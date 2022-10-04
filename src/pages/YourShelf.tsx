@@ -22,9 +22,10 @@ export function YourShelf({shelf_url} : YourShelfProps){
       return;
     }
     const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
-    sendPostRequestToServer("setshelfowner", {username:username, authtoken:authtoken, filename:filename}, (res:string)=>{
+    const req : setshelfownerRequest = {username:username, authtoken:authtoken, filename:filename};
+    sendPostRequestToServer("setshelfowner", req, (res:string)=>{
       const parsedRes : setshelfownerResponse = JSON.parse(res);
-      if(parsedRes.statusCode === 200) alert("successfully save this shelf to your profile!");
+      if(parsedRes.statusCode === 200) alert("successfully saved this shelf to your profile!");
       else alert("something went wrong, please try again later.");
     });
 

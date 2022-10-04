@@ -73,15 +73,24 @@ export function Profile({widgetCallback} : defaultProps){
 
       interface shelfImageElementProps{ s : shelfImage };
       const ShelfImageElement = ({s} : shelfImageElementProps) => {
+        const date = new Date(s.timestamp*1000);
+        const date_str : string = date.toLocaleDateString();
+        const shelf_url = IMG_URL_PREFIX + s.filename;
+
+        //TODO: Add functionality to name saved shelf
+        //TODO: Allow user to delete saved shelf
+        //TODO: maybe move all the functionality - when you click on a given shelf, it pops up full screen, and then you can mess with it
         return (
         <div className="shelf_image_element_container">
-          <img src={IMG_URL_PREFIX + s.filename} className="shelf_image_element_img"/>
+          <span className="shelf_image_date">{date_str}</span>
+          <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str}/>
+          <a href={shelf_url} download="myshelf">
+            <button className="bs_shelf_buttons" style={{transform: "scale(.7)", width:"100px"}}>download</button>
+          </a>
         </div>
         );
       }
 
-      //TODO: ADD CSS TO DISPLAY THESE SHELVES IN A GRID
-      //TODO: ADD AN OPTION TO DELETE SHELVES FROM YOUR PROFILE
       const built = shelfImages.map(s => <ShelfImageElement s={s}/>);
       setShelvesSection(built);
       setLoadedShelves(true);
@@ -153,7 +162,7 @@ export function Profile({widgetCallback} : defaultProps){
         <span>Your Saved Virtual Bookshelves</span>
         <span className={"arrow " + yourBookshelvesArrow}></span>
       </div>
-      <div style={{display : yourBookshelvesArrow === "arrow-right" ? "none" : "block"}}>
+      <div className={yourBookshelvesArrow === "arrow-right" ? "hide" :  loadedShelves ? "shelves_section_grid" : ""}>
         {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
