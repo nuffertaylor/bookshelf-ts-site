@@ -18,6 +18,8 @@ interface uploadForm {
   genre?:string,
 }
 
+//TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
+
 export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
   
@@ -36,9 +38,13 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const [b64Image, setB64Image] = React.useState<string>("");
   const [display_uploaded, set_display_uploaded] = React.useState<boolean>(false);
   const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
-    //TODO: Only allow PNG and JPG/JPEG files, and restrict the file size to something like 5mb
     if(!event.target.files || event.target.files.length === 0) return;
     const file : File = event.target.files[0];
+    const FIVE_MB : number = 5242880;
+    if(file.size > FIVE_MB){
+      alert("Please select a file with a size less than 5 MB. (You can probably get this file size by running your image through a compressor or converting it to a jpg)");
+      return;
+    }
     var reader = new FileReader();
     reader.onloadend = function() {
       if(typeof reader.result === "string") {
@@ -119,7 +125,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
           {display_uploaded && <img src={b64Image} alt="uploaded_img" className="uploaded_img" id="uploaded_img" />}
         </div>
         <div className="form_elements">
-          <input id="imageInput" type="file" accept="image/*" onChange={encodeImageFileAsURL} hidden />
+          <input id="imageInput" type="file" accept="image/png, image/jpg, image/jpeg" onChange={encodeImageFileAsURL} hidden />
           <label htmlFor="imageInput" className="bs_button" id="upload_img_override_btn">Choose File</label>
           <input className="bs_text_input" id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
           <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id} />

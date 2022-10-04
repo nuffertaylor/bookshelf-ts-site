@@ -11,7 +11,7 @@ interface leaderboard_res{
   statusCode : number,
   body : Array<rank>
 }
-
+//TODO: If the user clicks on another item from the header before this loads, cancel the result. Not sure how to do this.
 export function Leaderboard({widgetCallback} : defaultProps){
   const cur_user = getCookie("username");
   sendGetRequestToServer("leaderboard", "", (res : string)=>{
