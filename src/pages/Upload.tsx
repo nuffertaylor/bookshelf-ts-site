@@ -7,7 +7,7 @@ import ColorThief from "colorthief"; //needed suppression for this error:   Try 
 import { Title } from "./Title";
 interface uploadProps extends defaultProps{
   prefill ?: book,
-  origin : ReactElement
+  originCallback : Function
 }
 interface uploadForm {
   title:string,
@@ -18,7 +18,7 @@ interface uploadForm {
   genre?:string,
 }
 
-export function Upload({widgetCallback, prefill, origin} : uploadProps){
+export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
   
   let disable_title = false, disable_book_id = false, disable_author = false, disable_pubDate = false, disable_genre = false;
@@ -105,11 +105,11 @@ export function Upload({widgetCallback, prefill, origin} : uploadProps){
       };
       sendPostRequestToServer("spine", data, (res : string) => {
         alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
-        widgetCallback(origin);
+        originCallback(true);
       });
   }
   };
-  const returnToPrevPage = ()=>{widgetCallback(origin);};
+  const returnToPrevPage = ()=>{originCallback()};
   return(
     <div className="upload_super_container">
       <Title title="Upload Spine" backArrowOnClick={returnToPrevPage}/>

@@ -20,8 +20,8 @@ export function Create({ widgetCallback, props }: CreateProps){
     sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
       const resObj = JSON.parse(res);
       const found : Array<foundBook> = resObj["body"]["found"];
-      const unfound : Array<bookContainer> = resObj["body"]["unfound"];
-      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback}/>);
+      const unfound : Array<book> = resObj["body"]["unfound"];
+      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
     });
   };
 

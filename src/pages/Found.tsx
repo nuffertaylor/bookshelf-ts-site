@@ -1,18 +1,18 @@
 import React from 'react';
 import {Loading} from "./Loading";
 import { UnfoundUpload } from './UnfoundUpload';
-import { book, bookContainer, foundBook } from '../types/interfaces';
+import { book, bookContainer, defaultProps, foundBook } from '../types/interfaces';
 import { SortBy } from './SortBy';
 
-export interface FoundProps {
+export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
-  unfound ?: Array<bookContainer>,
-  widgetCallback : Function
+  unfound : Array<book>,
+  querystr : string
 }
 
-export function Found({found, unfound, widgetCallback} : FoundProps){
+export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
   const createUnfoundUpload =()=>{
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback}/>);
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
   const openSortBy = ()=>{

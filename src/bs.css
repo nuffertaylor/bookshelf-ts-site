@@ -469,3 +469,15 @@ text-align:center;
   cursor:not-allowed;
   filter:grayscale(1);
 }
+.shelf_image_element_container{
+  width: 100px;
+  height:200px;
+  display: grid;
+  place-items: center;
+  background:#D3D3D3;
+  border-radius:10px;
+  box-shadow: #696969;
+}
+.shelf_image_element_img{
+  width:75px;
+}

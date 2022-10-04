@@ -3,11 +3,29 @@ import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
 import { Title } from './Title';
+import { sendGetRequestToServer } from '../utils/utilities';
+import { book, bookContainer, foundBook } from '../types/interfaces';
+import { alphabetize_by_title_algo, alphabetize_list_by_title } from './SortBy';
 
-export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
-  const UnfoundRow = function(book : any){
-    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book.book} origin={<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback}/>}/>)};
-    let book_title = book.book.title;
+export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
+  const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
+  const originCallback = (changesMade = false)=>{
+    if(changesMade){
+      sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
+        const resObj = JSON.parse(res);
+        const f : Array<foundBook> = resObj["body"]["found"];
+        const u : Array<book> = resObj["body"]["unfound"];
+        widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
+      });
+      return;
+    }
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+  }
+
+  interface unfoundRowProps { book : book }
+  const UnfoundRow = function({book} : unfoundRowProps){
+    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)};
+    let book_title = book.title;
     if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
     return (
       <div key={nextId()}>
@@ -19,8 +37,9 @@ export function UnfoundUpload({found, unfound, widgetCallback} : FoundProps){
       </div>
     );
   }
-  const unfoundMapped = unfound?.map(u => <UnfoundRow book={u}/>);
-  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback}/>)};
+
+  const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u}/>);
+  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>

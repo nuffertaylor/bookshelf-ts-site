@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defaultProps, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
 import { sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -18,7 +18,7 @@ interface genshelfResponse {
   body : string
 }
 
-const alphbetize_by_title_algo = (a : foundBook, b : foundBook) => {
+export const alphabetize_by_title_algo = (a : book, b : book) => {
   const remove_first_article = (title : string) => {
     const articles = ["the", "a", "an"];
     let sp = title.split(' ');
@@ -36,7 +36,7 @@ const alphbetize_by_title_algo = (a : foundBook, b : foundBook) => {
 
 export const alphabetize_list_by_title = (list : Array<foundBook>) => {
   if(!list) return list;
-  return list.sort((a, b) => alphbetize_by_title_algo(a, b));
+  return list.sort((a, b) => alphabetize_by_title_algo(a, b));
 };
 
 export function SortBy({widgetCallback, booklist} : sortByProps){
@@ -94,7 +94,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       if(res !== 0) return res;
 
       //if they aren't in a series, just sort by title
-      return alphbetize_by_title_algo(a, b);
+      return alphabetize_by_title_algo(a, b);
     });
   };
 

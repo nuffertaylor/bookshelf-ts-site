@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import nextId from 'react-id-generator';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { deleteCookie, getCookie, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -38,7 +39,7 @@ export function Profile({widgetCallback} : defaultProps){
       const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
 
       if(!foundBooks || foundBooks.length === 0){
-        setSubmissionsSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
+        setSubmissionsSection([<div key={nextId()} style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
         return;
       }
 
@@ -57,20 +58,31 @@ export function Profile({widgetCallback} : defaultProps){
   const async_load_shelves = ()=>{
     sendGetRequestToServer("getownershelves", "username=".concat(username), (res:string)=>{
       const parsedRes : getownershelvesResponse = JSON.parse(res);
-      const shelfImages : shelfImage[] = parsedRes.body;
+      let shelfImages : shelfImage[] = parsedRes.body;
+      //sort shelves by date created
+      shelfImages.sort((a, b) => {
+        if(a.timestamp < b.timestamp) return -1;
+        if(a.timestamp > b.timestamp) return 1;
+        return 0;
+      });
 
       if(!shelfImages || shelfImages.length === 0){
-        setShelvesSection([<div style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
+        setShelvesSection([<div key={nextId()} style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
         return;
+      }
+
+      interface shelfImageElementProps{ s : shelfImage };
+      const ShelfImageElement = ({s} : shelfImageElementProps) => {
+        return (
+        <div className="shelf_image_element_container">
+          <img src={IMG_URL_PREFIX + s.filename} className="shelf_image_element_img"/>
+        </div>
+        );
       }
 
       //TODO: ADD CSS TO DISPLAY THESE SHELVES IN A GRID
       //TODO: ADD AN OPTION TO DELETE SHELVES FROM YOUR PROFILE
-      const built = shelfImages.map(s => 
-        <div>
-          <img src={IMG_URL_PREFIX + s.filename} style={{height:"100px"}}/>
-        </div>
-      );
+      const built = shelfImages.map(s => <ShelfImageElement s={s}/>);
       setShelvesSection(built);
       setLoadedShelves(true);
     });
