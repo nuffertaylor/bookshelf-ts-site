@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";

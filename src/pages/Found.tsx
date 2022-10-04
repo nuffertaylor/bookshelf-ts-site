@@ -1,7 +1,7 @@
 import React from 'react';
 import {Loading} from "./Loading";
 import { UnfoundUpload } from './UnfoundUpload';
-import { book, bookContainer, defaultProps, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook } from '../types/interfaces';
 import { SortBy } from './SortBy';
 
 export interface FoundProps extends defaultProps{

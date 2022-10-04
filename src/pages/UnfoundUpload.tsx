@@ -4,8 +4,8 @@ import {Upload} from "./Upload";
 import nextId from "react-id-generator";
 import { Title } from './Title';
 import { sendGetRequestToServer } from '../utils/utilities';
-import { book, bookContainer, foundBook } from '../types/interfaces';
-import { alphabetize_by_title_algo, alphabetize_list_by_title } from './SortBy';
+import { book, foundBook } from '../types/interfaces';
+import { alphabetize_by_title_algo } from './SortBy';
 
 export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);

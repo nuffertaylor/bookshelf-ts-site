@@ -1,6 +1,6 @@
 import React from 'react';
 import {Found} from "./Found";
-import { book, bookContainer, defaultProps, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
 import {getCookie, sendGetRequestToServer} from "../utils/utilities";
 

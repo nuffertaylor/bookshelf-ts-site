@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { createStyles, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
-import { DragDropContext, Droppable, Draggable, DraggableLocation } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { foundBook } from '../types/interfaces';
 
 const useStyles = createStyles((theme) => ({
@@ -39,7 +39,7 @@ export function DragAndDropList({ data, updateParent }: dragAndDropListProps) {
   const [state, handlers] = useListState(data);
   useEffect(()=>{
     updateParent(state);
-  }, [state]);
+  }, [updateParent, state]);
 
   const items = state.map((item, index) => (
     <Draggable index={index} draggableId={item.upload_id} key={item.upload_id}>
