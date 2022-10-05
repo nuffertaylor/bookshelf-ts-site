@@ -17,6 +17,30 @@ interface uploadForm {
   authorName?:string,
   genre?:string,
 }
+interface spinePostRequest {
+  title : string,
+  book_id : string | number,
+  authorName : string,
+  dimensions : string,
+  genre : string,
+  pubDate : string,
+  isbn : string,
+  isbn13 : string,
+  image : string,
+  username : string,
+  authtoken : string,
+  domColor : string,
+  upload_id ?: string,
+  replace_img ?: boolean
+}
+interface spinePostResponse {
+  statusCode : number, 
+  body: {
+    upload_id : string,
+    already_uploaded : boolean,
+    fileName ?: string
+  } | string
+}
 
 //TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
 
@@ -64,6 +88,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
       return s;
     });
   };
+  const return_to_prev_page = ()=>{originCallback()};
   const submit = ()=>{
     if(!onlyNumbers(formState.book_id)){
       alert("invalid goodreads book id!");
@@ -95,13 +120,13 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
         return str;
       };
       const domColor = convertRGBArrToHex(res);
-      const data = {
+      let data : spinePostRequest = {
         title : formState.title,
         book_id : formState.book_id,
-        authorName : formState.authorName,
+        authorName : formState.authorName ? formState.authorName : "",
         dimensions : formState.dimensions,
-        genre : formState.genre,
-        pubDate : formState.pubDate,
+        genre : formState.genre ? formState.genre : "",
+        pubDate : formState.pubDate ? formState.pubDate : "",
         isbn : prefill?.isbn ? prefill.isbn : "",
         isbn13 : prefill?.isbn13 ? prefill.isbn13 : "",
         image : b64Image,
@@ -109,16 +134,47 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
         authtoken : getCookie("authtoken"),
         domColor : domColor
       };
-      sendPostRequestToServer("spine", data, (res : string) => {
-        alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
-        originCallback(true);
+      const sendSpinePost = (data : spinePostRequest) => {
+        sendPostRequestToServer("spine", data, (res : string) => {
+        const parsed_res : spinePostResponse = JSON.parse(res);
+        if(parsed_res.statusCode !== 200) {
+          alert("something went wrong with your upload. Try again later?");
+          originCallback();
+          return;
+        }
+        if(typeof parsed_res.body === 'object' && !parsed_res.body.already_uploaded) {
+          alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
+          originCallback(true);
+          return;
+        }
+        if(typeof parsed_res.body === 'object' && parsed_res.body.already_uploaded && parsed_res.body.fileName && parsed_res.body.upload_id) {
+          const upload_id : string = parsed_res.body.upload_id;
+          const replace_upload = () => {
+            data.replace_img = true;
+            data.upload_id = upload_id;
+            sendSpinePost(data);
+          };
+          widgetCallback(
+          <div>
+            <Title title="Already Uploaded" backArrowOnClick={()=>{originCallback()}}/>
+            <img src={parsed_res.body.fileName} alt="uploaded_img" className="uploaded_img" id="uploaded_img" />
+            <span>You've already uploaded a spine for this book. Would you like to replace the spine you previously uploaded?</span>
+            <div className="bs_gr_id_row">
+              <button onClick={return_to_prev_page} className="bs_button bs_enter_button bs_gr_id_button" style={{background:"red"}}>No</button>
+              <button onClick={replace_upload} className="bs_button bs_enter_button bs_gr_id_button">Yes</button>
+            </div>
+          </div>
+          );
+          return;
+        }
       });
+    };
+    sendSpinePost(data);
   }
   };
-  const returnToPrevPage = ()=>{originCallback()};
   return(
     <div className="upload_super_container">
-      <Title title="Upload Spine" backArrowOnClick={returnToPrevPage}/>
+      <Title title="Upload Spine" backArrowOnClick={return_to_prev_page}/>
       <div className="upload_activity">
         <div className="spine_preview">
           {!display_uploaded && <div className="no_img_selected">?</div>}
