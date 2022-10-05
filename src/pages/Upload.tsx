@@ -5,6 +5,8 @@ import { Loading } from "./Loading";
 // @ts-ignore
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 import { Title } from "./Title";
+const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+
 interface uploadProps extends defaultProps{
   prefill ?: book,
   originCallback : Function
@@ -152,14 +154,15 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
           const replace_upload = () => {
             data.replace_img = true;
             data.upload_id = upload_id;
+            widgetCallback(<Loading/>);
             sendSpinePost(data);
           };
           widgetCallback(
           <div>
             <Title title="Already Uploaded" backArrowOnClick={()=>{originCallback()}}/>
-            <img src={parsed_res.body.fileName} alt="uploaded_img" className="uploaded_img" id="uploaded_img" />
+            {/* <img src={IMG_URL_PREFIX.concat(parsed_res.body.fileName)} alt="uploaded_img" className="uploaded_img" id="uploaded_img" /> */}
             <span>You've already uploaded a spine for this book. Would you like to replace the spine you previously uploaded?</span>
-            <div className="bs_gr_id_row">
+            <div className="bs_gr_id_row" style={{marginTop:"15px"}}>
               <button onClick={return_to_prev_page} className="bs_button bs_enter_button bs_gr_id_button" style={{background:"red"}}>No</button>
               <button onClick={replace_upload} className="bs_button bs_enter_button bs_gr_id_button">Yes</button>
             </div>
