@@ -55,7 +55,7 @@ export function loggedIn(){
   if(u === null || a === null) return false;
   return true;
 }
-//TODO: EVERYTHING THAT CALLS THIS NEEDS TO HANDLE NON-200 RETURNS
+
 export const sendGetRequestToServer = async function (method : string, querystr : string, callback : Function){
   var xhttp = new XMLHttpRequest();
   var path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;

@@ -36,10 +36,15 @@ export function Profile({widgetCallback} : defaultProps){
   const async_load_submissions = () => {
     sendGetRequestToServer("getbookspinesbysubmitter", "username=".concat(username), (res:string)=>{
       const parsedRes : getbookspinesbysubmitterResponse = JSON.parse(res);
+      if(parsedRes.statusCode !== 200){
+        setSubmissionsSection([<div key={nextId()} className="profile_err_text_container"><span className="profile_err_text">Something went wrong loading your spine submissions.</span></div>]);
+        return;
+      }
+
       const foundBooks : foundBook[] = alphabetize_list_by_title(parsedRes.body);
 
       if(!foundBooks || foundBooks.length === 0){
-        setSubmissionsSection([<div key={nextId()} style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't submitted any book spine images.</span></div>]);
+        setSubmissionsSection([<div key={nextId()} className="profile_err_text_container"><span className="profile_err_text">You haven't submitted any book spine images.</span></div>]);
         return;
       }
 
@@ -58,6 +63,11 @@ export function Profile({widgetCallback} : defaultProps){
   const async_load_shelves = ()=>{
     sendGetRequestToServer("getownershelves", "username=".concat(username), (res:string)=>{
       const parsedRes : getownershelvesResponse = JSON.parse(res);
+      if(parsedRes.statusCode !== 200){
+        setShelvesSection([<div key={nextId()} className="profile_err_text_container"><span className="profile_err_text">Something went wrong loading you bookshelves.</span></div>]);
+        return;
+      }
+
       let shelfImages : shelfImage[] = parsedRes.body;
       //sort shelves by date created
       shelfImages.sort((a, b) => {
@@ -67,7 +77,7 @@ export function Profile({widgetCallback} : defaultProps){
       });
 
       if(!shelfImages || shelfImages.length === 0){
-        setShelvesSection([<div key={nextId()} style={{marginBottom:"15px"}}><span style={{fontStyle:"italic"}}>You haven't saved any bookshelves.</span></div>]);
+        setShelvesSection([<div key={nextId()} className="profile_err_text_container"><span className="profile_err_text">You haven't saved any bookshelves.</span></div>]);
         return;
       }
 

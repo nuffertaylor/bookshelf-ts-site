@@ -10,6 +10,13 @@ interface CreateProps extends defaultProps{
     shelfname : string
   }
 }
+export interface getgrbookshelfResponse {
+  statusCode : number,
+  body : {
+    found : foundBook[],
+    unfound : book[]
+  }
+}
 
 export function Create({ widgetCallback, props }: CreateProps){
   const gr_id = getCookie("goodreads_id");
@@ -18,7 +25,12 @@ export function Create({ widgetCallback, props }: CreateProps){
     let querystr = "userid=" + userid + "&shelfname=" + shelfname;
     widgetCallback(<Loading/>);
     sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
-      const resObj = JSON.parse(res);
+      const resObj : getgrbookshelfResponse = JSON.parse(res);
+      if(resObj.statusCode !== 200) {
+        alert("something went wrong, please try again later.");
+        widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
+        return;
+      }
       const found : Array<foundBook> = resObj["body"]["found"];
       const unfound : Array<book> = resObj["body"]["unfound"];
       widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);

@@ -493,3 +493,9 @@ text-align:center;
   font-weight:600;
   margin-top: 5px;
 }
+.profile_err_text_container{
+  margin-bottom:15px;
+}
+.profile_err_text{
+  font-style: italic;
+}

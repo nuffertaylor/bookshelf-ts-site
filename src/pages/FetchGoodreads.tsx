@@ -24,6 +24,11 @@ export function FetchGoodreads({widgetCallback} : defaultProps){
     widgetCallback(<Loading/>);
     sendGetRequestToServer("getgrbookdetails", "url=" + encodeURIComponent(bs_url), (res : string)=>{
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
+      if(responseObject.statusCode !== 200) {
+        alert("Something went wrong fetching the book details.");
+        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);
+        return;
+      }
       let book : book = responseObject.body;
       const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);}
       widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)

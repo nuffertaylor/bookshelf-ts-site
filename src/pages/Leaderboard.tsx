@@ -16,6 +16,10 @@ export function Leaderboard({widgetCallback} : defaultProps){
   const cur_user = getCookie("username");
   sendGetRequestToServer("leaderboard", "", (res : string)=>{
     const parsed_res : leaderboard_res = JSON.parse(res);
+    if(parsed_res.statusCode !== 200) {
+      widgetCallback(<span>Something went wrong loading the leaderboard. Try again later.</span>);
+      return;
+    }
     let counter = 0, prevSpines = 0;
     const ranks = parsed_res.body.map((v, i) => {
       let classes = "leaderboard_row"

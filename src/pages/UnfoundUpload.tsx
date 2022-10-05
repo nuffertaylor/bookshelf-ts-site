@@ -6,13 +6,19 @@ import { Title } from './Title';
 import { sendGetRequestToServer } from '../utils/utilities';
 import { book, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
+import { getgrbookshelfResponse } from './Create';
 
 export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
     if(changesMade){
       sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
-        const resObj = JSON.parse(res);
+        const resObj : getgrbookshelfResponse = JSON.parse(res);
+        if(resObj.statusCode !== 200){
+          alert("something went wrong reloading your bookshelf.");
+          document.location.reload();
+          return;
+        }
         const f : Array<foundBook> = resObj["body"]["found"];
         const u : Array<book> = resObj["body"]["unfound"];
         widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
