@@ -6,6 +6,7 @@ import { Loading } from "./Loading";
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 import { Title } from "./Title";
 const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
 interface uploadProps extends defaultProps{
   prefill ?: book,
@@ -160,7 +161,8 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
           widgetCallback(
           <div>
             <Title title="Already Uploaded" backArrowOnClick={()=>{originCallback()}}/>
-            {/* <img src={IMG_URL_PREFIX.concat(parsed_res.body.fileName)} alt="uploaded_img" className="uploaded_img" id="uploaded_img" /> */}
+            {SHOW_PREVIOUSLY_UPLOAD_IMAGE && 
+            <img src={IMG_URL_PREFIX.concat(parsed_res.body.fileName)} alt="uploaded_img" className="uploaded_img" id="uploaded_img" /> }
             <span>You've already uploaded a spine for this book. Would you like to replace the spine you previously uploaded?</span>
             <div className="bs_gr_id_row" style={{marginTop:"15px"}}>
               <button onClick={return_to_prev_page} className="bs_button bs_enter_button bs_gr_id_button" style={{background:"red"}}>No</button>

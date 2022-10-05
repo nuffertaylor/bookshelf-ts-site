@@ -48,11 +48,18 @@ export function Profile({widgetCallback} : defaultProps){
         return;
       }
 
-      const built = foundBooks.map(b => 
+      //TODO: We could add a section here that expands the information on book spines you've already uploaded (since we have it all).
+      //We could even make the expanded information edit-able, if they want to adjust any of the fields. And honestly, let them change any of the data. It's alright if they screw up their own uploads.
+      const built = foundBooks.map(b => {
+        let title = b.title;
+        if(title.length > 30) title = title.substring(0, 27) + "...";
+        return (
         <div key={b.upload_id}>
-          <a href={IMG_URL_PREFIX + b.fileName}>{b.title}</a>
-          <div style={{marginTop:"10px"}} className="bs_box_line"></div>
+          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName}>{title}</a>
+          <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
+        );
+      }
       );
       setSubmissionsSection(built);
       setLoadedSubmissions(true);
