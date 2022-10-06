@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { ResponsiveHeader } from './ResponsiveHeader';
 import {Create} from './pages/Create';
@@ -8,17 +8,29 @@ import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
 import './bs.css'
 import { FetchGoodreads } from './pages/FetchGoodreads';
-import { getCookie } from './utils/utilities';
+import { getCookie, logout, sendGetRequestToServer } from './utils/utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 import { Profile } from './pages/Profile';
+import { validateGetResponse } from './types/interfaces';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
+//TODO: Add Dark mode
+//TODO: log all visitors to keep track of MAUs
 function App() {
-  //base login status on existence of cookie. when cookie is expired, so is authtoken.
-  //TODO: on load, send request to check if authtoken has expired (happens also if they login elsewhere). log them out if so
-  const [loginStatus, setLoginStatus] = useState(getCookie("authtoken") ? "profile" : "login");
-
+  let authtoken = getCookie("authtoken");
+  let username = getCookie("username");
+  const [loginStatus, setLoginStatus] = useState(authtoken ? "profile" : "login");
+  //Empty array means this triggers when page renders. Effectively componentDidMount
+  useEffect(()=>{
+    //if we have a cookie that says we're logged in, send a validation request to the server to ensure the token is still valid.
+    if(authtoken) {
+      sendGetRequestToServer("validate", "username="+username+"&authtoken="+authtoken, (res : string)=>{
+        const parsed_res : validateGetResponse = JSON.parse(res);
+        if(parsed_res.statusCode !== 200 || !parsed_res.valid_authtoken) logout();
+      });
+    }
+  }, []);
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
   
   const headerClick = (active : String) => {

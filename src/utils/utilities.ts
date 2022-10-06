@@ -84,3 +84,10 @@ export const sendPostRequestToServer = async function(method : string, data : ob
 export function capitalizeFirstLetter(string : string) : string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function logout() {
+  deleteCookie("username");
+  deleteCookie("authtoken");
+  deleteCookie("goodreads_id");
+  document.location.reload();
+}

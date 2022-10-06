@@ -12,6 +12,8 @@ interface leaderboard_res{
   body : Array<rank>
 }
 //TODO: If the user clicks on another item from the header before this loads, cancel the result. Not sure how to do this.
+//TODO: If there are many users, scroll the leaderboard so the user sees their ranking when they first login.
+//TODO: Lazy loading if many users
 export function Leaderboard({widgetCallback} : defaultProps){
   const cur_user = getCookie("username");
   sendGetRequestToServer("leaderboard", "", (res : string)=>{

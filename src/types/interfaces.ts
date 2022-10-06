@@ -21,18 +21,15 @@ export interface foundBook extends book {
 export interface bookContainer {
   book : book
 }
-
 export interface defaultProps {
   widgetCallback : Function
 }
-
 export interface shelfImage {
   upload_id : string,
   filename : string,
   timestamp : number,
   owner : string
 }
-
 export interface user {
   username : string,
   hashedPassword : string,
@@ -43,4 +40,8 @@ export interface user {
   ip : string,
   banned : boolean,
   goodreads_id : string
+}
+export interface validateGetResponse {
+  statusCode : number,
+  valid_authtoken : boolean
 }

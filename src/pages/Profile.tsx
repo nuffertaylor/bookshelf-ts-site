@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import nextId from 'react-id-generator';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
-import { deleteCookie, getCookie, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
+import { deleteCookie, getCookie, logout, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
 import { alphabetize_list_by_title } from './SortBy';
 
@@ -153,13 +153,6 @@ export function Profile({widgetCallback} : defaultProps){
         setGoodreadsUserId(updated_user.goodreads_id);
       }
     });
-  }
-
-  const logout = ()=>{
-    deleteCookie("username");
-    deleteCookie("authtoken");
-    deleteCookie("goodreads_id");
-    document.location.reload();
   }
 
   return(
