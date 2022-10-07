@@ -13,11 +13,15 @@ import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 import { Profile } from './pages/Profile';
 import { validateGetResponse } from './types/interfaces';
+//@ts-ignore
+import clientInfo from 'client-info';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add Dark mode
 //TODO: log all visitors to keep track of MAUs
+//TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
 function App() {
+  const client_info = clientInfo.getBrowser();
   let authtoken = getCookie("authtoken");
   let username = getCookie("username");
   const [loginStatus, setLoginStatus] = useState(authtoken ? "profile" : "login");

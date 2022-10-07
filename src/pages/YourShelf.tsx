@@ -1,6 +1,7 @@
 import React from 'react';
 import { getCookie, sendPostRequestToServer } from '../utils/utilities';
 
+//TODO: Fix error {"errorMessage": "float() argument must be a string or a number, not 'NoneType'", "errorType": "TypeError", "stackTrace": ["  File \"/var/task/genShelfLambda.py\", line 23, in lambda_handler\n    bookshelf.fillShelf(sortedBooks)\n", "  File \"/var/task/bookshelf.py\", line 74, in fillShelf\n    h,w,l = self.getBookHeightWidthLength(f[\"dimensions\"])\n", "  File \"/var/task/bookshelf.py\", line 41, in getBookHeightWidthLength\n    return float(h), float(w), float(l)\n"]}
 interface YourShelfProps {
   shelf_url : string
 }
