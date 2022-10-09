@@ -151,7 +151,10 @@ export function Profile({widgetCallback} : defaultProps){
         alert("successfully set your goodreads user id to: " + updated_user.goodreads_id);
         setCookie("goodreads_id", updated_user.goodreads_id);
         setGoodreadsUserId(updated_user.goodreads_id);
+        return;
       }
+      alert("something went wrong saving your new goodreads user id. Please try again later.");
+      return;
     });
   }
 

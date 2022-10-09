@@ -66,7 +66,6 @@ export const sendGetRequestToServer = async function (method : string, querystr 
   xhttp.send();
 }
 
-//TODO: EVERYTHING THAT CALLS THIS NEEDS TO HANDLE NON-200 RETURNS
 export const sendPostRequestToServer = async function(method : string, data : object, callback : Function)
 {
   const httpPost = new XMLHttpRequest();

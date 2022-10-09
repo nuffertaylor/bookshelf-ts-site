@@ -6,6 +6,7 @@ import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
+import { Landing } from './Landing';
 
 interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
@@ -143,8 +144,13 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     }
     sendPostRequestToServer("genshelf", data, (res : string)=>{
       const resObj : genshelfResponse = JSON.parse(res);
+      if(resObj.statusCode !== 200) {
+        alert("something went wrong generating your shelf. Please try again later.");
+        widgetCallback(<Landing widgetCallback={widgetCallback}/>);
+        return;
+      }
       const url : string = resObj.body as string;
-      widgetCallback(<YourShelf shelf_url={url}/>)
+      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback}/>)
     });
   }
 
@@ -164,6 +170,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           'Default Sort',
           'Author',
           'Title',
+          //TODO: Additional sort methods
           // 'Year',
           // 'Date Read',
           'Color',
