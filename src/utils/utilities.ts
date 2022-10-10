@@ -90,3 +90,9 @@ export function logout() {
   deleteCookie("goodreads_id");
   document.location.reload();
 }
+
+export function get_year_from_date_str(str : string) : number {
+  const d = new Date(str);
+  const year = d.getUTCFullYear();
+  return year;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { sendPostRequestToServer } from '../utils/utilities';
+import { get_year_from_date_str, sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
@@ -108,7 +108,22 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         return []
     });
     return sortedBooklist;
-  }
+  };
+
+  const sort_books_by_year = (books :foundBook[]) => {
+    return books.sort((a,b) => {
+      if(a.pubDate && b.pubDate) {
+        const year_a = get_year_from_date_str(a.pubDate);
+        const year_b = get_year_from_date_str(b.pubDate);
+        if(year_a < year_b) return -1;
+        if(year_a > year_b) return 1;
+        return 0;
+      }
+      if(a.pubDate && !b.pubDate) return 1;
+      if(!a.pubDate && b.pubDate) return -1;
+      return 0;
+    });
+  };
 
   const submit_main_click = ()=>{
     if(selectValue === null) return;
@@ -128,7 +143,8 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         break;
       case "User Rating":
         break;
-      case "Year":
+      case "Publication Year":
+        booklist = sort_books_by_year(booklist);
         break;
       case "Sort Manually":
         widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
@@ -171,7 +187,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           'Author',
           'Title',
           //TODO: Additional sort methods
-          // 'Year',
+          'Publication Year',
           // 'Date Read',
           'Color',
           // 'User Rating',
