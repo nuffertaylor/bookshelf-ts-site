@@ -38,6 +38,8 @@ export function Create({ widgetCallback, props }: CreateProps){
   };
 
   const generate = () => {
+    //TODO: Allow user to input their profile URL as well
+    //Constrain the actual userid to just the numbers
     const userIdEl = document.getElementById("userid") as HTMLInputElement;
     let userid : string = "";
     if(userIdEl != null) userid = userIdEl.value;
