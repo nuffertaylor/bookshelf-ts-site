@@ -10,6 +10,7 @@ export interface FoundProps extends defaultProps{
   querystr : string
 }
 
+//TODO: if there are 0 spines found, display an alternate screen.
 export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
   const createUnfoundUpload =()=>{
     widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);

@@ -125,6 +125,22 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
+  const sort_books_by_rating = (books : foundBook[], rating_type : "user_rating" | "average_rating") => {
+    return books.sort((a,b) => {
+      const a_rating = rating_type === "user_rating" ? a.user_rating : a.average_rating;
+      const b_rating = rating_type === "user_rating" ? b.user_rating : b.average_rating;
+      if(a_rating && b_rating) {
+        if(a_rating < b_rating) return -1;
+        if(a_rating > b_rating) return 1;
+        //if they have the same rating, sort books by title
+        return alphabetize_by_title_algo(a,b);
+      }
+      if(a_rating && !b_rating) return 1;
+      if(!a_rating && b_rating) return -1;
+      return 0;
+    });
+  };
+
   const submit_main_click = ()=>{
     if(selectValue === null) return;
     switch(selectValue){
@@ -132,6 +148,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         booklist = alphabetize_list_by_author(booklist);
         break;
       case "Average Rating":
+        booklist = sort_books_by_rating(booklist, "average_rating");
         break;
       case "Color":
         booklist = sort_books_by_color(booklist)
@@ -142,6 +159,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         booklist = alphabetize_list_by_title(booklist);
         break;
       case "User Rating":
+        booklist = sort_books_by_rating(booklist, "user_rating");
         break;
       case "Publication Year":
         booklist = sort_books_by_year(booklist);
@@ -190,8 +208,8 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           'Publication Year',
           // 'Date Read',
           'Color',
-          // 'User Rating',
-          // 'Average Rating',
+          'User Rating',
+          'Average Rating',
           'Sort Manually'
         ]}
         placeholder="Select Sort Method"
