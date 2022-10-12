@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Header, Container, Group, Burger, Paper, Transition } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
-import { Landing } from './pages/Landing';
 
 const HEADER_HEIGHT = 60;
 
@@ -105,7 +104,7 @@ export function ResponsiveHeader({ links, widgetCallback}: HeaderResponsiveProps
 
   useEffect(()=>{
     widgetCallback(active);
-  }, [active]);
+  }, [active, widgetCallback]);
 
   const open_landing = ()=>{ widgetCallback("/landing")};
   return (
