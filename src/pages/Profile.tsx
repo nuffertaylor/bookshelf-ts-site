@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import nextId from 'react-id-generator';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
-import { deleteCookie, getCookie, logout, onlyNumbers, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
+import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
 import { alphabetize_list_by_title } from './SortBy';
 
@@ -130,13 +130,14 @@ export function Profile({widgetCallback} : defaultProps){
   }
 
   const changeId = ()=>{
-    let val = (document.getElementById("new_gr_id") as HTMLInputElement)?.value;
-    if(!val) {
-      alert("cannot set nothing as your id");
-      return;
-    }
+    let val : string = (document.getElementById("new_gr_id") as HTMLInputElement)?.value;
     if(!onlyNumbers(val)){
-      alert("Your goodreads id should only consist of numbers, for example : \"123\"");
+      val = remove_query_string(val);
+      val = remove_text_title(val);
+      val = remove_non_numeric_char_from_str(val);
+    }
+    if(!val) {
+      alert("Invalid input. Please provide Goodreads Profile URL or User ID.");
       return;
     }
     const data = {
@@ -179,8 +180,8 @@ export function Profile({widgetCallback} : defaultProps){
         {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
-        <input type="text" placeholder="goodreads id" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
-        <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button" >save your ID</button>
+        <input type="text" placeholder="Goodreads Profile URL or ID" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
+        <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
       </div>
     </div>
     <div className="bs_center_grid">
