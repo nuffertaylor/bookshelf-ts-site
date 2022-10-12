@@ -45,3 +45,11 @@ export interface validateGetResponse {
   statusCode : number,
   valid_authtoken : boolean
 }
+export interface rank{
+  username : string,
+  spines : number
+}
+export interface leaderboard_res{
+  statusCode : number,
+  body : Array<rank>
+}

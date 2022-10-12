@@ -78,10 +78,10 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderResponsiveProps {
   links: { link: string; label: string }[],
-  widgetCallback : Function
+  headerClick : Function
 }
 
-export function ResponsiveHeader({ links, widgetCallback}: HeaderResponsiveProps) {
+export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useBooleanToggle(false);
   const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
@@ -103,10 +103,10 @@ export function ResponsiveHeader({ links, widgetCallback}: HeaderResponsiveProps
   ));
 
   useEffect(()=>{
-    widgetCallback(active);
-  }, [active, widgetCallback]);
+    headerClick(active);
+  }, [active]);
 
-  const open_landing = ()=>{ widgetCallback("/landing")};
+  const open_landing = ()=>{ headerClick("/landing")};
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>

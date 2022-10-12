@@ -12,7 +12,7 @@ import { getCookie, logout, sendGetRequestToServer, sendPostRequestToServer } fr
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
 import { Profile } from './pages/Profile';
-import { validateGetResponse } from './types/interfaces';
+import { leaderboard_res, validateGetResponse } from './types/interfaces';
 //@ts-ignore
 import clientInfo from 'client-info';
 
@@ -32,6 +32,7 @@ function App() {
   useEffect(()=>{
     //send visit post
     sendPostRequestToServer("visit", visit_body, ()=>{});
+
     //if we have a cookie that says we're logged in, send a validation request to the server to ensure the token is still valid.
     if(authtoken) {
       sendGetRequestToServer("validate", "username="+username+"&authtoken="+authtoken, (res : string)=>{
@@ -41,6 +42,18 @@ function App() {
     }
   }, []);
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
+
+  const fetch_leaderboard = () => {
+    setCenterWidget(<Loading/>);
+    sendGetRequestToServer("leaderboard", "", (res : string)=>{
+      const parsed_res : leaderboard_res = JSON.parse(res);
+      if(parsed_res.statusCode !== 200) {
+        setCenterWidget(<span>Something went wrong loading the leaderboard. Try again later.</span>);
+        return;
+      }
+      setCenterWidget(<Leaderboard leaderboard_data={parsed_res.body}/>);
+    });
+  };
   
   const headerClick = (active : String) => {
     switch(active){
@@ -58,7 +71,7 @@ function App() {
         setCenterWidget(<Landing widgetCallback={setCenterWidget}/>);
         break;
       case "/leaderboard":
-        setCenterWidget(<Leaderboard widgetCallback={changeCenterWidget}/>);
+        fetch_leaderboard();
         break;
       case "/loading":
         setCenterWidget(<Loading/>);
@@ -88,7 +101,7 @@ function App() {
         // { link: "/loading", label: "loading" },
         { link: "/" + loginStatus, label: loginStatus }
         ]}
-        widgetCallback = {headerClick}
+        headerClick = {headerClick}
         />
       <div className="bs_main_tile">
         <div className="bs_main_box">
