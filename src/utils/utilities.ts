@@ -96,3 +96,6 @@ export function get_year_from_date_str(str : string) : number {
   const year = d.getUTCFullYear();
   return year;
 }
+export const remove_query_string = (url : string) => { return url.split('?')[0]; };
+export const remove_text_title = (url : string) => { return url.split('-')[0]; };
+export const remove_non_numeric_char_from_str = (str : string) => { return str.replace(/\D/g,''); };

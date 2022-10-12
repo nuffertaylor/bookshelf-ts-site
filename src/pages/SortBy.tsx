@@ -155,6 +155,8 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         break;
       case "Date Read":
         break;
+      case "Height":
+        break;
       case "Title":
         booklist = alphabetize_list_by_title(booklist);
         break;
@@ -207,6 +209,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           //TODO: Additional sort methods
           'Publication Year',
           // 'Date Read',
+          // 'Height',
           'Color',
           'User Rating',
           'Average Rating',

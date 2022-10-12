@@ -2,7 +2,7 @@ import React from 'react';
 import {Found} from "./Found";
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
-import {getCookie, sendGetRequestToServer} from "../utils/utilities";
+import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer} from "../utils/utilities";
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -38,16 +38,21 @@ export function Create({ widgetCallback, props }: CreateProps){
   };
 
   const generate = () => {
-    //TODO: Allow user to input their profile URL as well
-    //Constrain the actual userid to just the numbers
     const userIdEl = document.getElementById("userid") as HTMLInputElement;
     let userid : string = "";
     if(userIdEl != null) userid = userIdEl.value;
+    //if not only digits, assume its a url
+    if(!onlyDigits(userid)) {
+      userid = remove_query_string(userid);
+      userid = remove_text_title(userid);
+      userid = remove_non_numeric_char_from_str(userid);
+    }
     if(userid === ""){
-      alert("Please provide your goodreads user id!");
+      alert("Please provide a valid Goodreads Profile URL or User ID");
       if(userIdEl != null) userIdEl.focus();
       return;
     }
+
     const shelfNameEl = document.getElementById("shelfname") as HTMLInputElement;
     let shelfname : string = "";
     if(shelfNameEl != null) shelfname = shelfNameEl.value;
@@ -61,7 +66,7 @@ export function Create({ widgetCallback, props }: CreateProps){
 
   return (
   <div className="bs_input_section">
-    <input type="text" placeholder="goodreads user id" className="bs_text_input" id="userid" defaultValue={gr_id}/>
+    <input type="text" placeholder="goodreads profile url or user id" className="bs_text_input" id="userid" defaultValue={gr_id}/>
     <input type="text" placeholder="shelfname" className="bs_text_input" id="shelfname"/>
     <button id="bs_enter_button" className="bs_button" onClick={generate}>GENERATE</button>
   </div>
