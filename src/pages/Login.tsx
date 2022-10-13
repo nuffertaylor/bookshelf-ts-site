@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { defaultProps } from '../types/interfaces';
-import { capitalizeFirstLetter, sendPostRequestToServer, setCookie} from '../utils/utilities';
+import { capitalizeFirstLetter, sendPostRequestToServer, setCookie, validEmail} from '../utils/utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 
@@ -41,9 +41,10 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
     let failedChecks = [];
     if(!username) { failedChecks.push("username"); }
     if(!password) { failedChecks.push("password"); }
-    if(currentState==="register" && !email) { failedChecks.push("email"); }
+    if(currentState==="register" && (!email || !validEmail(email))) { failedChecks.push("email"); }
     if(failedChecks.length > 0) {
       failedChecks.forEach(s=>document.getElementById(s)?.classList.add("bs_failed_input"));
+      //TODO: place toast alerts here that say which inputs failed
       return;
     }
     widgetCallback(<Loading />)
