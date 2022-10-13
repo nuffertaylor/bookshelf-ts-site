@@ -18,6 +18,9 @@ interface setshelfownerResponse{
 export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
+
+  //TODO: If they aren't signed in, give them the opportunity to sign in without losing their generated shelf.
+  //TODO: Limit maximum number of bookshelves user can save to their profile
   const save_to_profile = () => {
     if(!username) {
       alert("Login or register to save the generated shelf to your profile!");
@@ -32,7 +35,6 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       else alert("something went wrong, please try again later.");
       widgetCallback(<YourShelf shelf_url={shelf_url} widgetCallback={widgetCallback}/>);
     });
-
   };
 
   return(

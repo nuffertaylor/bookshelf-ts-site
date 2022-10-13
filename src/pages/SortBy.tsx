@@ -151,8 +151,20 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
-  const sort_books_by_date = (books : foundBook[], date_type : "user_read_at") => {
-
+  const sort_books_by_date = (books : foundBook[], date_type : "user_read_at" | "pubDate") => {
+    return books.sort((a,b) => {
+      const a_date_str = date_type === "user_read_at" ? a.user_read_at : a.pubDate;
+      const b_date_str = date_type === "user_read_at" ? b.user_read_at : b.pubDate;
+      if(typeof a_date_str !== "undefined" && typeof b_date_str === "undefined") return 1;
+      if(typeof a_date_str === "undefined" && typeof b_date_str !== "undefined") return -1;
+      if(typeof a_date_str === "undefined") return 0;
+      if(typeof b_date_str === "undefined") return 0;
+      let a_date = new Date(a_date_str);
+      let b_date = new Date(b_date_str);
+      if(a_date.getTime() < b_date.getTime()) return -1;
+      if(a_date.getTime() > b_date.getTime()) return 1;
+      return 0;
+    });
   };
 
   const submit_main_click = ()=>{
@@ -165,9 +177,10 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         booklist = sort_books_by_rating(booklist, "average_rating");
         break;
       case "Color":
-        booklist = sort_books_by_color(booklist)
+        booklist = sort_books_by_color(booklist);
         break;
       case "Date Read":
+        booklist = sort_books_by_date(booklist, "user_read_at");
         break;
       case "Height":
         booklist = sort_books_by_height(booklist);
@@ -218,17 +231,16 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     <div className="custom-select" style={{width:"200px"}}>
     <Select
         data={[
-          'Default Sort',
           'Author',
-          'Title',
-          //TODO: Additional sort methods
-          'Publication Year',
-          // 'Date Read',
-          'Height',
-          'Color',
-          'User Rating',
           'Average Rating',
-          'Sort Manually'
+          'Color',
+          'Date Read by User',
+          'Default',
+          'Height',
+          'Publication Year',
+          'Sort Manually',
+          'Title',
+          'User Rating'
         ]}
         placeholder="Select Sort Method"
         value={selectValue}
