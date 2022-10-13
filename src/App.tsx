@@ -40,7 +40,8 @@ function App() {
         if(parsed_res.statusCode !== 200 || !parsed_res.valid_authtoken) logout();
       });
     }
-  });
+  // eslint-disable-next-line
+  }, []);
   const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
 
   const fetch_leaderboard = () => {
