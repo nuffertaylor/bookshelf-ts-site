@@ -35,6 +35,7 @@ export function validUrl(url : string){
 }
 
 export function validEmail(email : string){
+  // eslint-disable-next-line
   return /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(email);
 }
 
@@ -103,3 +104,17 @@ export function get_year_from_date_str(str : string) : number {
 export const remove_query_string = (url : string) => { return url.split('?')[0]; };
 export const remove_text_title = (url : string) => { return url.split('-')[0]; };
 export const remove_non_numeric_char_from_str = (str : string) => { return str.replace(/\D/g,''); };
+
+export const split_dimensions_str_into_h_w_l = (dimensions : string) => {
+  const int_arr : number[] = dimensions.toLowerCase().split('x').map(item => parseFloat(item.trim()));
+  const h = Math.max(...int_arr);
+  const w = Math.min(...int_arr);
+  let l = 0;
+  for(let i = 0; i < 3; i++) {
+    if(int_arr[i] === h) continue;
+    else if(int_arr[i] === w) continue;
+    else l = int_arr[i];
+  }
+  if(l === 0) l = h; //we have a square book
+  return { h : h, w : w, l : l };
+};

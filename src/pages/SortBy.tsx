@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { get_year_from_date_str, sendPostRequestToServer } from '../utils/utilities';
+import { get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
@@ -141,6 +141,20 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
+  const sort_books_by_height = (books : foundBook[]) => {
+    return books.sort((a,b) => {
+      const dim_a = split_dimensions_str_into_h_w_l(a.dimensions);
+      const dim_b = split_dimensions_str_into_h_w_l(b.dimensions);
+      if(dim_a.h < dim_b.h) return -1;
+      if(dim_a.h > dim_b.h) return 1;
+      return 0;
+    });
+  };
+
+  const sort_books_by_date = (books : foundBook[], date_type : "user_read_at") => {
+
+  };
+
   const submit_main_click = ()=>{
     if(selectValue === null) return;
     switch(selectValue){
@@ -156,6 +170,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       case "Date Read":
         break;
       case "Height":
+        booklist = sort_books_by_height(booklist);
         break;
       case "Title":
         booklist = alphabetize_list_by_title(booklist);
@@ -209,7 +224,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           //TODO: Additional sort methods
           'Publication Year',
           // 'Date Read',
-          // 'Height',
+          'Height',
           'Color',
           'User Rating',
           'Average Rating',
