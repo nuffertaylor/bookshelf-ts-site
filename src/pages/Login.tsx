@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { capitalizeFirstLetter, sendPostRequestToServer, setCookie} from '../utils/utilities';
 import { Profile } from './Profile';
@@ -31,6 +31,10 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
   const [flip_text, set_flip_text] = useState<string>(startState === "login" ? login_flip_text : register_flip_text);
 
   const submitLoginRegister = ()=>{
+    const clear_failed_input_css = (element_ids : string[]) => {
+      element_ids.forEach(i=>document.getElementById(i)?.classList.remove("bs_failed_input"));
+    };
+    clear_failed_input_css(["username", "password", "email"]);
     let username = (document.getElementById("username") as HTMLInputElement)?.value;
     let password = (document.getElementById("password")as HTMLInputElement)?.value;
     let email = (document.getElementById("email") as HTMLInputElement)?.value;
@@ -64,7 +68,8 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
         widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
       }
     });
-  }
+  };
+
   const flip_state = ()=>{
     if(currentState==="login") {
       setState("register");
@@ -75,6 +80,17 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
       set_flip_text(login_flip_text);
     }
   };
+
+  useEffect(()=>{
+    const keyDownHandler = (event : KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitLoginRegister();
+      }
+    }
+    document.addEventListener('keydown', keyDownHandler);
+    return () => { document.removeEventListener('keydown', keyDownHandler); };
+  });
 
   return(
     <div className="bs_input_section">

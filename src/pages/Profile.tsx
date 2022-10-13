@@ -180,7 +180,7 @@ export function Profile({widgetCallback} : defaultProps){
         {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
-        <input type="text" placeholder="Goodreads Profile URL or ID" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
+        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
         <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
       </div>
     </div>
