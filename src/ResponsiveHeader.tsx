@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { createStyles, Header, Container, Group, Burger, Paper, Transition } from '@mantine/core';
+import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
+import { IconSun, IconMoonStars } from '@tabler/icons';
 
 const HEADER_HEIGHT = 60;
 
@@ -105,8 +106,11 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
   useEffect(()=>{
     headerClick(active);
   }, [active]);
-
   const open_landing = ()=>{ headerClick("/landing")};
+  const toggle_color_scheme = () => {
+    setColorScheme(s => s === "dark" ? "light" : "dark");
+  };
+  const [colorScheme, setColorScheme] = useState("dark");
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
@@ -114,6 +118,13 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
+        <Switch
+          checked={colorScheme === 'dark'}
+          onChange={() => toggle_color_scheme()}
+          size="lg"
+          //@ts-ignore
+          onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} offLabel={<IconMoonStars color="#25262B" size={20} stroke={1.5} />}
+        />
 
         <Burger
           opened={opened}

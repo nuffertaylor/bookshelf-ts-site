@@ -15,6 +15,7 @@ import { Profile } from './pages/Profile';
 import { leaderboard_res, validateGetResponse } from './types/interfaces';
 //@ts-ignore
 import clientInfo from 'client-info';
+import { MantineProvider } from '@mantine/core';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add Dark mode
@@ -92,24 +93,26 @@ function App() {
 
   //TODO: Add footer with relevant links (about, how-to, buy me coffee)
   return (
-    <div className="App">
-      <ResponsiveHeader 
-      links={
-        [{ link: "/create", label: "create" },
-        { link: "/contribute", label: "contribute" },
-        // { link: "/curate", label: "curate" },
-        { link: "/leaderboard", label: "leaderboard" },
-        // { link: "/loading", label: "loading" },
-        { link: "/" + loginStatus, label: loginStatus }
-        ]}
-        headerClick = {headerClick}
-        />
-      <div className="bs_main_tile">
-        <div className="bs_main_box">
-          {centerWidget}
+    <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
+      <div className="App">
+        <ResponsiveHeader 
+        links={
+          [{ link: "/create", label: "create" },
+          { link: "/contribute", label: "contribute" },
+          // { link: "/curate", label: "curate" },
+          { link: "/leaderboard", label: "leaderboard" },
+          // { link: "/loading", label: "loading" },
+          { link: "/" + loginStatus, label: loginStatus }
+          ]}
+          headerClick = {headerClick}
+          />
+        <div className="bs_main_tile">
+          <div className="bs_main_box">
+            {centerWidget}
+          </div>
         </div>
       </div>
-    </div>
+    </MantineProvider>
   );
 }
 
