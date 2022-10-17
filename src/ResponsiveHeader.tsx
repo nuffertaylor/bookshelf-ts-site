@@ -114,10 +114,8 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
+        <div className="bs_title_container">
         <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
-        <Group spacing={5} className={classes.links}>
-          {items}
-        </Group>
         <Switch
           checked={colorScheme === 'dark'}
           onChange={() => toggle_color_scheme()}
@@ -125,6 +123,10 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
           //@ts-ignore
           onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} offLabel={<IconMoonStars color="#25262B" size={20} stroke={1.5} />}
         />
+        </div>
+        <Group spacing={5} className={classes.links}>
+          {items}
+        </Group>
 
         <Burger
           opened={opened}

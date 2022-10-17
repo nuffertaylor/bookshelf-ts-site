@@ -499,3 +499,8 @@ text-align:center;
 .profile_err_text{
   font-style: italic;
 }
+.bs_title_container{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  place-items:center;
+}
