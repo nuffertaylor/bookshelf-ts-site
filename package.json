@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@mantine/core": "^4.2.8",
-    "@mantine/hooks": "^4.2.8",
+    "@mantine/core": "^5.5.5",
+    "@mantine/hooks": "^5.5.5",
     "@tabler/icons": "^1.104.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",

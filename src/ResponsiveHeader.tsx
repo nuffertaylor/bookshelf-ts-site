@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { useBooleanToggle } from '@mantine/hooks';
+import { useToggle } from '@mantine/hooks';
 import { IconSun, IconMoonStars } from '@tabler/icons';
 
 const HEADER_HEIGHT = 60;
@@ -83,7 +83,7 @@ interface HeaderResponsiveProps {
 }
 
 export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
-  const [opened, toggleOpened] = useBooleanToggle(false);
+  const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
 
@@ -120,8 +120,8 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
           checked={colorScheme === 'dark'}
           onChange={() => toggle_color_scheme()}
           size="lg"
-          //@ts-ignore
-          onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} offLabel={<IconMoonStars color="#25262B" size={20} stroke={1.5} />}
+          onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
+          offLabel={<IconMoonStars color="#25262B" size={20} stroke={1.5} />}
         />
         </div>
         <Group spacing={5} className={classes.links}>
