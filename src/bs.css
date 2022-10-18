@@ -504,3 +504,6 @@ text-align:center;
   grid-template-columns: 1fr 1fr;
   place-items:center;
 }
+.mantine-Switch-track {
+  cursor:pointer;
+}
