@@ -29,6 +29,9 @@ function App() {
   let authtoken = getCookie("authtoken");
   let username = getCookie("username");
   const [loginStatus, setLoginStatus] = useState(authtoken ? "profile" : "login");
+  let cookieColorScheme = getCookie("colorScheme");
+  const [colorScheme, setColorScheme] = useState(cookieColorScheme ? cookieColorScheme : "light");
+
   //Empty array means this triggers when page renders. Effectively componentDidMount
   useEffect(()=>{
     //send visit post
@@ -93,7 +96,7 @@ function App() {
 
   //TODO: Add footer with relevant links (about, how-to, buy me coffee)
   return (
-    <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider theme={{ colorScheme: colorScheme === "light" ? "light" : "dark" }} withGlobalStyles withNormalizeCSS>
       <div className="App">
         <ResponsiveHeader 
         links={
@@ -105,7 +108,9 @@ function App() {
           { link: "/" + loginStatus, label: loginStatus }
           ]}
           headerClick = {headerClick}
-          />
+          colorScheme = {colorScheme}
+          setColorScheme = {setColorScheme}
+        />
         <div className="bs_main_tile">
           <div className="bs_main_box">
             {centerWidget}

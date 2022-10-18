@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { IconSun, IconMoonStars } from '@tabler/icons';
 
@@ -79,10 +79,12 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderResponsiveProps {
   links: { link: string; label: string }[],
-  headerClick : Function
+  headerClick : Function,
+  colorScheme : string,
+  setColorScheme: React.Dispatch<React.SetStateAction<string>>
 }
 
-export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
+export function ResponsiveHeader({ links, headerClick, colorScheme, setColorScheme }: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
@@ -105,19 +107,21 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
 
   useEffect(()=>{
     headerClick(active);
+  // eslint-disable-next-line
   }, [active]);
   const open_landing = ()=>{ headerClick("/landing")};
   const toggle_color_scheme = () => {
     setColorScheme(s => s === "dark" ? "light" : "dark");
+    setLocalColorScheme(s => s === "dark" ? "light" : "dark");
   };
-  const [colorScheme, setColorScheme] = useState("dark");
+  const [localColorScheme, setLocalColorScheme] = useState(colorScheme);
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
         <div className="bs_title_container">
         <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
         <Switch
-          checked={colorScheme === 'dark'}
+          checked={localColorScheme === "light"}
           onChange={() => toggle_color_scheme()}
           size="lg"
           onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
