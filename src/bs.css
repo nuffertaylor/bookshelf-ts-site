@@ -37,11 +37,17 @@ a.nostyle:visited {
 .bs_main_box {
   width: 100%;
   padding:20px;
-  background: #ffffff;
-  border-color: #eaeaea;
   border-radius: 2rem;
   border-style: solid;
   border-width: 1px;
+}
+.bs_main_box_light {
+  background: #ffffff;
+  border-color: #eaeaea;
+}
+.bs_main_box_dark {
+  background:#4c5265;
+  border-color:#383c50;
 }
 body {
   display: grid;

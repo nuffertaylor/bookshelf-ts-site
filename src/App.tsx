@@ -112,7 +112,7 @@ function App() {
           setColorScheme = {setColorScheme}
         />
         <div className="bs_main_tile">
-          <div className="bs_main_box">
+          <div className={"bs_main_box bs_main_box_".concat(colorScheme)}>
             {centerWidget}
           </div>
         </div>

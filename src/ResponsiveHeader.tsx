@@ -9,6 +9,7 @@ const useStyles = createStyles((theme) => ({
   root: {
     position: 'relative',
     zIndex: 1,
+    backgroundColor: theme.colorScheme === 'dark' ? '#4c5265' : '#ffffff'
   },
 
   dropdown: {
@@ -68,7 +69,7 @@ const useStyles = createStyles((theme) => ({
 
   linkActive: {
     '&, &:hover': {
-      backgroundColor:
+      backgroundColor: 
         theme.colorScheme === 'dark'
           ? theme.fn.rgba(theme.colors[theme.primaryColor][9], 0.25)
           : theme.colors[theme.primaryColor][0],
