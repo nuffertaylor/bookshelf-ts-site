@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { IconSun, IconMoonStars } from '@tabler/icons';
+import { setCookie } from './utils/utilities';
 
 const HEADER_HEIGHT = 60;
 
@@ -114,6 +115,7 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
   const toggle_color_scheme = () => {
     setColorScheme(s => s === "dark" ? "light" : "dark");
     setLocalColorScheme(s => s === "dark" ? "light" : "dark");
+    setCookie("colorScheme", localColorScheme === "dark" ? "light" : "dark");
   };
   const [localColorScheme, setLocalColorScheme] = useState(colorScheme);
   return (
