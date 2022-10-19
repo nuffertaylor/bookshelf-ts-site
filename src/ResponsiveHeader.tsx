@@ -126,7 +126,7 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
           onChange={() => toggle_color_scheme()}
           size="lg"
           onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
-          offLabel={<IconMoonStars color="#25262B" size={20} stroke={1.5} />}
+          offLabel={<IconMoonStars color="#FFFFFF" size={20} stroke={1.5} />}
         />
         </div>
         <Group spacing={5} className={classes.links}>
