@@ -153,16 +153,15 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
   const sort_books_by_date = (books : foundBook[], date_type : "user_read_at" | "pubDate") => {
     return books.sort((a,b) => {
-      const a_date_str = date_type === "user_read_at" ? a.user_read_at : a.pubDate;
-      const b_date_str = date_type === "user_read_at" ? b.user_read_at : b.pubDate;
-      if(typeof a_date_str !== "undefined" && typeof b_date_str === "undefined") return 1;
-      if(typeof a_date_str === "undefined" && typeof b_date_str !== "undefined") return -1;
-      if(typeof a_date_str === "undefined") return 0;
-      if(typeof b_date_str === "undefined") return 0;
-      let a_date = new Date(a_date_str);
-      let b_date = new Date(b_date_str);
-      if(a_date.getTime() < b_date.getTime()) return -1;
-      if(a_date.getTime() > b_date.getTime()) return 1;
+      let a_date_str = date_type === "user_read_at" ? a.user_read_at : a.pubDate;
+      let b_date_str = date_type === "user_read_at" ? b.user_read_at : b.pubDate;
+      const today_date_str : string = new Date().toUTCString();
+      if(typeof a_date_str === "undefined") a_date_str = today_date_str;
+      if(typeof b_date_str === "undefined") b_date_str = today_date_str;
+      const a_date = new Date(a_date_str);
+      const b_date = new Date(b_date_str);
+      if(a_date < b_date) return -1;
+      if(a_date > b_date) return 1;
       return 0;
     });
   };
@@ -179,9 +178,15 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       case "Color":
         booklist = sort_books_by_color(booklist);
         break;
-      case "Date Read":
+      case "Date Read by User":
+        //TODO: This sort method is just busted and I haven't figured out why
         booklist = sort_books_by_date(booklist, "user_read_at");
-        break;
+        let x = booklist.map(b => {return {title : b.title, date: b.user_read_at}});
+        console.table(x);
+        // let x = booklist.map(b => {return {title : b.title, date: b.user_read_at}});
+        // console.table(x);
+        return;
+        // break;
       case "Height":
         booklist = sort_books_by_height(booklist);
         break;
@@ -234,7 +239,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
           'Author',
           'Average Rating',
           'Color',
-          'Date Read by User',
+          // 'Date Read by User', TODO: Once this sort method is fixed.
           'Default',
           'Height',
           'Publication Year',
