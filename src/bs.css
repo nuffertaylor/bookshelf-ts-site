@@ -507,3 +507,12 @@ text-align:center;
 .mantine-Switch-track {
   cursor:pointer;
 }
+a {
+  text-decoration: none;
+}
+.a_dark {
+  color:skyblue;
+}
+.a_light {
+  color:blue;
+}

@@ -42,7 +42,7 @@ export function YourShelf({shelf_url, widgetCallback, colorScheme} : YourShelfPr
       <div className="found_spine_head">Your Shelf</div>
       <img alt="your_generated_shelf" src={shelf_url} className="display_shelf" />
       <div className="multiple_button_wrapper">
-        <a href={shelf_url} download="myshelf">
+        <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">download</button>
         </a>
         <button className="bs_shelf_buttons" onClick={save_to_profile}>save to profile</button>

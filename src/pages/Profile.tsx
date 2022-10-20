@@ -55,7 +55,7 @@ export function Profile({widgetCallback, colorScheme} : defaultProps){
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
         <div key={b.upload_id}>
-          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName}>{title}</a>
+          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName} className={"a_".concat(colorScheme)}>{title}</a>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
         );
@@ -101,7 +101,7 @@ export function Profile({widgetCallback, colorScheme} : defaultProps){
         <div className="shelf_image_element_container">
           <span className="shelf_image_date">{date_str}</span>
           <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str}/>
-          <a href={shelf_url} download="myshelf">
+          <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
             <button className="bs_shelf_buttons" style={{transform: "scale(.7)", width:"100px"}}>download</button>
           </a>
         </div>
