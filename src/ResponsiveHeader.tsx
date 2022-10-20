@@ -114,17 +114,15 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
   const open_landing = ()=>{ headerClick("/landing")};
   const toggle_color_scheme = () => {
     setColorScheme(s => s === "dark" ? "light" : "dark");
-    setLocalColorScheme(s => s === "dark" ? "light" : "dark");
-    setCookie("colorScheme", localColorScheme === "dark" ? "light" : "dark");
+    setCookie("colorScheme", colorScheme === "dark" ? "light" : "dark");
   };
-  const [localColorScheme, setLocalColorScheme] = useState(colorScheme);
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
         <div className="bs_title_container">
         <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
         <Switch
-          checked={localColorScheme === "light"}
+          checked={colorScheme === "light"}
           onChange={() => toggle_color_scheme()}
           size="lg"
           onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
