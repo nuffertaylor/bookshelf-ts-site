@@ -112,6 +112,7 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
   // eslint-disable-next-line
   }, [active]);
   const open_landing = ()=>{ headerClick("/landing")};
+  //TODO: for some reason, the change of setColorSheme isn't propogating to all the children
   const toggle_color_scheme = () => {
     setColorScheme(s => s === "dark" ? "light" : "dark");
     setCookie("colorScheme", colorScheme === "dark" ? "light" : "dark");
