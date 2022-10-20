@@ -15,7 +15,7 @@ interface setshelfownerResponse{
   statusCode:number,
   body:string
 }
-export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
+export function YourShelf({shelf_url, widgetCallback, colorScheme} : YourShelfProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
 
@@ -33,7 +33,7 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       const parsedRes : setshelfownerResponse = JSON.parse(res);
       if(parsedRes.statusCode === 200) alert("successfully saved this shelf to your profile!");
       else alert("something went wrong, please try again later.");
-      widgetCallback(<YourShelf shelf_url={shelf_url} widgetCallback={widgetCallback}/>);
+      widgetCallback(<YourShelf shelf_url={shelf_url} widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
     });
   };
 

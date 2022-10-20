@@ -18,7 +18,7 @@ export interface getgrbookshelfResponse {
   }
 }
 
-export function Create({ widgetCallback, props }: CreateProps){
+export function Create({ widgetCallback, colorScheme, props }: CreateProps){
   const gr_id = getCookie("goodreads_id");
 
   const getGRShelf = (userid : string, shelfname : string)=>{
@@ -28,12 +28,12 @@ export function Create({ widgetCallback, props }: CreateProps){
       const resObj : getgrbookshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
         alert("something went wrong, please try again later.");
-        widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
+        widgetCallback(<Create widgetCallback={widgetCallback} colorScheme={colorScheme} props={props}/>);
         return;
       }
       const found : Array<foundBook> = resObj["body"]["found"];
       const unfound : Array<book> = resObj["body"]["unfound"];
-      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>);
     });
   };
 
@@ -66,8 +66,8 @@ export function Create({ widgetCallback, props }: CreateProps){
 
   return (
   <div className="bs_input_section">
-    <input type="text" placeholder="goodreads profile url or user id" className="bs_text_input" id="userid" defaultValue={gr_id}/>
-    <input type="text" placeholder="shelfname" className="bs_text_input" id="shelfname"/>
+    <input type="text" placeholder="goodreads profile url or user id" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="userid" defaultValue={gr_id}/>
+    <input type="text" placeholder="shelfname" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="shelfname"/>
     <button id="bs_enter_button" className="bs_button" onClick={generate}>GENERATE</button>
   </div>
   )

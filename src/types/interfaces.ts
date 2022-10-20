@@ -22,7 +22,8 @@ export interface bookContainer {
   book : book
 }
 export interface defaultProps {
-  widgetCallback : React.Dispatch<React.SetStateAction<JSX.Element>>
+  widgetCallback : React.Dispatch<React.SetStateAction<JSX.Element>>,
+  colorScheme : string
 }
 export interface shelfImage {
   upload_id : string,

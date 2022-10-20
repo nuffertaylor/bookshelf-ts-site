@@ -89,14 +89,21 @@ body {
 }
 .bs_text_input {
   padding: 15px 25px 15px 25px;
-  border: 2px solid #eaeaea;
   border-radius: 20px;
   margin-bottom: 20px;
   width: 265px;
   height: 45px;
-  font-weight: bold;
+  font-weight: 600;
   font-family: "Albert Sans", Verdana, sans-serif;
   font-size:.8em;
+}
+.bs_text_input_light {
+  border: 2px solid #eaeaea;
+}
+.bs_text_input_dark {
+  border: 2px solid #373A40;
+  background: #25262b;
+  color: #c1c2c5;
 }
 .curate_box{
   display:grid;
@@ -105,12 +112,10 @@ body {
   grid-template-rows: 1fr auto 1fr;
   text-align:center;
 }
-
 .book_title_head{
   grid-column: 2;
   grid-row: 1;
 }
-
 #bad{
   grid-column: 1;
   grid-row: 2;
@@ -166,17 +171,6 @@ body {
 }
 .uploaded_img{
   max-height:500px;
-}
-.bs_text_input {
-  padding: 15px 25px 15px 25px;
-  border: 2px solid #eaeaea;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  width: 265px;
-  height: 45px;
-  font-family: 'Albert Sans', Verdana, sans-serif;
-  font-weight: 600;
-  
 }
 .bs_button {
   font-weight: bold;
@@ -428,7 +422,6 @@ text-align:center;
 .bs_failed_input{
   border-color:red;
 }
-
 .bs_profile_title{
   width:100%;
   margin-bottom:20px;

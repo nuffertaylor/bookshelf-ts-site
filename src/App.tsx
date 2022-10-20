@@ -46,7 +46,7 @@ function App() {
     }
   // eslint-disable-next-line
   }, []);
-  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
+  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}} colorScheme={colorScheme}/>);
 
   const fetch_leaderboard = () => {
     setCenterWidget(<Loading/>);
@@ -63,17 +63,17 @@ function App() {
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
-        setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Create widgetCallback={changeCenterWidget} colorScheme={colorScheme}/>);
         break;
       case "/contribute":
-        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
-        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget} setLoginStatus={setLoginStatus}/>);
+        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget} colorScheme={colorScheme}/>);
+        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget} colorScheme={colorScheme} setLoginStatus={setLoginStatus}/>);
         break;
       case "/curate":
         setCenterWidget(<Curate/>);
         break;
       case "/landing":
-        setCenterWidget(<Landing widgetCallback={setCenterWidget}/>);
+        setCenterWidget(<Landing widgetCallback={setCenterWidget} colorScheme={colorScheme}/>);
         break;
       case "/leaderboard":
         fetch_leaderboard();
@@ -82,10 +82,10 @@ function App() {
         setCenterWidget(<Loading/>);
         break;
       case "/login":
-        setCenterWidget(<Login widgetCallback={changeCenterWidget} setLoginStatus={ setLoginStatus }/>);
+        setCenterWidget(<Login widgetCallback={changeCenterWidget} colorScheme={colorScheme} setLoginStatus={ setLoginStatus }/>);
         break;
       case "/profile":
-        setCenterWidget(<Profile widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Profile widgetCallback={changeCenterWidget} colorScheme={colorScheme}/>);
         break;
     }
   };

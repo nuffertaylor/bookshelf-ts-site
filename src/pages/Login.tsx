@@ -24,7 +24,7 @@ interface loginProps extends defaultProps {
   startState ?: string
 }
 
-export function Login({widgetCallback,setLoginStatus, startState = "login"} : loginProps){
+export function Login({widgetCallback, colorScheme, setLoginStatus, startState = "login"} : loginProps){
   const login_flip_text = "Don't have an account? Register one here.";
   const register_flip_text = "Already have an account? Login here.";
   const [currentState, setState] = useState(startState);
@@ -62,11 +62,11 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
         setCookie("authtoken", parsed_res.body.authtoken);
         if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
         setLoginStatus("profile");
-        widgetCallback(<Profile widgetCallback={widgetCallback}/>);
+        widgetCallback(<Profile widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
       }
       else {
         alert(parsed_res.body);
-        widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
+        widgetCallback(<Login widgetCallback={widgetCallback} colorScheme={colorScheme} setLoginStatus={setLoginStatus}/>);
       }
     });
   };
@@ -96,10 +96,10 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
   return(
     <div className="bs_input_section">
       {currentState === "register" &&
-      <input type="text" placeholder="email" id="email" className="bs_text_input" />
+      <input type="text" placeholder="email" id="email" className={"bs_text_input bs_text_input_".concat(colorScheme)}  />
       }
-      <input type="text" placeholder="username" className="bs_text_input" id="username"/>
-      <input type="password" placeholder="password" className="bs_text_input" id="password"/>
+      <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
+      <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
       <span className="bs_registerlogin_flip" onClick={flip_state}>{flip_text}</span>
       <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>{capitalizeFirstLetter(currentState)}</button>
     </div>

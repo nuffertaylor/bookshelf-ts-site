@@ -18,7 +18,7 @@ interface getownershelvesResponse{
   body : shelfImage[]
 }
 
-export function Profile({widgetCallback} : defaultProps){
+export function Profile({widgetCallback, colorScheme} : defaultProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const [yourSubmissionsArrow, setYourSubmissionsArrow] = useState("arrow-right");
@@ -180,7 +180,7 @@ export function Profile({widgetCallback} : defaultProps){
         {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
-        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
+        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />
         <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
       </div>
     </div>

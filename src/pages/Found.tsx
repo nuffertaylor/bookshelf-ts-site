@@ -11,9 +11,9 @@ export interface FoundProps extends defaultProps{
 }
 
 //TODO: if there are 0 spines found, display an alternate screen.
-export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
+export function Found({found, unfound, widgetCallback, colorScheme, querystr} : FoundProps){
   const createUnfoundUpload =()=>{
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>);
   }
 
   const openSortBy = ()=>{
@@ -22,7 +22,7 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
     // if((document.getElementById("generate_fakes") as HTMLInputElement)?.checked && unfound) {
     //   unfound.forEach(u=>booklist.push(u.book as foundBook));
     // }
-    widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
+    widgetCallback(<SortBy widgetCallback={widgetCallback} colorScheme={colorScheme} booklist={booklist}/>);
   }
 
   return(

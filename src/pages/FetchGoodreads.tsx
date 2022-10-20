@@ -9,7 +9,7 @@ interface getgrbookdetailsResponse{
   body : book
 }
 
-export function FetchGoodreads({widgetCallback} : defaultProps){
+export function FetchGoodreads({ widgetCallback, colorScheme } : defaultProps){
   const getBookData = ()=>{
     const bs_url_input = document.getElementById("bs_url_input") as HTMLInputElement;
     if(!bs_url_input) {
@@ -26,17 +26,17 @@ export function FetchGoodreads({widgetCallback} : defaultProps){
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
       if(responseObject.statusCode !== 200) {
         alert("Something went wrong fetching the book details.");
-        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);
+        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
         return;
       }
       let book : book = responseObject.body;
-      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);}
-      widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)
+      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} colorScheme={colorScheme}/>);}
+      widgetCallback(<Upload widgetCallback={widgetCallback} colorScheme={colorScheme} prefill={book} originCallback={originCallback}/>)
     });
   }
   return(
     <div className="bs_input_section">
-      <input type="text" placeholder="Paste Goodreads URL/Book ID" className="bs_text_input" id="bs_url_input"/>
+      <input type="text" placeholder="Paste Goodreads URL/Book ID" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="bs_url_input"/>
       <button id="bs_enter_button" className="bs_button" onClick={getBookData}>Get Book Data</button>
     </div>
   )
