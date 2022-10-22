@@ -416,9 +416,9 @@ text-align:center;
   color: #085df8;
   cursor:pointer;
 }
-.bs_registerlogin_flip:hover{
+/* .bs_registerlogin_flip:hover{
   color: #053ea8;
-}
+} */
 .bs_failed_input{
   border-color:red;
 }

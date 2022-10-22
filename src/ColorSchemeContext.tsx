@@ -11,7 +11,7 @@ type ColorSchemeProps = {
 const cookieColorScheme = getCookie("colorScheme");
 
 export const ColorSchemeCtx = createContext<ColorSchemeProps>({
-  colorScheme: cookieColorScheme ? cookieColorScheme === "light" ? "light" : "dark" : "light",
+  colorScheme: "light",
   toggleColorScheme: () => {},
 });
 
@@ -20,7 +20,7 @@ export const ColorSchemeCtx = createContext<ColorSchemeProps>({
 export const ColorSchemeCtxProvider: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(cookieColorScheme ? cookieColorScheme === "light" ? "light" : "dark" : "light");
   function toggleColorScheme() {
     setColorScheme((s) => (s === 'dark' ? 'light' : 'dark'));
     setCookie("colorScheme", colorScheme === "dark" ? "light" : "dark");
