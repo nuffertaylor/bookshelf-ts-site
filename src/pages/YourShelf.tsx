@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps } from '../types/interfaces';
 import { getCookie, sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -18,6 +19,7 @@ interface setshelfownerResponse{
 export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   //TODO: If they aren't signed in, give them the opportunity to sign in without losing their generated shelf.
   //TODO: Limit maximum number of bookshelves user can save to their profile
@@ -42,7 +44,7 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       <div className="found_spine_head">Your Shelf</div>
       <img alt="your_generated_shelf" src={shelf_url} className="display_shelf" />
       <div className="multiple_button_wrapper">
-        <a href={shelf_url} download="myshelf">
+        <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">download</button>
         </a>
         <button className="bs_shelf_buttons" onClick={save_to_profile}>save to profile</button>

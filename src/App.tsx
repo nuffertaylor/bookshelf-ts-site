@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './App.css';
 import { ResponsiveHeader } from './ResponsiveHeader';
 import {Create} from './pages/Create';
@@ -15,6 +15,8 @@ import { Profile } from './pages/Profile';
 import { leaderboard_res, validateGetResponse } from './types/interfaces';
 //@ts-ignore
 import clientInfo from 'client-info';
+import { MantineProvider } from '@mantine/core';
+import { ColorSchemeCtx } from './ColorSchemeContext';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add Dark mode
@@ -28,6 +30,7 @@ function App() {
   let authtoken = getCookie("authtoken");
   let username = getCookie("username");
   const [loginStatus, setLoginStatus] = useState(authtoken ? "profile" : "login");
+
   //Empty array means this triggers when page renders. Effectively componentDidMount
   useEffect(()=>{
     //send visit post
@@ -42,7 +45,7 @@ function App() {
     }
   // eslint-disable-next-line
   }, []);
-  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}}/>);
+  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}} />);
 
   const fetch_leaderboard = () => {
     setCenterWidget(<Loading/>);
@@ -59,17 +62,17 @@ function App() {
   const headerClick = (active : String) => {
     switch(active){
       case "/create":
-        setCenterWidget(<Create widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Create widgetCallback={changeCenterWidget} />);
         break;
       case "/contribute":
-        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget}/>);
-        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget} setLoginStatus={setLoginStatus}/>);
+        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget} />);
+        else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget}  setLoginStatus={setLoginStatus}/>);
         break;
       case "/curate":
         setCenterWidget(<Curate/>);
         break;
       case "/landing":
-        setCenterWidget(<Landing widgetCallback={setCenterWidget}/>);
+        setCenterWidget(<Landing widgetCallback={setCenterWidget} />);
         break;
       case "/leaderboard":
         fetch_leaderboard();
@@ -78,10 +81,10 @@ function App() {
         setCenterWidget(<Loading/>);
         break;
       case "/login":
-        setCenterWidget(<Login widgetCallback={changeCenterWidget} setLoginStatus={ setLoginStatus }/>);
+        setCenterWidget(<Login widgetCallback={changeCenterWidget}  setLoginStatus={ setLoginStatus }/>);
         break;
       case "/profile":
-        setCenterWidget(<Profile widgetCallback={changeCenterWidget}/>);
+        setCenterWidget(<Profile widgetCallback={changeCenterWidget} />);
         break;
     }
   };
@@ -89,27 +92,30 @@ function App() {
   const changeCenterWidget = (widget : any) => {
     setCenterWidget(widget);
   }
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   //TODO: Add footer with relevant links (about, how-to, buy me coffee)
   return (
-    <div className="App">
-      <ResponsiveHeader 
-      links={
-        [{ link: "/create", label: "create" },
-        { link: "/contribute", label: "contribute" },
-        // { link: "/curate", label: "curate" },
-        { link: "/leaderboard", label: "leaderboard" },
-        // { link: "/loading", label: "loading" },
-        { link: "/" + loginStatus, label: loginStatus }
-        ]}
-        headerClick = {headerClick}
+    <MantineProvider theme={{ colorScheme: colorScheme === "light" ? "light" : "dark" }} withGlobalStyles withNormalizeCSS>
+      <div className="App">
+        <ResponsiveHeader 
+        links={
+          [{ link: "/create", label: "create" },
+          { link: "/contribute", label: "contribute" },
+          // { link: "/curate", label: "curate" },
+          { link: "/leaderboard", label: "leaderboard" },
+          // { link: "/loading", label: "loading" },
+          { link: "/" + loginStatus, label: loginStatus }
+          ]}
+          headerClick = {headerClick}
         />
-      <div className="bs_main_tile">
-        <div className="bs_main_box">
-          {centerWidget}
+        <div className="bs_main_tile">
+          <div className={"bs_main_box bs_main_box_".concat(colorScheme)}>
+            {centerWidget}
+          </div>
         </div>
       </div>
-    </div>
+    </MantineProvider>
   );
 }
 

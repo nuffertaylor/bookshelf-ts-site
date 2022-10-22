@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { capitalizeFirstLetter, sendPostRequestToServer, setCookie, validEmail} from '../utils/utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface loginregisterRequest {
   requestType : string, //"login" | "register",
@@ -24,11 +25,12 @@ interface loginProps extends defaultProps {
   startState ?: string
 }
 
-export function Login({widgetCallback,setLoginStatus, startState = "login"} : loginProps){
+export function Login({widgetCallback, setLoginStatus, startState = "login"} : loginProps){
   const login_flip_text = "Don't have an account? Register one here.";
   const register_flip_text = "Already have an account? Login here.";
   const [currentState, setState] = useState(startState);
   const [flip_text, set_flip_text] = useState<string>(startState === "login" ? login_flip_text : register_flip_text);
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   const submitLoginRegister = ()=>{
     const clear_failed_input_css = (element_ids : string[]) => {
@@ -96,10 +98,10 @@ export function Login({widgetCallback,setLoginStatus, startState = "login"} : lo
   return(
     <div className="bs_input_section">
       {currentState === "register" &&
-      <input type="text" placeholder="email" id="email" className="bs_text_input" />
+      <input type="text" placeholder="email" id="email" className={"bs_text_input bs_text_input_".concat(colorScheme)}  />
       }
-      <input type="text" placeholder="username" className="bs_text_input" id="username"/>
-      <input type="password" placeholder="password" className="bs_text_input" id="password"/>
+      <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
+      <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
       <span className="bs_registerlogin_flip" onClick={flip_state}>{flip_text}</span>
       <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>{capitalizeFirstLetter(currentState)}</button>
     </div>

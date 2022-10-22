@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 import { Title } from "./Title";
+import { ColorSchemeCtx } from "../ColorSchemeContext";
 const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
@@ -49,6 +50,7 @@ interface spinePostResponse {
 
 export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
+  const { colorScheme } = useContext(ColorSchemeCtx);
   
   let disable_title = false, disable_book_id = false, disable_author = false, disable_pubDate = false, disable_genre = false;
   let defaultFormState : uploadForm = {title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""}
@@ -188,12 +190,12 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
         <div className="form_elements">
           <input id="imageInput" type="file" accept="image/png, image/jpg, image/jpeg" onChange={encodeImageFileAsURL} hidden />
           <label htmlFor="imageInput" className="bs_button" id="upload_img_override_btn">Choose File</label>
-          <input className="bs_text_input" id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
-          <input className="bs_text_input" id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id} />
-          <input className="bs_text_input" id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} disabled={disable_author}/>
-          <input className="bs_text_input" id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
-          <input className="bs_text_input" id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>
-          <input className="bs_text_input" id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} disabled={disable_genre}/>
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id} />
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} disabled={disable_author}/>
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} disabled={disable_genre}/>
           <button className="bs_button" type="submit" id="uploadButton" onClick={submit}>Upload</button>
         </div>
       </div>

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { createStyles, Header, Container, Group, Burger, Paper, Transition } from '@mantine/core';
-import { useBooleanToggle } from '@mantine/hooks';
+import React, { useContext, useEffect, useState } from 'react';
+import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch } from '@mantine/core';
+import { useToggle } from '@mantine/hooks';
+import { IconSun, IconMoonStars } from '@tabler/icons';
+import { ColorSchemeCtx } from './ColorSchemeContext';
 
 const HEADER_HEIGHT = 60;
 
@@ -8,6 +10,7 @@ const useStyles = createStyles((theme) => ({
   root: {
     position: 'relative',
     zIndex: 1,
+    backgroundColor: theme.colorScheme === 'dark' ? '#4c5265' : '#ffffff'
   },
 
   dropdown: {
@@ -67,7 +70,7 @@ const useStyles = createStyles((theme) => ({
 
   linkActive: {
     '&, &:hover': {
-      backgroundColor:
+      backgroundColor: 
         theme.colorScheme === 'dark'
           ? theme.fn.rgba(theme.colors[theme.primaryColor][9], 0.25)
           : theme.colors[theme.primaryColor][0],
@@ -81,8 +84,8 @@ interface HeaderResponsiveProps {
   headerClick : Function
 }
 
-export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
-  const [opened, toggleOpened] = useBooleanToggle(false);
+export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) {
+  const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
 
@@ -104,13 +107,25 @@ export function ResponsiveHeader({ links, headerClick}: HeaderResponsiveProps) {
 
   useEffect(()=>{
     headerClick(active);
+  // eslint-disable-next-line
   }, [active]);
-
   const open_landing = ()=>{ headerClick("/landing")};
+  //TODO: for some reason, the change of setColorSheme isn't propogating to all the children
+  const { colorScheme, toggleColorScheme} = useContext(ColorSchemeCtx);
+
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
+        <div className="bs_title_container">
         <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
+        <Switch
+          checked={colorScheme === "light"}
+          onChange={toggleColorScheme}
+          size="lg"
+          onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
+          offLabel={<IconMoonStars color="#FFFFFF" size={20} stroke={1.5} />}
+        />
+        </div>
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>

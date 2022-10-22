@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Loading} from './Loading';
 import {validUrl, onlyDigits, sendGetRequestToServer} from '../utils/utilities';
 import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface getgrbookdetailsResponse{
   statusCode : number,
   body : book
 }
 
-export function FetchGoodreads({widgetCallback} : defaultProps){
+export function FetchGoodreads({ widgetCallback } : defaultProps){
+  const { colorScheme } = useContext(ColorSchemeCtx);
+
   const getBookData = ()=>{
     const bs_url_input = document.getElementById("bs_url_input") as HTMLInputElement;
     if(!bs_url_input) {
@@ -26,17 +29,17 @@ export function FetchGoodreads({widgetCallback} : defaultProps){
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
       if(responseObject.statusCode !== 200) {
         alert("Something went wrong fetching the book details.");
-        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);
+        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);
         return;
       }
       let book : book = responseObject.body;
-      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback}/>);}
+      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);}
       widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)
     });
   }
   return(
     <div className="bs_input_section">
-      <input type="text" placeholder="Paste Goodreads URL/Book ID" className="bs_text_input" id="bs_url_input"/>
+      <input type="text" placeholder="Paste Goodreads URL/Book ID" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="bs_url_input"/>
       <button id="bs_enter_button" className="bs_button" onClick={getBookData}>Get Book Data</button>
     </div>
   )

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import nextId from 'react-id-generator';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -31,6 +32,7 @@ export function Profile({widgetCallback} : defaultProps){
   const [loadedSubmissions, setLoadedSubmissions] = useState(false);
   const [loadedShelves, setLoadedShelves] = useState(false);
   const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   //async load submissions section
   const async_load_submissions = () => {
@@ -55,7 +57,7 @@ export function Profile({widgetCallback} : defaultProps){
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
         <div key={b.upload_id}>
-          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName}>{title}</a>
+          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName} className={"a_".concat(colorScheme)}>{title}</a>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
         );
@@ -101,7 +103,7 @@ export function Profile({widgetCallback} : defaultProps){
         <div className="shelf_image_element_container">
           <span className="shelf_image_date">{date_str}</span>
           <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str}/>
-          <a href={shelf_url} download="myshelf">
+          <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
             <button className="bs_shelf_buttons" style={{transform: "scale(.7)", width:"100px"}}>download</button>
           </a>
         </div>
@@ -180,7 +182,7 @@ export function Profile({widgetCallback} : defaultProps){
         {shelvesSection}
       </div>
       <div className="bs_gr_id_row">
-        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className="bs_text_input bs_gr_id_input" />
+        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />
         <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
       </div>
     </div>

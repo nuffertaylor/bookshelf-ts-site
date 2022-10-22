@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Found} from "./Found";
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
 import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer} from "../utils/utilities";
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -20,6 +21,7 @@ export interface getgrbookshelfResponse {
 
 export function Create({ widgetCallback, props }: CreateProps){
   const gr_id = getCookie("goodreads_id");
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   const getGRShelf = (userid : string, shelfname : string)=>{
     let querystr = "userid=" + userid + "&shelfname=" + shelfname;
@@ -66,8 +68,8 @@ export function Create({ widgetCallback, props }: CreateProps){
 
   return (
   <div className="bs_input_section">
-    <input type="text" placeholder="goodreads profile url or user id" className="bs_text_input" id="userid" defaultValue={gr_id}/>
-    <input type="text" placeholder="shelfname" className="bs_text_input" id="shelfname"/>
+    <input type="text" placeholder="goodreads profile url or user id" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="userid" defaultValue={gr_id}/>
+    <input type="text" placeholder="shelfname" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="shelfname"/>
     <button id="bs_enter_button" className="bs_button" onClick={generate}>GENERATE</button>
   </div>
   )

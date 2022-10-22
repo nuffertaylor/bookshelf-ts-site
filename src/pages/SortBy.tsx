@@ -215,11 +215,11 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       const resObj : genshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
         alert("something went wrong generating your shelf. Please try again later.");
-        widgetCallback(<Landing widgetCallback={widgetCallback}/>);
+        widgetCallback(<Landing widgetCallback={widgetCallback} />);
         return;
       }
       const url : string = resObj.body as string;
-      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback}/>)
+      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback} />)
     });
   }
 
