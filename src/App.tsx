@@ -17,6 +17,7 @@ import { leaderboard_res, validateGetResponse } from './types/interfaces';
 import clientInfo from 'client-info';
 import { MantineProvider } from '@mantine/core';
 import { ColorSchemeCtx } from './ColorSchemeContext';
+import { FooterCentered } from './FooterCentered';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add Dark mode
@@ -114,6 +115,31 @@ function App() {
             {centerWidget}
           </div>
         </div>
+        <div className="bs_filler_div"></div>
+        <FooterCentered links={
+        [
+          {
+            "link": "#",
+            "label": "Contact"
+          },
+          {
+            "link": "#",
+            "label": "Privacy"
+          },
+          {
+            "link": "#",
+            "label": "Blog"
+          },
+          {
+            "link": "#",
+            "label": "Store"
+          },
+          {
+            "link": "#",
+            "label": "Careers"
+          }
+        ]
+          }/>
       </div>
     </MantineProvider>
   );
