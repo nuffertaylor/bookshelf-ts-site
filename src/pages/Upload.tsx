@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 import { Title } from "./Title";
+import { ColorSchemeCtx } from "../ColorSchemeContext";
 const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
@@ -47,8 +48,9 @@ interface spinePostResponse {
 
 //TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
 
-export function Upload({widgetCallback, colorScheme, prefill, originCallback} : uploadProps){
+export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
+  const { colorScheme } = useContext(ColorSchemeCtx);
   
   let disable_title = false, disable_book_id = false, disable_author = false, disable_pubDate = false, disable_genre = false;
   let defaultFormState : uploadForm = {title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""}

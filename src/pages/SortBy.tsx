@@ -40,7 +40,7 @@ export const alphabetize_list_by_title = (list : Array<foundBook>) => {
   return list.sort((a, b) => alphabetize_by_title_algo(a, b));
 };
 
-export function SortBy({widgetCallback, colorScheme, booklist} : sortByProps){
+export function SortBy({widgetCallback, booklist} : sortByProps){
   const [selectValue, setSelectValue] = useState<string | null>(null);
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
   const [disabledClass, setDisabledClass] = useState<string>("bs_disabled");
@@ -195,7 +195,7 @@ export function SortBy({widgetCallback, colorScheme, booklist} : sortByProps){
         booklist = sort_books_by_year(booklist);
         break;
       case "Sort Manually":
-        widgetCallback(<SortManual widgetCallback={widgetCallback} colorScheme={colorScheme} booklist={booklist} genShelf={generateShelf}/>)
+        widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
         return;
     }
     generateShelf(booklist);
@@ -210,11 +210,11 @@ export function SortBy({widgetCallback, colorScheme, booklist} : sortByProps){
       const resObj : genshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
         alert("something went wrong generating your shelf. Please try again later.");
-        widgetCallback(<Landing widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
+        widgetCallback(<Landing widgetCallback={widgetCallback} />);
         return;
       }
       const url : string = resObj.body as string;
-      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback} colorScheme={colorScheme}/>)
+      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback} />)
     });
   }
 

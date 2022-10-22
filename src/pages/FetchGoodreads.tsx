@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Loading} from './Loading';
 import {validUrl, onlyDigits, sendGetRequestToServer} from '../utils/utilities';
 import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface getgrbookdetailsResponse{
   statusCode : number,
   body : book
 }
 
-export function FetchGoodreads({ widgetCallback, colorScheme } : defaultProps){
+export function FetchGoodreads({ widgetCallback } : defaultProps){
+  const { colorScheme } = useContext(ColorSchemeCtx);
+
   const getBookData = ()=>{
     const bs_url_input = document.getElementById("bs_url_input") as HTMLInputElement;
     if(!bs_url_input) {
@@ -26,12 +29,12 @@ export function FetchGoodreads({ widgetCallback, colorScheme } : defaultProps){
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
       if(responseObject.statusCode !== 200) {
         alert("Something went wrong fetching the book details.");
-        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
+        widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);
         return;
       }
       let book : book = responseObject.body;
-      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} colorScheme={colorScheme}/>);}
-      widgetCallback(<Upload widgetCallback={widgetCallback} colorScheme={colorScheme} prefill={book} originCallback={originCallback}/>)
+      const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);}
+      widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)
     });
   }
   return(

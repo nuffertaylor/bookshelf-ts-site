@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import nextId from 'react-id-generator';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -18,7 +19,7 @@ interface getownershelvesResponse{
   body : shelfImage[]
 }
 
-export function Profile({widgetCallback, colorScheme} : defaultProps){
+export function Profile({widgetCallback} : defaultProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const [yourSubmissionsArrow, setYourSubmissionsArrow] = useState("arrow-right");
@@ -31,6 +32,7 @@ export function Profile({widgetCallback, colorScheme} : defaultProps){
   const [loadedSubmissions, setLoadedSubmissions] = useState(false);
   const [loadedShelves, setLoadedShelves] = useState(false);
   const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   //async load submissions section
   const async_load_submissions = () => {

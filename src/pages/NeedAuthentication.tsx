@@ -6,10 +6,10 @@ interface needAuthenticationProps extends defaultProps {
   setLoginStatus : Function
 }
 
-export default function NeedAuthentication({ widgetCallback, colorScheme, setLoginStatus } : needAuthenticationProps){
+export default function NeedAuthentication({ widgetCallback, setLoginStatus } : needAuthenticationProps){
   const click_login_tab = ()=>{document.getElementById("login")?.click();}
-  const flip_to_login = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} colorScheme={colorScheme} setLoginStatus={setLoginStatus} startState="login"/>)};
-  const flip_to_register = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} colorScheme={colorScheme} setLoginStatus={setLoginStatus} startState="register"/>)};
+  const flip_to_login = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="login"/>)};
+  const flip_to_register = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="register"/>)};
   return(
     <div className="bs_landing bs_needsauth">
       <div className="landing_text">Login or register to contribute</div>

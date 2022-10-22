@@ -2,8 +2,8 @@ import React from 'react'
 import { defaultProps } from '../types/interfaces';
 import { Create } from './Create';
 
-export function Landing({ widgetCallback, colorScheme } : defaultProps){
-  const load_create = ()=>{widgetCallback(<Create widgetCallback={widgetCallback} colorScheme={colorScheme}/>)};
+export function Landing({ widgetCallback } : defaultProps){
+  const load_create = ()=>{widgetCallback(<Create widgetCallback={widgetCallback} />)};
   return(
     <div className="bs_landing">
       <div className="landing_text">create a virtual bookshelf</div>

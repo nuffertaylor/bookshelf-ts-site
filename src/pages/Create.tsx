@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Found} from "./Found";
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
 import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer} from "../utils/utilities";
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -18,8 +19,9 @@ export interface getgrbookshelfResponse {
   }
 }
 
-export function Create({ widgetCallback, colorScheme, props }: CreateProps){
+export function Create({ widgetCallback, props }: CreateProps){
   const gr_id = getCookie("goodreads_id");
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   const getGRShelf = (userid : string, shelfname : string)=>{
     let querystr = "userid=" + userid + "&shelfname=" + shelfname;
@@ -28,12 +30,12 @@ export function Create({ widgetCallback, colorScheme, props }: CreateProps){
       const resObj : getgrbookshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
         alert("something went wrong, please try again later.");
-        widgetCallback(<Create widgetCallback={widgetCallback} colorScheme={colorScheme} props={props}/>);
+        widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
         return;
       }
       const found : Array<foundBook> = resObj["body"]["found"];
       const unfound : Array<book> = resObj["body"]["unfound"];
-      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>);
+      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
     });
   };
 

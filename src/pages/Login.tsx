@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { capitalizeFirstLetter, sendPostRequestToServer, setCookie, validEmail} from '../utils/utilities';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface loginregisterRequest {
   requestType : string, //"login" | "register",
@@ -24,11 +25,12 @@ interface loginProps extends defaultProps {
   startState ?: string
 }
 
-export function Login({widgetCallback, colorScheme, setLoginStatus, startState = "login"} : loginProps){
+export function Login({widgetCallback, setLoginStatus, startState = "login"} : loginProps){
   const login_flip_text = "Don't have an account? Register one here.";
   const register_flip_text = "Already have an account? Login here.";
   const [currentState, setState] = useState(startState);
   const [flip_text, set_flip_text] = useState<string>(startState === "login" ? login_flip_text : register_flip_text);
+  const { colorScheme } = useContext(ColorSchemeCtx);
 
   const submitLoginRegister = ()=>{
     const clear_failed_input_css = (element_ids : string[]) => {
@@ -62,11 +64,11 @@ export function Login({widgetCallback, colorScheme, setLoginStatus, startState =
         setCookie("authtoken", parsed_res.body.authtoken);
         if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
         setLoginStatus("profile");
-        widgetCallback(<Profile widgetCallback={widgetCallback} colorScheme={colorScheme}/>);
+        widgetCallback(<Profile widgetCallback={widgetCallback}/>);
       }
       else {
         alert(parsed_res.body);
-        widgetCallback(<Login widgetCallback={widgetCallback} colorScheme={colorScheme} setLoginStatus={setLoginStatus}/>);
+        widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
       }
     });
   };

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { createStyles, Header, Container, Group, Burger, Paper, Transition, Switch } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { IconSun, IconMoonStars } from '@tabler/icons';
-import { setCookie } from './utils/utilities';
+import { ColorSchemeCtx } from './ColorSchemeContext';
 
 const HEADER_HEIGHT = 60;
 
@@ -81,12 +81,10 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderResponsiveProps {
   links: { link: string; label: string }[],
-  headerClick : Function,
-  colorScheme : string,
-  setColorScheme: React.Dispatch<React.SetStateAction<string>>
+  headerClick : Function
 }
 
-export function ResponsiveHeader({ links, headerClick, colorScheme, setColorScheme }: HeaderResponsiveProps) {
+export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
   const { classes, cx } = useStyles();
@@ -113,10 +111,8 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
   }, [active]);
   const open_landing = ()=>{ headerClick("/landing")};
   //TODO: for some reason, the change of setColorSheme isn't propogating to all the children
-  const toggle_color_scheme = () => {
-    setColorScheme(s => s === "dark" ? "light" : "dark");
-    setCookie("colorScheme", colorScheme === "dark" ? "light" : "dark");
-  };
+  const { colorScheme, toggleColorScheme} = useContext(ColorSchemeCtx);
+
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
@@ -124,7 +120,7 @@ export function ResponsiveHeader({ links, headerClick, colorScheme, setColorSche
         <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
         <Switch
           checked={colorScheme === "light"}
-          onChange={() => toggle_color_scheme()}
+          onChange={toggleColorScheme}
           size="lg"
           onLabel={<IconSun color="#FFFFFF" size={20} stroke={1.5} />} 
           offLabel={<IconMoonStars color="#FFFFFF" size={20} stroke={1.5} />}

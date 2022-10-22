@@ -8,7 +8,7 @@ import { book, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
 
-export function UnfoundUpload({found, unfound, widgetCallback, colorScheme, querystr} : FoundProps){
+export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
     if(changesMade){
@@ -21,16 +21,16 @@ export function UnfoundUpload({found, unfound, widgetCallback, colorScheme, quer
         }
         const f : Array<foundBook> = resObj["body"]["found"];
         const u : Array<book> = resObj["body"]["unfound"];
-        widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>);
+        widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
       });
       return;
     }
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
   interface unfoundRowProps { book : book }
   const UnfoundRow = function({book} : unfoundRowProps){
-    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} colorScheme={colorScheme} prefill={book} originCallback={originCallback}/>)};
+    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)};
     let book_title = book.title;
     if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
     return (
@@ -45,7 +45,7 @@ export function UnfoundUpload({found, unfound, widgetCallback, colorScheme, quer
   }
 
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u}/>);
-  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} colorScheme={colorScheme} querystr={querystr}/>)};
+  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>

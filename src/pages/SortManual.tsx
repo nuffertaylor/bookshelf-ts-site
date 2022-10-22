@@ -8,8 +8,8 @@ interface sortManualProps extends defaultProps{
   booklist : Array<foundBook>,
   genShelf : Function
 }
-export function SortManual({widgetCallback, colorScheme, booklist, genShelf} : sortManualProps){
-  const returnToSortBy = ()=>{widgetCallback(<SortBy widgetCallback={widgetCallback} colorScheme={colorScheme} booklist={booklist}/>)};
+export function SortManual({widgetCallback, booklist, genShelf} : sortManualProps){
+  const returnToSortBy = ()=>{widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>)};
   const submit_man_sort = ()=>{ genShelf(booklist) };
   const update_booklist = (bl : foundBook[]) => { booklist = bl };
 
