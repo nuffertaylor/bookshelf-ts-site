@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface titleProps {
     backArrowOnClick ?: Function,
@@ -8,15 +9,15 @@ interface titleProps {
 }
 
 //TODO: allow option for making the title bar sticky if the div scrolls
-//TODO: make color of back arrow change between black and white for each colorscheme
 export function Title({backArrowOnClick=()=>{}, title, includeBottomLine=true, includeArrow=true} : titleProps){
+  const { colorScheme } = useContext(ColorSchemeCtx);
     const onClickWrapper = () => {backArrowOnClick();}
     return (
       <div>
         <div className="unfound_row" id="sectionTitle">
           <div className="bs_title_arrow">
             {includeArrow &&
-            <span className="arrow arrow-left" onClick={onClickWrapper}></span>
+            <span className={"arrow arrow-left arrow_".concat(colorScheme)} onClick={onClickWrapper}></span>
             }
             {!includeArrow && <div></div>}
             <span className="bs_unfound_title">{title}</span>

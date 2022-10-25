@@ -390,10 +390,16 @@ text-align:center;
   display: inline-block;
   width: 15px;
   height: 15px;
-  border-top: 2px solid #000;
-  border-right: 2px solid #000;
   cursor: pointer;
   user-select: none;
+}
+.arrow_light {
+  border-top: 2px solid #000;
+  border-right: 2px solid #000;
+}
+.arrow_dark {
+  border-top: 2px solid #fff;
+  border-right: 2px solid #fff;
 }
 .arrow-left {
   transform: rotate(-135deg);
