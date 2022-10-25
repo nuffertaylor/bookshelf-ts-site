@@ -519,9 +519,3 @@ a {
 .bs_filler_div {
   flex: 1 1;
 }
-.App {
-  height:100%;
-  flex-flow: column;
-  display: flex;
-  text-align: center;
-}

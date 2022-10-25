@@ -2,7 +2,9 @@ import { createStyles, Anchor, Group } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   footer: {
-    marginTop: 50,
+    position: "absolute",
+    bottom: "1vw",
+    width:"100%",
     borderTop: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
@@ -20,10 +22,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   links: {
-    [theme.fn.smallerThan('sm')]: {
-      marginTop: theme.spacing.lg,
-      marginBottom: theme.spacing.sm,
-    },
+    margin: "auto"
   },
 }));
 
