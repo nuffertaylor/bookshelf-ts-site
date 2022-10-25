@@ -84,7 +84,6 @@ interface HeaderResponsiveProps {
   headerClick : Function
 }
 
-//TODO: this still shows pages as active if you navigate away from them by clicking either the footer or the page title. make that go back to an inactive state.
 export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
@@ -110,7 +109,10 @@ export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) 
     headerClick(active);
   // eslint-disable-next-line
   }, [active]);
-  const open_landing = ()=>{ headerClick("/landing")};
+  const open_landing = ()=>{ 
+    headerClick("/landing"); 
+    setActive("");
+  };
   //TODO: for some reason, the change of setColorSheme isn't propogating to all the children
   const { colorScheme, toggleColorScheme} = useContext(ColorSchemeCtx);
 
