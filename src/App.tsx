@@ -115,27 +115,23 @@ function App() {
             {centerWidget}
           </div>
         </div>
-        <FooterCentered links={
+        <FooterCentered widgetCallback={setCenterWidget} links={
         [
           {
-            "link": "#",
-            "label": "Contact"
+            "link": "about",
+            "label": "About"
           },
           {
-            "link": "#",
-            "label": "Privacy"
+            "link": "howto",
+            "label": "How to Use"
           },
           {
-            "link": "#",
-            "label": "Blog"
+            "link": "api",
+            "label": "API"
           },
           {
-            "link": "#",
-            "label": "Store"
-          },
-          {
-            "link": "#",
-            "label": "Careers"
+            "link": "discord",
+            "label": "Discord"
           }
         ]
           }/>

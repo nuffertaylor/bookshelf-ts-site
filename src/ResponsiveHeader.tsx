@@ -84,6 +84,7 @@ interface HeaderResponsiveProps {
   headerClick : Function
 }
 
+//TODO: this still shows pages as active if you navigate away from them by clicking either the footer or the page title. make that go back to an inactive state.
 export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) {
   const [opened, toggleOpened] = useToggle([false, true]);
   const [active, setActive] = useState("");
