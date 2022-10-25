@@ -113,14 +113,13 @@ export function ResponsiveHeader({ links, headerClick }: HeaderResponsiveProps) 
     headerClick("/landing"); 
     setActive("");
   };
-  //TODO: for some reason, the change of setColorSheme isn't propogating to all the children
   const { colorScheme, toggleColorScheme} = useContext(ColorSchemeCtx);
 
   return (
     <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
       <Container className={classes.header}>
         <div className="bs_title_container">
-        <span onClick={open_landing} className="pointer_no_select">📚 My Bookshelf</span>
+        <span onClick={open_landing} className="pointer_no_select" id="bs_site_title">📚 My Bookshelf</span>
         <Switch
           checked={colorScheme === "light"}
           onChange={toggleColorScheme}

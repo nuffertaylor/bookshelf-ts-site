@@ -1,4 +1,7 @@
 import { createStyles, Anchor, Group } from '@mantine/core';
+import { About } from './pages/About';
+import { AboutApi } from './pages/AboutApi';
+import { HowTo } from './pages/HowTo';
 import { defaultProps } from './types/interfaces';
 
 //TODO: The footer styling is all messed up if you have a long list of data that scrolls past the bottom of the page. Fix that.
@@ -37,18 +40,17 @@ export function FooterCentered({ links, widgetCallback }: FooterCenteredProps) {
   const { classes } = useStyles();
   const link_click = (event : React.MouseEvent<HTMLAnchorElement, MouseEvent>, link : link) => {
     event.preventDefault();
+    //this is a cheap hack to disable the active hedaer element, I just don't know a better way to access the header from here
+    document.getElementById("bs_site_title")?.click(); 
     switch(link.link){
-      //TODO: Create About Page
       case "about":
-        widgetCallback(<span>about</span>);
+        widgetCallback(<About/>);
         break;
-      //TODO: create howto page
       case "howto":
-        widgetCallback(<span>howto</span>);
+        widgetCallback(<HowTo/>);
         break;
-      //TODO: create api page
       case "api":
-        widgetCallback(<span>api</span>);
+        widgetCallback(<AboutApi/>);
         break;
       //TODO: create discord for website
       case "discord":
