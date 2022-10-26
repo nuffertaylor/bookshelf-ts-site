@@ -1,6 +1,6 @@
 # My Bookshelf
 
-A React frontend for [the virtual bookshelf generator I wrote](https://github.com/nuffertaylor/bookshelf-ts-site).
+A React frontend for [the virtual bookshelf generator I wrote](https://github.com/nuffertaylor/bookshelf).
 
 Some cool features:
 
