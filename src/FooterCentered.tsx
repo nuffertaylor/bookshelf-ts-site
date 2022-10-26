@@ -52,9 +52,8 @@ export function FooterCentered({ links, widgetCallback }: FooterCenteredProps) {
       case "api":
         widgetCallback(<AboutApi/>);
         break;
-      //TODO: create discord for website
       case "discord":
-        widgetCallback(<span>discord</span>);
+        window.open("https://discord.gg/E965KYvv6m", "_blank");
         break;
       default:
         widgetCallback(<span>That link doesn't exist... how did you do this?</span>)
