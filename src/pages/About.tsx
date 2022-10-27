@@ -10,7 +10,7 @@ export function About(){
         <li>To allow readers (aka me, and maybe some others) to create virtual bookshelves so they can visualize the books they've read</li>
         <li>To create a database of book spine images (nothing else like that seems to exist on the internet)</li>
       </ul>
-      <span>If either of those objectives interest you, help me out! Make an account, take some pictures of your book spines, and upload them. We can make something really cool!</span>
+      <span>If either of those objectives interest you, you can help out! Make an account, take some pictures of your book spines, and upload them. We can make something really cool!</span>
     </div>
   );
 }
