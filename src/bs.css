@@ -525,3 +525,6 @@ a {
 .bs_filler_div {
   flex: 1 1;
 }
+.bs_faq_img{
+  max-width: 100%;
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { Accordion, createStyles } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
@@ -15,7 +15,7 @@ const useStyles = createStyles((theme) => ({
 export interface FaqItem{
   value : string,
   control: string,
-  panel: string
+  panel: string | ReactElement
 }
 interface FaqProps{items : FaqItem[]}
 interface AccordianItemProps{item : FaqItem}
