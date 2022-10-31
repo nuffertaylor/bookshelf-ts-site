@@ -23,6 +23,19 @@ export function HowTo(){
           <p>Fun fact, the first Goodreads user, found at <a href="https://www.goodreads.com/user/show/1">https://www.goodreads.com/user/show/1</a>, is Otis Chandler, the creator of Goodreads. Makes sense.</p>
 			</div>
       )
+    },
+    {
+      value: "goodreads_book_id",
+      control: "Where do I find a goodreads book id?",
+      panel: (
+        <div>
+				  <p>Every edition of every book has a unique numeric Book ID. You can find this by going to the page of the specific edition you’re looking for. The Book ID will be contained in the URL.</p>
+          <img className="bs_faq_img" src="https://i.imgur.com/LKcdcca.png" alt="where the bookid is in the url"/>
+          <p>For the purposes of the “My Bookshelf” website, you'll only need the URL. You can paste that into the website, and it will parse out the book id for you.</p>
+          <p>You can also find this ID on the mobile app. Just go to the book edition you want, click the “share” icon, and click copy. This will copy the URL to your clipboard. You can then paste it somewhere and extract that numeric book id. Or, if you’re using the bookshelf website, just paste that url directly.</p>
+          <p>Fun fact: The book with the lowest Book ID on Goodreads (1, it is 1 not 0 indexed) is <a href="https://www.goodreads.com/book/show/1">Harry Potter #6</a>. This seems to imply that this specific book was the first one added to the service. If you keep going up 1-7, you’ll find the rest of the Harry Potter series, in a seemingly random order. So at its roots, Goodreads was created by and for Harry Potter fans. Or perhaps they were just using one of the most popular series of all time to start with, who knows? 🤔</p>
+			</div>
+      )
     }
   ];
   return(
