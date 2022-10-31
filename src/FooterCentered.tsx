@@ -7,8 +7,7 @@ import { defaultProps } from './types/interfaces';
 //TODO: The footer styling is all messed up if you have a long list of data that scrolls past the bottom of the page. Fix that.
 const useStyles = createStyles((theme) => ({
   footer: {
-    position: "absolute",
-    bottom: "1vw",
+    marginTop:"10px",
     width:"100%",
     borderTop: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]

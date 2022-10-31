@@ -3,8 +3,17 @@
 *{
   box-sizing: border-box;
 }
+html {
+  height:100%;
+}
 #root {
   width:100%;
+  height:100%;
+}
+.App{
+  display:flex;
+  flex-flow:column;
+  height:100%;
 }
 .bs_main_tile {
   width: 400px;

@@ -115,6 +115,7 @@ function App() {
             {centerWidget}
           </div>
         </div>
+        <div className="bs_filler_div"></div>
         <FooterCentered widgetCallback={setCenterWidget} links={
         [
           {
