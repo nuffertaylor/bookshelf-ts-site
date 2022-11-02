@@ -5,7 +5,7 @@ const useStyles = createStyles((theme) => ({
   item: {
     borderRadius: theme.radius.md,
     marginBottom: theme.spacing.lg,
-
+    textAlign:"left",
     border: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
     }`,
