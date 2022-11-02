@@ -1,5 +1,6 @@
 import React, { ReactElement } from "react";
 import { Accordion, createStyles } from '@mantine/core';
+import nextId from "react-id-generator";
 
 const useStyles = createStyles((theme) => ({
   item: {
@@ -22,7 +23,7 @@ interface AccordianItemProps{item : FaqItem}
 const AccordianItem = ({ item } : AccordianItemProps) => {
   const { classes } = useStyles();
   return (
-    <Accordion.Item className={classes.item} value={item.value}>
+    <Accordion.Item className={classes.item} value={item.value} key={nextId()}>
       <Accordion.Control>{item.control}</Accordion.Control>
       <Accordion.Panel>{item.panel}</Accordion.Panel>
     </Accordion.Item>

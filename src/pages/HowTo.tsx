@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import nextId from "react-id-generator";
 import { ColorSchemeCtx } from "../ColorSchemeContext";
 import { Faq, FaqItem } from "./Faq";
 import { Title } from "./Title";
@@ -10,7 +11,7 @@ export function HowTo(){
       value: "make_shelf",
       control: "How do I make a virtual bookshelf?",
       panel: (
-      <div>
+      <div key={nextId()}>
         <p>To use this site, you'll need to have a Goodreads account. If you don't have on yet, <a href="https://www.goodreads.com/user/sign_up" className={"a_".concat(colorScheme)}>you can register for one here.</a></p>
         <p>In your Goodreads account, make a new shelf with whatever name you want. You can do this from any Goodreads book page, or from any other shelf page.</p>
         <img className="bs_faq_img" src="https://i.imgur.com/wLkjkui.png" alt="add shelf from book page" style={{marginBottom:"1vw"}}/>
@@ -29,7 +30,7 @@ export function HowTo(){
       value: "goodreads_user_id",
       control: "Where do I find my goodreads user id?",
       panel: (
-        <div>
+        <div key={nextId()}>
           <p>Every Goodreads user has a numeric User ID. You can find this by going to your (or any other user’s) profile page. Your Goodreads User ID will be contained in the URL.</p>
           <img className="bs_faq_img" src="https://i.imgur.com/UI9CyEY.png" alt="goodreads_profile_url"/>
           <p>You can see my goodreads profile URL is <a href="https://www.goodreads.com/user/show/119763485-jonas" className={"a_".concat(colorScheme)}>https://www.goodreads.com/user/show/119763485-jonas</a>. Therefore, my User ID would be 119763485. The bookshelf website needs this ID to pull shelf information from your account.</p>
@@ -45,7 +46,7 @@ export function HowTo(){
       value: "goodreads_book_id",
       control: "Where do I find a goodreads book id?",
       panel: (
-        <div>
+        <div key={nextId()}>
 				  <p>Every edition of every book has a unique numeric Book ID. You can find this by going to the page of the specific edition you’re looking for. The Book ID will be contained in the URL.</p>
           <img className="bs_faq_img" src="https://i.imgur.com/LKcdcca.png" alt="where the bookid is in the url"/>
           <p>For the purposes of the “My Bookshelf” website, you'll only need the URL. You can paste that into the website, and it will parse out the book id for you.</p>
