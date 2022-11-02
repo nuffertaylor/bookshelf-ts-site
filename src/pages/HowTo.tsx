@@ -54,6 +54,16 @@ export function HowTo(){
           <p>Fun fact: The book with the lowest Book ID on Goodreads (1, it is 1 not 0 indexed) is <a href="https://www.goodreads.com/book/show/1" className={"a_".concat(colorScheme)}>Harry Potter #6</a>. This seems to imply that this specific book was the first one added to the service. If you keep going up 1-7, you’ll find the rest of the Harry Potter series, in a seemingly random order. So at its roots, Goodreads was created by and for Harry Potter fans. Or perhaps they were just using one of the most popular series of all time to start with, who knows? 🤔</p>
 			</div>
       )
+    },
+    {
+      value: "how_to_contribute_spines",
+      control: "How do I contribute book spines?",
+      panel: ""
+    },
+    {
+      value: "how_to_edit_spines",
+      control: "How do you edit spine images?",
+      panel: ""
     }
   ];
   return(
