@@ -47,6 +47,7 @@ interface spinePostResponse {
 }
 
 //TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
+//TODO: Add red border to missing input fields on submit
 
 export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
