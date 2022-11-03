@@ -169,14 +169,14 @@ export function Profile({widgetCallback} : defaultProps){
     <div className="bs_profile_body">
       <div className="bs_submissions_row" onClick={flipSubmissions}>
         <span>Your Spine Submissions</span>
-        <span className={"arrow " + yourSubmissionsArrow}></span>
+        <span className={("arrow " + yourSubmissionsArrow) + " arrow_" + colorScheme}></span>
       </div>
       <div style={{display : yourSubmissionsArrow === "arrow-right" ? "none" : "block"}}>
         {submissionsSection}
       </div>
       <div className="bs_submissions_row" onClick={flipBookshelves}>
         <span>Your Saved Virtual Bookshelves</span>
-        <span className={"arrow " + yourBookshelvesArrow}></span>
+        <span className={("arrow " + yourBookshelvesArrow) + " arrow_" + colorScheme}></span>
       </div>
       <div className={yourBookshelvesArrow === "arrow-right" ? "hide" :  loadedShelves ? "shelves_section_grid" : ""}>
         {shelvesSection}
