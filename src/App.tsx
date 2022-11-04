@@ -20,7 +20,6 @@ import { ColorSchemeCtx } from './ColorSchemeContext';
 import { FooterCentered } from './FooterCentered';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
-//TODO: Add Dark mode
 //TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
 function App() {
   const client_info = clientInfo.getBrowser();
@@ -95,7 +94,6 @@ function App() {
   }
   const { colorScheme } = useContext(ColorSchemeCtx);
 
-  //TODO: Add footer with relevant links (about, how-to, buy me coffee)
   return (
     <MantineProvider theme={{ colorScheme: colorScheme === "light" ? "light" : "dark" }} withGlobalStyles withNormalizeCSS>
       <div className="App">

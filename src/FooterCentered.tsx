@@ -4,7 +4,6 @@ import { AboutApi } from './pages/AboutApi';
 import { HowTo } from './pages/HowTo';
 import { defaultProps } from './types/interfaces';
 
-//TODO: The footer styling is all messed up if you have a long list of data that scrolls past the bottom of the page. Fix that.
 const useStyles = createStyles((theme) => ({
   footer: {
     marginTop:"10px",
