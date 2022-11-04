@@ -47,7 +47,6 @@ interface spinePostResponse {
 }
 
 //TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
-//TODO: Add red border to missing input fields on submit
 
 export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
@@ -96,25 +95,35 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   };
   const return_to_prev_page = ()=>{originCallback()};
   const submit = ()=>{
+
     if(!onlyNumbers(formState.book_id)){
       alert("invalid goodreads book id!");
       document.getElementById("book_id")?.focus();
+      document.getElementById("book_id")?.classList.add("bs_failed_input");
       return;
-    }
+    } 
+    else { document.getElementById("book_id")?.classList.remove("bs_failed_input"); }
+
     if(!validDimensions(formState.dimensions)) {
       alert("invalid dimension input, should be in format 1 x 2 x 3");
       document.getElementById("dimensions")?.focus();
+      document.getElementById("dimensions")?.classList.add("bs_failed_input");
       return;
     }
+    else { document.getElementById("dimensions")?.classList.remove("bs_failed_input"); }
+
     if(!loggedIn()){
       alert("must be logged in to submit new spine");
       return;
     }
+
     if(!b64Image){
       alert("must provide a spine image to upload.");
       return;
     }
-    widgetCallback(<Loading/>)
+
+    widgetCallback(<Loading/>);
+
     let tempImage = new Image();
     tempImage.src = b64Image;
     tempImage.onload = ()=>{
@@ -185,7 +194,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
       <Title title="Upload Spine" backArrowOnClick={return_to_prev_page}/>
       <div className="upload_activity">
         <div className="spine_preview">
-          {!display_uploaded && <div className="no_img_selected">?</div>}
+          {!display_uploaded && <div className="no_img_selected" id="no_img_placeholder">?</div>}
           {display_uploaded && <img src={b64Image} alt="uploaded_img" className="uploaded_img" id="uploaded_img" />}
         </div>
         <div className="form_elements">
