@@ -4,6 +4,7 @@ import { capitalizeFirstLetter, sendPostRequestToServer, setCookie, validEmail} 
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
+import { toast } from 'react-toastify';
 
 interface loginregisterRequest {
   requestType : string, //"login" | "register",
@@ -17,7 +18,7 @@ interface loginregisterResponse {
     username : string,
     authtoken : string,
     goodreads_id ?: string
-  }
+  } | string
 }
 
 interface loginProps extends defaultProps {
@@ -45,8 +46,11 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
     if(!password) { failedChecks.push("password"); }
     if(currentState==="register" && (!email || !validEmail(email))) { failedChecks.push("email"); }
     if(failedChecks.length > 0) {
-      failedChecks.forEach(s=>document.getElementById(s)?.classList.add("bs_failed_input"));
-      //TODO: place toast alerts here that say which inputs failed
+      failedChecks.forEach((s) => {
+        document.getElementById(s)?.classList.add("bs_failed_input");
+        if(s === "email" && email) toast.error("Invalid email provided.");
+        else toast.error("No " + s + " provided.");
+      });
       return;
     }
     widgetCallback(<Loading />)
@@ -58,8 +62,8 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
     if(currentState==="register") data.email = email;
     sendPostRequestToServer("loginregister", data, (res : string)=>{
       const parsed_res : loginregisterResponse = JSON.parse(res);
-      if(parsed_res.statusCode === 200){
-        alert("Welcome " + parsed_res.body.username + "!");
+      if(parsed_res.statusCode === 200 && typeof parsed_res.body !== 'string') {
+        toast.success("Welcome " + parsed_res.body.username + "!");
         setCookie("username", parsed_res.body.username);
         setCookie("authtoken", parsed_res.body.authtoken);
         if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
@@ -67,7 +71,7 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
         widgetCallback(<Profile widgetCallback={widgetCallback}/>);
       }
       else {
-        alert(parsed_res.body);
+        toast.error(typeof parsed_res.body === 'string' ? parsed_res.body : "Something went wrong with your login.");
         widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
       }
     });
