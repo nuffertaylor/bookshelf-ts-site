@@ -101,8 +101,14 @@ export function get_year_from_date_str(str : string) : number {
   const year = d.getUTCFullYear();
   return year;
 }
+export const get_last_sub_dir_from_url = (url : string) => {
+  let res = url.split('/').at(-1);
+  if(res === '') res = url.split('/').at(-2);
+  if(typeof res === "string") return res;
+  return "";
+}
 export const remove_query_string = (url : string) => { return url.split('?')[0]; };
-export const remove_text_title = (url : string) => { return url.split('-')[0]; };
+export const remove_text_title = (url : string) => { return url.split(/-|\./)[0]; };
 export const remove_non_numeric_char_from_str = (str : string) => { return str.replace(/\D/g,''); };
 
 export const split_dimensions_str_into_h_w_l = (dimensions : string) => {

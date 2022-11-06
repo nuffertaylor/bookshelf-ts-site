@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import {Loading} from './Loading';
-import {validUrl, onlyDigits, sendGetRequestToServer} from '../utils/utilities';
+import {validUrl, onlyDigits, sendGetRequestToServer, remove_query_string, remove_text_title, remove_non_numeric_char_from_str, get_last_sub_dir_from_url} from '../utils/utilities';
 import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
@@ -20,13 +20,16 @@ export function FetchGoodreads({ widgetCallback } : defaultProps){
       toast.info("You have to provide a URL or Book ID to continue!");
       return;
     }
-    //TODO: Fix bug where url like this:
-    //https://www.goodreads.com/book/show/511999.The_37th_Mandala?ac=1&from_search=true&qid=xorPRbHGGs&rank=1
-    //brings up incorrect data. (happens because of unhandled number in title)
-    const bs_url : string = bs_url_input.value.split('?')[0];
+    let bs_url : string = bs_url_input.value.split('?')[0];
     if(!validUrl(bs_url) && !onlyDigits(bs_url)) {
       toast.error("Invalid URL/Book ID provided. Please try again!");
       return;
+    }
+    if(!onlyDigits(bs_url)){
+      bs_url = get_last_sub_dir_from_url(bs_url);
+      bs_url = remove_query_string(bs_url);
+      bs_url = remove_text_title(bs_url);
+      bs_url = remove_non_numeric_char_from_str(bs_url);
     }
     widgetCallback(<Loading/>);
     sendGetRequestToServer("getgrbookdetails", "url=" + encodeURIComponent(bs_url), (res : string)=>{
