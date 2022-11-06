@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps } from '../types/interfaces';
 import { getCookie, sendPostRequestToServer } from '../utils/utilities';
@@ -25,7 +26,7 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
   //TODO: Limit maximum number of bookshelves user can save to their profile
   const save_to_profile = () => {
     if(!username) {
-      alert("Login or register to save the generated shelf to your profile!");
+      toast.info("Login or register to save the generated shelf to your profile!");
       return;
     }
     const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
@@ -33,8 +34,8 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{
       const parsedRes : setshelfownerResponse = JSON.parse(res);
-      if(parsedRes.statusCode === 200) alert("successfully saved this shelf to your profile!");
-      else alert("something went wrong, please try again later.");
+      if(parsedRes.statusCode === 200) toast.success("successfully saved this shelf to your profile!");
+      else toast.error("something went wrong, please try again later.");
       widgetCallback(<YourShelf shelf_url={shelf_url} widgetCallback={widgetCallback}/>);
     });
   };

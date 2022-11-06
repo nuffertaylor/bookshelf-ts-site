@@ -21,7 +21,6 @@ import { FooterCentered } from './FooterCentered';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-//TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
 function App() {
   const client_info = clientInfo.getBrowser();

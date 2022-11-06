@@ -7,6 +7,7 @@ import { sendGetRequestToServer } from '../utils/utilities';
 import { book, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
+import { toast } from 'react-toastify';
 
 export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
@@ -15,7 +16,7 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
       sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
         const resObj : getgrbookshelfResponse = JSON.parse(res);
         if(resObj.statusCode !== 200){
-          alert("something went wrong reloading your bookshelf.");
+          toast.error("Something went wrong reloading your bookshelf.");
           document.location.reload();
           return;
         }

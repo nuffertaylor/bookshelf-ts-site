@@ -7,6 +7,7 @@ import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
 import { Landing } from './Landing';
+import { toast } from 'react-toastify';
 
 interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
@@ -214,7 +215,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     sendPostRequestToServer("genshelf", data, (res : string)=>{
       const resObj : genshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
-        alert("something went wrong generating your shelf. Please try again later.");
+        toast.error("something went wrong generating your shelf. Please try again later.");
         widgetCallback(<Landing widgetCallback={widgetCallback} />);
         return;
       }
