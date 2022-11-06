@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import nextId from 'react-id-generator';
+import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
@@ -139,7 +140,12 @@ export function Profile({widgetCallback} : defaultProps){
       val = remove_non_numeric_char_from_str(val);
     }
     if(!val) {
-      alert("Invalid input. Please provide Goodreads Profile URL or User ID.");
+      toast.error("Invalid input. Please provide Goodreads Profile URL or User ID.");
+      document.getElementById("new_gr_id")?.focus();
+      return;
+    }
+    if(val === gr_id) {
+      toast.error(val + " is already your saved Goodreads ID.");
       return;
     }
     const data = {
@@ -151,12 +157,12 @@ export function Profile({widgetCallback} : defaultProps){
       const response : setusergridRes = JSON.parse(res);
       if(response.statusCode === 200){
         const updated_user : user = response.body;
-        alert("successfully set your goodreads user id to: " + updated_user.goodreads_id);
+        toast.success("Successfully set your Goodreads User ID to: " + updated_user.goodreads_id);
         setCookie("goodreads_id", updated_user.goodreads_id);
         setGoodreadsUserId(updated_user.goodreads_id);
         return;
       }
-      alert("something went wrong saving your new goodreads user id. Please try again later.");
+      toast.error("something went wrong saving your new goodreads user id. Please try again later.");
       return;
     });
   }

@@ -21,6 +21,7 @@
     "react-dom": "^18.1.0",
     "react-id-generator": "^3.0.2",
     "react-scripts": "5.0.1",
+    "react-toastify": "^9.1.1",
     "typescript": "^4.7.3",
     "web-vitals": "^2.1.4"
   },

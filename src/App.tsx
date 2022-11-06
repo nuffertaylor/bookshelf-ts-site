@@ -18,6 +18,8 @@ import clientInfo from 'client-info';
 import { MantineProvider } from '@mantine/core';
 import { ColorSchemeCtx } from './ColorSchemeContext';
 import { FooterCentered } from './FooterCentered';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //TODO: Every time the "alert" function appears in this app, replace it with a custom alert component.
 //TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
@@ -93,7 +95,6 @@ function App() {
     setCenterWidget(widget);
   }
   const { colorScheme } = useContext(ColorSchemeCtx);
-
   return (
     <MantineProvider theme={{ colorScheme: colorScheme === "light" ? "light" : "dark" }} withGlobalStyles withNormalizeCSS>
       <div className="App">
@@ -113,6 +114,18 @@ function App() {
             {centerWidget}
           </div>
         </div>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme={colorScheme}
+        />
         <div className="bs_filler_div"></div>
         <FooterCentered widgetCallback={setCenterWidget} links={
         [
