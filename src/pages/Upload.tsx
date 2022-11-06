@@ -6,6 +6,7 @@ import { Loading } from "./Loading";
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
 import { Title } from "./Title";
 import { ColorSchemeCtx } from "../ColorSchemeContext";
+import { toast } from "react-toastify";
 const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
@@ -71,7 +72,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
     const file : File = event.target.files[0];
     const FIVE_MB : number = 5242880;
     if(file.size > FIVE_MB){
-      alert("Please select a file with a size less than 5 MB. (You can probably get this file size by running your image through a compressor or converting it to a jpg)");
+      toast.info("Please select a file with a size less than 5 MB. (You can probably get this file size by running your image through a compressor or converting it to a jpg)");
       return;
     }
     var reader = new FileReader();
@@ -80,7 +81,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
         setB64Image(reader.result);
         set_display_uploaded(true);
       } else {
-        alert("something went wrong with that file upload, please try again.");
+        toast.error("something went wrong with that file upload, please try again.");
       }
     }
     reader.readAsDataURL(file);
@@ -95,32 +96,33 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
   };
   const return_to_prev_page = ()=>{originCallback()};
   const submit = ()=>{
+    let validInput : boolean = true;
 
     if(!onlyNumbers(formState.book_id)){
-      alert("invalid goodreads book id!");
-      document.getElementById("book_id")?.focus();
+      toast.error("Invalid Goodreads book id!");
       document.getElementById("book_id")?.classList.add("bs_failed_input");
-      return;
+      validInput = false;
     } 
     else { document.getElementById("book_id")?.classList.remove("bs_failed_input"); }
 
     if(!validDimensions(formState.dimensions)) {
-      alert("invalid dimension input, should be in format 1 x 2 x 3");
-      document.getElementById("dimensions")?.focus();
+      toast.error("Invalid dimension input. Should be in format 1 x 2 x 3");
       document.getElementById("dimensions")?.classList.add("bs_failed_input");
-      return;
+      validInput = false;
     }
     else { document.getElementById("dimensions")?.classList.remove("bs_failed_input"); }
 
     if(!loggedIn()){
-      alert("must be logged in to submit new spine");
-      return;
+      toast.error("must be logged in to submit new spine");
+      validInput = false;
     }
 
     if(!b64Image){
-      alert("must provide a spine image to upload.");
-      return;
+      toast.error("must provide a spine image to upload.");
+      validInput = false;
     }
+
+    if(!validInput) return;
 
     widgetCallback(<Loading/>);
 
@@ -153,12 +155,12 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
         sendPostRequestToServer("spine", data, (res : string) => {
         const parsed_res : spinePostResponse = JSON.parse(res);
         if(parsed_res.statusCode !== 200) {
-          alert("something went wrong with your upload. Try again later?");
+          toast.error("something went wrong with your upload. Try again later?");
           originCallback();
           return;
         }
         if(typeof parsed_res.body === 'object' && !parsed_res.body.already_uploaded) {
-          alert("Congrats! Your spine for " + data.title + " was successfully uploaded.");
+          toast.success("Congrats! Your spine for " + data.title + " was successfully uploaded.");
           originCallback(true);
           return;
         }

@@ -141,9 +141,10 @@ export function Profile({widgetCallback} : defaultProps){
     }
     if(!val) {
       toast.error("Invalid input. Please provide Goodreads Profile URL or User ID.");
-      document.getElementById("new_gr_id")?.focus();
+      document.getElementById("new_gr_id")?.classList.add("bs_failed_input");
       return;
     }
+    else { document.getElementById("new_gr_id")?.classList.remove("bs_failed_input"); }
     if(val === gr_id) {
       toast.error(val + " is already your saved Goodreads ID.");
       return;

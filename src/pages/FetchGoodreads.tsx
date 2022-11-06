@@ -4,6 +4,7 @@ import {validUrl, onlyDigits, sendGetRequestToServer} from '../utils/utilities';
 import { book, defaultProps } from "../types/interfaces";
 import { Upload } from './Upload';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
+import { toast } from 'react-toastify';
 
 interface getgrbookdetailsResponse{
   statusCode : number,
@@ -15,8 +16,8 @@ export function FetchGoodreads({ widgetCallback } : defaultProps){
 
   const getBookData = ()=>{
     const bs_url_input = document.getElementById("bs_url_input") as HTMLInputElement;
-    if(!bs_url_input) {
-      alert("You have to provide a URL or Book ID to continue!");
+    if(!bs_url_input.value) {
+      toast.info("You have to provide a URL or Book ID to continue!");
       return;
     }
     //TODO: Fix bug where url like this:
@@ -24,14 +25,14 @@ export function FetchGoodreads({ widgetCallback } : defaultProps){
     //brings up incorrect data. (happens because of unhandled number in title)
     const bs_url : string = bs_url_input.value.split('?')[0];
     if(!validUrl(bs_url) && !onlyDigits(bs_url)) {
-      alert("invalid URL/Book ID provided. Please try again");
+      toast.error("Invalid URL/Book ID provided. Please try again!");
       return;
     }
     widgetCallback(<Loading/>);
     sendGetRequestToServer("getgrbookdetails", "url=" + encodeURIComponent(bs_url), (res : string)=>{
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
       if(responseObject.statusCode !== 200) {
-        alert("Something went wrong fetching the book details.");
+        toast.error("Something went wrong fetching the book details.");
         widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);
         return;
       }
