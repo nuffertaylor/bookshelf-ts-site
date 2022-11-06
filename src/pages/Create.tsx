@@ -4,6 +4,7 @@ import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
 import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer} from "../utils/utilities";
 import { ColorSchemeCtx } from '../ColorSchemeContext';
+import { toast } from 'react-toastify';
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -29,7 +30,7 @@ export function Create({ widgetCallback, props }: CreateProps){
     sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
       const resObj : getgrbookshelfResponse = JSON.parse(res);
       if(resObj.statusCode !== 200) {
-        alert("something went wrong, please try again later.");
+        toast.error("Something went wrong, please try again later.");
         widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
         return;
       }
@@ -49,20 +50,25 @@ export function Create({ widgetCallback, props }: CreateProps){
       userid = remove_text_title(userid);
       userid = remove_non_numeric_char_from_str(userid);
     }
+    let validInput : boolean = true;
     if(userid === ""){
-      alert("Please provide a valid Goodreads Profile URL or User ID");
-      if(userIdEl != null) userIdEl.focus();
-      return;
+      toast.error("Please provide a valid Goodreads Profile URL or User ID.");
+      userIdEl?.classList.add("bs_failed_input");
+      validInput = false;
     }
+    else { userIdEl?.classList.remove("bs_failed_input"); }
 
     const shelfNameEl = document.getElementById("shelfname") as HTMLInputElement;
     let shelfname : string = "";
     if(shelfNameEl != null) shelfname = shelfNameEl.value;
     if(shelfname === ""){
-      alert("Please provide the shelf you'd like to make a shelf of");
-      if(shelfNameEl != null) shelfNameEl.focus();
-      return;
+      toast.error("Please provide the shelf you'd like to make a shelf of.");
+      shelfNameEl?.classList.add("bs_failed_input");
+      validInput = false;
     }
+    else { shelfNameEl?.classList.remove("bs_failed_input"); }
+
+    if(!validInput) return;
     getGRShelf(userid, shelfname);
   };
 
