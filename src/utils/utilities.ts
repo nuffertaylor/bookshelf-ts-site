@@ -62,18 +62,20 @@ export function loggedIn(){
 }
 
 export const sendGetRequestToServer = async function (method : string, querystr : string, callback : Function){
-  var xhttp = new XMLHttpRequest();
-  var path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;
-  xhttp.onreadystatechange = function() {
-      if(this.readyState === 4) callback(xhttp.responseText);
+  const httpGet = new XMLHttpRequest();
+  httpGet.ontimeout = (e) => { callback(JSON.stringify({statusCode : 500})); };
+  const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;
+  httpGet.onreadystatechange = function() {
+      if(this.readyState === 4) callback(httpGet.responseText);
   };
-  xhttp.open("GET", path, true);
-  xhttp.send();
+  httpGet.open("GET", path, true);
+  httpGet.send();
 }
 
 export const sendPostRequestToServer = async function(method : string, data : object, callback : Function)
 {
   const httpPost = new XMLHttpRequest();
+  httpPost.ontimeout = (e) => { callback(JSON.stringify({statusCode : 500})); };
   const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method;
   let json_data = JSON.stringify(data);
   httpPost.onreadystatechange = (err) => {
@@ -108,7 +110,7 @@ export const get_last_sub_dir_from_url = (url : string) => {
   return "";
 }
 export const remove_query_string = (url : string) => { return url.split('?')[0]; };
-export const remove_text_title = (url : string) => { return url.split(/-|\./)[0]; };
+export const remove_text_title = (url : string) => { return url.split(/-/)[0]; };
 export const remove_non_numeric_char_from_str = (str : string) => { return str.replace(/\D/g,''); };
 
 export const split_dimensions_str_into_h_w_l = (dimensions : string) => {
