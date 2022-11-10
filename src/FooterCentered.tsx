@@ -61,6 +61,7 @@ export function FooterCentered({ links, widgetCallback }: FooterCenteredProps) {
   const items = links.map((link) => (
     <Anchor<'a'>
       color="dimmed"
+      id={link.link}
       key={link.label}
       href={link.link}
       sx={{ lineHeight: 1 }}

@@ -106,7 +106,7 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
       }
       <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
       <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
-      <span className={"bs_registerlogin_flip a_".concat(colorScheme)} onClick={flip_state}>{flip_text}</span>
+      <span className={"bs_registerlogin_flip a_ a_".concat(colorScheme)} onClick={flip_state}>{flip_text}</span>
       <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>{capitalizeFirstLetter(currentState)}</button>
     </div>
   )

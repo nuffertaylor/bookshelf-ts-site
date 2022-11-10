@@ -525,6 +525,9 @@ text-align:center;
 a {
   text-decoration: none;
 }
+.a_ {
+  cursor: pointer;
+}
 .a_dark {
   color:skyblue;
 }

@@ -17,7 +17,7 @@ export function HowTo(){
         <img className="bs_faq_img" src="https://i.imgur.com/wLkjkui.png" alt="add shelf from book page" style={{marginBottom:"1vw"}}/>
         <img className="bs_faq_img" src="https://i.imgur.com/5Kb8dGc.png" alt="add shelf from shelf page"/>
         <p>Add all the books you want to be displayed on your virtual bookshelf to that Goodreads shelf.</p>
-        <p className={"a_".concat(colorScheme)} onClick={()=>{document.getElementById("create")?.click()}}>Go to the Create tab</p>
+        <p className={"a_ a_".concat(colorScheme)} onClick={()=>{document.getElementById("create")?.click()}}>Go to the Create tab</p>
         <p>Here, paste your Goodreads profile URL (or your Goodreads User ID, there's another FAQ item explaining that) and the name of the shelf you're using. The name needs to match exactly, with the same capitalization. If Goodreads can't find the shelf name you provided, it will instead return a list of every book you've added on your Goodreads account, which probably isn't what you're looking for.</p>
         <p>Click "Generate"</p>
         <p>Now you'll be provided the option to sort your books, or to upload spine images for books on shelf that aren't in the system yet. That's a different objective, so for now, just click the sort button.</p>
@@ -62,7 +62,7 @@ export function HowTo(){
         <div>
           <ol>
             <li>Login to or Create a My Bookshelf Account</li>
-            <li><span className={"a_".concat(colorScheme)} onClick={()=>document.getElementById("contribute")?.click()}>Click on the “Contribute” tab</span></li>
+            <li><span className={"a_ a_".concat(colorScheme)} onClick={()=>document.getElementById("contribute")?.click()}>Click on the “Contribute” tab</span></li>
             <li>Find the book (and the matching edition) you want to upload a spine for on Goodreads.</li>
             <li>Copy the Goodreads URL for that book (You can also do this on mobile by clicking the share icon, then “Copy”)</li>
             <li>Paste that URL into the textbox on the contribute page</li>
