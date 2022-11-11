@@ -22,7 +22,11 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
         }
         const f : Array<foundBook> = resObj["body"]["found"];
         const u : Array<book> = resObj["body"]["unfound"];
-        widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
+        if(u.length === 0) {
+          toast.success("You've uploaded all the missing spines from this shelf!");
+          widgetCallback(<Found found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
+        }
+        else { widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>); }
       });
       return;
     }
