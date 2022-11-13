@@ -489,9 +489,14 @@ text-align:center;
   height:225px;
   display: grid;
   place-items: center;
-  background:#eaeaea;
   border-radius:10px;
   box-shadow: #696969;
+}
+.shelf_image_element_container_light{
+  background:#eaeaea;
+}
+.shelf_image_element_container_dark{
+  background:#222222;
 }
 .shelf_image_element_img{
   width:75px;
