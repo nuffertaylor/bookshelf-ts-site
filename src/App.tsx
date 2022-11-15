@@ -22,6 +22,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 //TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
+//TODO: Direct users to a "choose alternates" page if multiple spines were found for any of their books
+//TODO: Direct user to a "choose shelf background" page so they can select which bg they want to use
 function App() {
   const client_info = clientInfo.getBrowser();
   const visit_body = {
