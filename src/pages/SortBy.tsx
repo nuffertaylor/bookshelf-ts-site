@@ -235,23 +235,23 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
   <div className="found_spine_box">
     <div className="found_spine_head">Sort by</div>
     <div className="custom-select" style={{width:"200px"}}>
-    <Select
-        data={[
-          'Author',
-          'Average Rating',
-          'Color',
-          // 'Date Read by User', TODO: Once this sort method is fixed.
-          'Default',
-          'Height',
-          'Publication Year',
-          'Sort Manually',
-          'Title',
-          'User Rating'
-        ]}
-        placeholder="Select Sort Method"
-        value={selectValue}
-        onChange={alterSelectValue}
-      />
+      <Select
+          data={[
+            'Author',
+            'Average Rating',
+            'Color',
+            // 'Date Read by User', TODO: Once this sort method is fixed.
+            'Default',
+            'Height',
+            'Publication Year',
+            'Sort Manually',
+            'Title',
+            'User Rating'
+          ]}
+          placeholder="Select Sort Method"
+          value={selectValue}
+          onChange={alterSelectValue}
+        />
     </div>
     <div className="bs_button_wrapper">
       <button className={disabledClass + " bs_button"} id="sort_main_button" onClick={submit_main_click}>{buttonText}</button>
