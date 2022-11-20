@@ -1,6 +1,7 @@
 import { Select } from '@mantine/core';
 import React, { useState } from 'react';
 import { defaultProps } from "../types/interfaces";
+import { sendGetRequestToServer } from '../utils/utilities';
 
 export interface shelf_bg{
     bg_id : string,
@@ -14,10 +15,14 @@ export interface shelf_bg{
     title : string
 }
 interface selectBookshelfProps extends defaultProps {
-  shelf_bgs : shelf_bg[]
+  shelf_bgs ?: shelf_bg[]
 }
 
 export function SelectBookshelfBg({widgetCallback, shelf_bgs} : selectBookshelfProps){
+  if(!shelf_bgs) {
+    shelf_bgs = [];
+    sendGetRequestToServer("shelfBgs", "", (res:any)=>{console.log(res)});
+  }
   const [selectValue, setSelectValue] = useState<string | null>(null);
   const alterSelectValue = (val:string)=>{
     setSelectValue(val);
@@ -29,7 +34,7 @@ export function SelectBookshelfBg({widgetCallback, shelf_bgs} : selectBookshelfP
       <div className="custom-select" style={{width:"200px"}}>
         <Select
             data={selectData.map(d => d.title)}
-            placeholder="Select Sort Method"
+            placeholder="Choose a Bookshelf"
             value={selectValue}
             onChange={alterSelectValue}
           />

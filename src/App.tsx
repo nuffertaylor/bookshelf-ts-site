@@ -20,6 +20,7 @@ import { ColorSchemeCtx } from './ColorSchemeContext';
 import { FooterCentered } from './FooterCentered';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SelectBookshelfBg } from './pages/SelectBookshelfBg';
 
 //TODO: Add cookie consent banner (maybe use lib 'react-cookie-consent'
 //TODO: Direct users to a "choose alternates" page if multiple spines were found for any of their books
@@ -89,6 +90,9 @@ function App() {
       case "/profile":
         setCenterWidget(<Profile widgetCallback={changeCenterWidget} />);
         break;
+      case "/test": //use this to test whatever comp you're developing
+        setCenterWidget(<SelectBookshelfBg widgetCallback={changeCenterWidget} />);
+        break;
     }
   };
 
@@ -101,12 +105,13 @@ function App() {
       <div className="App">
         <ResponsiveHeader 
         links={
-          [{ link: "/create", label: "create" },
-          { link: "/contribute", label: "contribute" },
-          // { link: "/curate", label: "curate" },
-          { link: "/leaderboard", label: "leaderboard" },
-          // { link: "/loading", label: "loading" },
-          { link: "/" + loginStatus, label: loginStatus }
+          [
+            { link: "/create", label: "create" },
+            { link: "/contribute", label: "contribute" },
+            // { link: "/curate", label: "curate" },
+            { link: "/leaderboard", label: "leaderboard" },
+            { link: "/" + loginStatus, label: loginStatus },
+            { link: "/test", label: "test"}
           ]}
           headerClick = {headerClick}
         />
