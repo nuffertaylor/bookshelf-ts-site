@@ -1,7 +1,9 @@
 import { Select } from '@mantine/core';
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { defaultProps } from "../types/interfaces";
 import { sendGetRequestToServer } from '../utils/utilities';
+import { Loading } from './Loading';
 
 export interface shelf_bg{
     bg_id : string,
@@ -17,11 +19,23 @@ export interface shelf_bg{
 interface selectBookshelfProps extends defaultProps {
   shelf_bgs ?: shelf_bg[]
 }
+interface getShelfBgResponse {
+  statusCode : number,
+  body : shelf_bg[]
+}
 
 export function SelectBookshelfBg({widgetCallback, shelf_bgs} : selectBookshelfProps){
   if(!shelf_bgs) {
+    widgetCallback(<Loading/>);
     shelf_bgs = [];
-    sendGetRequestToServer("shelfBgs", "", (res:any)=>{console.log(res)});
+    sendGetRequestToServer("shelfbg", "", (json:string)=>{
+      const res : getShelfBgResponse = JSON.parse(json);
+      if(res.statusCode !== 200) {
+        toast.error("failed to fetch shelf backgrounds; please try again later.");
+        return;
+      }
+      widgetCallback(<SelectBookshelfBg widgetCallback={widgetCallback} shelf_bgs={res.body}/>);
+    });
   }
   const [selectValue, setSelectValue] = useState<string | null>(null);
   const alterSelectValue = (val:string)=>{
