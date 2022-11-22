@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
+import { getCookie, IMG_URL_PREFIX, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
@@ -7,7 +7,6 @@ import ColorThief from "colorthief"; //needed suppression for this error:   Try 
 import { Title } from "./Title";
 import { ColorSchemeCtx } from "../ColorSchemeContext";
 import { toast } from "react-toastify";
-const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
 interface uploadProps extends defaultProps{

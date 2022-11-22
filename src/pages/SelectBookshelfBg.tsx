@@ -2,7 +2,7 @@ import { Select } from '@mantine/core';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { defaultProps } from "../types/interfaces";
-import { sendGetRequestToServer } from '../utils/utilities';
+import { IMG_URL_PREFIX, sendGetRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 
 export interface shelf_bg{
@@ -42,17 +42,24 @@ export function SelectBookshelfBg({widgetCallback, shelf_bgs} : selectBookshelfP
     setSelectValue(val);
   }
   const [selectData, setSelectData] = useState<shelf_bg[]>(shelf_bgs);
+  const get_shelf_from_bg_id = (bg_id: string) => {
+    for(const bg of selectData)
+      if(bg.bg_id === bg_id) return bg;
+  };
 
   return(
     <div>
-      <div className="custom-select" style={{width:"200px"}}>
+      <div className="custom-select" style={{width:"200px", marginBottom: "2vw"}}>
         <Select
-            data={selectData.map(d => d.title)}
+            data={selectData.map(d => {return { label: d.title, value: d.bg_id}})}
             placeholder="Choose a Bookshelf"
             value={selectValue}
             onChange={alterSelectValue}
           />
       </div>
+      {!!selectValue &&
+      <img alt="your_generated_shelf" src={IMG_URL_PREFIX + get_shelf_from_bg_id(selectValue)?.filename} className="display_shelf" />
+      }
     </div>
   );
 }
