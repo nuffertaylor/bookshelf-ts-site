@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { defaultProps } from '../types/interfaces';
-import { getCookie, sendPostRequestToServer } from '../utils/utilities';
+import { getCookie, get_cur_date_str, sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 
 interface YourShelfProps extends defaultProps {
@@ -11,7 +11,8 @@ interface YourShelfProps extends defaultProps {
 interface setshelfownerRequest{
   username : string,
   authtoken : string,
-  filename : string
+  filename : string,
+  bookshelfName : string
 }
 interface setshelfownerResponse{
   statusCode:number,
@@ -29,8 +30,13 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       toast.info("Login or register to save the generated shelf to your profile!");
       return;
     }
+    const bookshelfName = prompt("What would you like to name the shelf?", get_cur_date_str());
+    if(!bookshelfName) {
+      toast.info("Canceled saving shelf to profile.");
+      return;
+    }
     const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
-    const req : setshelfownerRequest = {username:username, authtoken:authtoken, filename:filename};
+    let req : setshelfownerRequest = {username:username, authtoken:authtoken, filename:filename, bookshelfName:bookshelfName};
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{
       const parsedRes : setshelfownerResponse = JSON.parse(res);

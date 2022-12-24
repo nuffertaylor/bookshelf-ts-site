@@ -103,6 +103,9 @@ export function get_year_from_date_str(str : string) : number {
   const year = d.getUTCFullYear();
   return year;
 }
+export const get_cur_date_str = () : string => {
+  return new Date().toLocaleString().toString().split(',')[0]
+}
 export const get_last_sub_dir_from_url = (url : string) => {
   let res = url.split('/').at(-1);
   if(res === '') res = url.split('/').at(-2);
