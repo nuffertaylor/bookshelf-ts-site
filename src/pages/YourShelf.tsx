@@ -63,6 +63,7 @@ export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelf
     });
   };
 
+  //TODO: hookup delete function
   const delete_shelf = () => {
     console.log("attempting to delete shelf");
   };
@@ -70,6 +71,7 @@ export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelf
   const shelf_img_url = IMG_URL_PREFIX.concat(shelf_image.filename);
   return(
     <div className="found_spine_box">
+      {/*TODO: fix formatting on header*/}
       <div className="found_spine_head">
           {saved_shelf ? shelf_image.bookshelf_name : "Your Shelf"}
           {saved_shelf && 
