@@ -97,7 +97,8 @@ export function Profile({widgetCallback} : defaultProps){
         const date_str : string = date.toLocaleDateString();
         const shelf_url = IMG_URL_PREFIX + s.filename;
         const bookshelf_name = s.bookshelf_name;
-        const title = bookshelf_name ? bookshelf_name : date_str;
+        let title = bookshelf_name ? bookshelf_name : date_str;
+        if(title.length > 10) title = title.substring(0,7).concat("...");
 
         //TODO: Add functionality to edit name of saved shelf
         //TODO: Allow user to delete saved shelf
