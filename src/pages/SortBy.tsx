@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { book, defaultProps, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook, shelfImage } from '../types/interfaces';
 import { Select } from '@mantine/core';
 import { getCookie, get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -19,7 +19,7 @@ interface genshelfRequest {
 }
 interface genshelfResponse {
   statusCode : number,
-  body : string
+  body : shelfImage
 }
 
 export const alphabetize_by_title_algo = (a : book, b : book) => {
@@ -223,8 +223,8 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         widgetCallback(<Landing widgetCallback={widgetCallback} />);
         return;
       }
-      const url : string = resObj.body as string;
-      widgetCallback(<YourShelf shelf_url={url} widgetCallback={widgetCallback} />)
+      const shelfImage : shelfImage = resObj.body as shelfImage;
+      widgetCallback(<YourShelf shelf_image={shelfImage} widgetCallback={widgetCallback} saved_shelf={false}/>)
     });
   }
 

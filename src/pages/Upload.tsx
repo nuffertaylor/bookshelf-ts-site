@@ -7,7 +7,7 @@ import ColorThief from "colorthief"; //needed suppression for this error:   Try 
 import { Title } from "./Title";
 import { ColorSchemeCtx } from "../ColorSchemeContext";
 import { toast } from "react-toastify";
-const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
+import { IMG_URL_PREFIX } from "../types/constants";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
 interface uploadProps extends defaultProps{

@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
-import { defaultProps } from '../types/interfaces';
+import { IMG_URL_PREFIX } from '../types/constants';
+import { defaultProps, shelfImage } from '../types/interfaces';
 import { getCookie, get_cur_date_str, sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 
 interface YourShelfProps extends defaultProps {
-  shelf_url : string
+  shelf_image : shelfImage
+  saved_shelf : boolean,
 }
 interface setshelfownerRequest{
   username : string,
@@ -15,10 +17,10 @@ interface setshelfownerRequest{
   bookshelf_name : string
 }
 interface setshelfownerResponse{
-  statusCode:number,
-  body:string
+  statusCode : number,
+  body : shelfImage
 }
-export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
+export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelfProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const { colorScheme } = useContext(ColorSchemeCtx);
@@ -39,11 +41,10 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       toast.error("That shelf name is too long! The max length is 64 characters. Try again with a shorter name.");
       return;
     }
-    const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
     let req : setshelfownerRequest = {
       username : username, 
       authtoken : authtoken, 
-      filename : filename, 
+      filename : shelf_image.filename, 
       bookshelf_name : bookshelf_name
     };
     widgetCallback(<Loading/>);
@@ -51,19 +52,24 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       const parsedRes : setshelfownerResponse = JSON.parse(res);
       if(parsedRes.statusCode === 200) toast.success("successfully saved this shelf to your profile!");
       else toast.error("something went wrong, please try again later.");
-      widgetCallback(<YourShelf shelf_url={shelf_url} widgetCallback={widgetCallback}/>);
+      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} saved_shelf={true}/>);
     });
   };
 
+  const delete_shelf = () => {
+    console.log("attempting to delete shelf");
+  };
+  
+  const shelf_img_url = IMG_URL_PREFIX.concat(shelf_image.filename);
   return(
     <div className="found_spine_box">
-      <div className="found_spine_head">Your Shelf</div>
-      <img alt="your_generated_shelf" src={shelf_url} className="display_shelf" />
+      <div className="found_spine_head">{saved_shelf ? shelf_image.bookshelf_name : "Your Shelf"}</div>
+      <img alt="your_generated_shelf" src={shelf_img_url} className="display_shelf" />
       <div className="multiple_button_wrapper">
-        <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
+        <a href={shelf_img_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">download</button>
         </a>
-        <button className="bs_shelf_buttons" onClick={save_to_profile}>save to profile</button>
+        <button className={"bs_shelf_buttons".concat(saved_shelf ? " bs_delete_bg_color" : "")} onClick={saved_shelf ? delete_shelf : save_to_profile}>{saved_shelf ? "Delete Shelf" : "Save to Profile"}</button>
       </div>
     </div>
   );

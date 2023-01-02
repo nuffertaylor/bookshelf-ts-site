@@ -542,6 +542,9 @@ a {
 .bs_filler_div {
   flex: 1 1;
 }
-.bs_faq_img{
+.bs_faq_img {
   max-width: 100%;
+}
+.bs_delete_bg_color {
+  background: crimson;
 }

@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import nextId from 'react-id-generator';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
+import { IMG_URL_PREFIX } from '../types/constants';
 import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
@@ -32,7 +33,6 @@ export function Profile({widgetCallback} : defaultProps){
   const [shelvesSection, setShelvesSection] = useState(loading);
   const [loadedSubmissions, setLoadedSubmissions] = useState(false);
   const [loadedShelves, setLoadedShelves] = useState(false);
-  const IMG_URL_PREFIX : string = "https://bookshelf-spines.s3.amazonaws.com/";
   const { colorScheme } = useContext(ColorSchemeCtx);
 
   //async load submissions section
