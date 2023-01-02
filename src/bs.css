@@ -280,9 +280,16 @@ body {
 text-align:center;
 }
 .found_spine_head{
+  margin-bottom:10px;
+  display:flex;
   font-weight:500;
   font-size:2em;
-  margin-bottom:10px;
+  width:100%;
+  text-align:center;
+}
+.bs_edit_pencil_yourshelf {
+  text-align: right;
+  cursor: pointer;
 }
 .bs_button_wrapper{
   width:100%;
