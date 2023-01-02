@@ -35,6 +35,10 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       toast.info("Canceled saving shelf to profile.");
       return;
     }
+    if(bookshelf_name.length > 64) {
+      toast.error("That shelf name is too long! The max length is 64 characters. Try again with a shorter name.");
+      return;
+    }
     const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
     let req : setshelfownerRequest = {
       username : username, 
