@@ -28,7 +28,10 @@ export interface shelfImage {
   upload_id : string,
   filename : string,
   timestamp : number,
-  owner : string
+  owner ?: string,
+  bookshelf_name ?: string,
+  gr_shelf_name ?: string,
+  gr_user_id ?: string
 }
 export interface user {
   username : string,

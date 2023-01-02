@@ -96,13 +96,15 @@ export function Profile({widgetCallback} : defaultProps){
         const date = new Date(s.timestamp*1000);
         const date_str : string = date.toLocaleDateString();
         const shelf_url = IMG_URL_PREFIX + s.filename;
+        const bookshelf_name = s.bookshelf_name;
+        const title = bookshelf_name ? bookshelf_name : date_str;
 
-        //TODO: Add functionality to name saved shelf
+        //TODO: Add functionality to edit name of saved shelf
         //TODO: Allow user to delete saved shelf
         //TODO: maybe move all the functionality - when you click on a given shelf, it pops up full screen, and then you can mess with it
         return (
         <div className={"shelf_image_element_container shelf_image_element_container_".concat(colorScheme)}>
-          <span className="shelf_image_date">{date_str}</span>
+          <span className="shelf_image_date">{title}</span>
           <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str}/>
           <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
             <button className="bs_shelf_buttons" style={{transform: "scale(.7)", width:"100px"}}>download</button>

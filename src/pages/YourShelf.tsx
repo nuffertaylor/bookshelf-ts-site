@@ -12,7 +12,7 @@ interface setshelfownerRequest{
   username : string,
   authtoken : string,
   filename : string,
-  bookshelfName : string
+  bookshelf_name : string
 }
 interface setshelfownerResponse{
   statusCode:number,
@@ -30,13 +30,18 @@ export function YourShelf({shelf_url, widgetCallback} : YourShelfProps){
       toast.info("Login or register to save the generated shelf to your profile!");
       return;
     }
-    const bookshelfName = prompt("What would you like to name the shelf?", get_cur_date_str());
-    if(!bookshelfName) {
+    const bookshelf_name = prompt("What would you like to name the shelf?", get_cur_date_str());
+    if(!bookshelf_name) {
       toast.info("Canceled saving shelf to profile.");
       return;
     }
     const filename = shelf_url.replace("https://bookshelf-spines.s3.amazonaws.com/", "");
-    let req : setshelfownerRequest = {username:username, authtoken:authtoken, filename:filename, bookshelfName:bookshelfName};
+    let req : setshelfownerRequest = {
+      username : username, 
+      authtoken : authtoken, 
+      filename : filename, 
+      bookshelf_name : bookshelf_name
+    };
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{
       const parsedRes : setshelfownerResponse = JSON.parse(res);

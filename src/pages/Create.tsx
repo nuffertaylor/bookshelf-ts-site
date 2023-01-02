@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {Found} from "./Found";
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import {Loading} from "./Loading";
-import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer} from "../utils/utilities";
+import {getCookie, onlyDigits, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, setCookie} from "../utils/utilities";
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { toast } from 'react-toastify';
 
@@ -34,6 +34,8 @@ export function Create({ widgetCallback, props }: CreateProps){
         widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
         return;
       }
+      setCookie("gr_shelf_name", shelfname);
+      setCookie("gr_user_id", userid);
       const found : Array<foundBook> = resObj["body"]["found"];
       const unfound : Array<book> = resObj["body"]["unfound"];
       widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);

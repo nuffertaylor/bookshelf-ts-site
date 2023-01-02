@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
+import { getCookie, get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
 import { Loading } from './Loading';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
@@ -13,7 +13,9 @@ interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
 }
 interface genshelfRequest {
-  bookList : Array<foundBook>
+  bookList : Array<foundBook>,
+  gr_shelf_name : string,
+  gr_user_id : string
 }
 interface genshelfResponse {
   statusCode : number,
@@ -210,7 +212,9 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
   const generateShelf = (bl : foundBook[])=>{
     widgetCallback(<Loading/>);
     const data : genshelfRequest = {
-      bookList : bl
+      bookList : bl,
+      gr_shelf_name : getCookie("gr_shelf_name"),
+      gr_user_id : getCookie("gr_user_id")
     }
     sendPostRequestToServer("genshelf", data, (res : string)=>{
       const resObj : genshelfResponse = JSON.parse(res);
