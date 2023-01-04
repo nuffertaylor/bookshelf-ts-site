@@ -237,7 +237,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
   return(
   <div className="found_spine_box">
-    <div className="found_spine_head">Sort by</div>
+    <div className="bs_head">Sort by</div>
     <div className="custom-select" style={{width:"200px"}}>
     <Select
         data={[

@@ -279,9 +279,17 @@ body {
 .found_spine_box{
 text-align:center;
 }
+.bs_head{
+  margin-bottom:10px;
+  font-weight:500;
+  font-size:2em;
+  width:100%;
+  text-align:center;
+}
 .found_spine_head{
   margin-bottom:10px;
   display:flex;
+  justify-content: space-between;
   font-weight:500;
   font-size:2em;
   width:100%;
@@ -297,11 +305,6 @@ text-align:center;
 }
 .found_spine_box{
 text-align:center;
-}
-.found_spine_head{
-  font-weight:500;
-  font-size:2em;
-  margin-bottom:10px;
 }
 .bs_button_wrapper{
   width:100%;
@@ -333,11 +336,6 @@ text-align:center;
 }
 .found_spine_box{
   text-align:center;
-}
-.found_spine_head{
-  font-weight:500;
-  font-size:2em;
-  margin-bottom:10px;
 }
 .bs_button_wrapper{
   width:100%;

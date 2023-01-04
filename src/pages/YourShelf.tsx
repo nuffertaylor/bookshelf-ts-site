@@ -74,8 +74,8 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
     <div className="found_spine_box">
       {/*TODO: fix formatting on header*/}
       <div className="found_spine_head">
-          {from_profile && <span className={"arrow arrow-left arrow_".concat(colorScheme)} onClick={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}></span>}
-          {shelf_image.bookshelf_name ? shelf_image.bookshelf_name : "Your Shelf"}
+          {from_profile && <span className={"arrow arrow-left arrow_".concat(colorScheme)} style={{marginTop:".5em"}}onClick={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}></span>}
+          <span style={{width:"100%"}}>{shelf_image.bookshelf_name ? shelf_image.bookshelf_name : "Your Shelf"}</span>
           {shelf_image.owner && 
             <div className="bs_edit_pencil_yourshelf" onClick={rename_shelf}>
               <IconPencil color="#FFFFFF" size={20} stroke={1.5}/>

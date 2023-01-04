@@ -27,7 +27,7 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
 
   return(
     <div className="found_spine_box">
-      <div className="found_spine_head">Found {found.length} Spines</div>
+      <div className="bs_head">Found {found.length} Spines</div>
       {unfound && unfound.length > 0 &&
       <div>
         <div className="unfound_spine_subhead">Missing {unfound.length} Spines</div>
