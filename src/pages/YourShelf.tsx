@@ -17,7 +17,8 @@ interface setshelfownerRequest{
   username : string,
   authtoken : string,
   filename : string,
-  bookshelf_name : string
+  bookshelf_name ?: string,
+  delete_owner ?: boolean
 }
 interface setshelfownerResponse{
   statusCode : number,
@@ -60,19 +61,34 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
       const success_msg = renaming ? "Successfully renamed shelf!" : "Successfully saved this shelf to your profile!";
       if(parsedRes.statusCode === 200) toast.success(success_msg);
       else toast.error("something went wrong, please try again later.");
-      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} from_profile={false}/>);
+      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} from_profile={from_profile}/>);
     });
   };
 
-  //TODO: hookup delete function
   const delete_shelf = () => {
-    console.log("attempting to delete shelf");
+    widgetCallback(<Loading/>);
+    let req : setshelfownerRequest = {
+      username : username, 
+      authtoken : authtoken, 
+      filename : shelf_image.filename,
+      delete_owner : true
+    };
+    widgetCallback(<Loading/>);
+    sendPostRequestToServer("setshelfowner", req, (res:string)=>{
+      const parsedRes : setshelfownerResponse = JSON.parse(res);
+      if(parsedRes.statusCode === 200) {
+        toast.success("Successfully deleted.");
+        widgetCallback(<Profile widgetCallback={widgetCallback}/>);
+        return;
+      }
+      else toast.error("something went wrong, please try again later.");
+      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} from_profile={from_profile}/>);
+    });
   };
 
   const shelf_img_url = IMG_URL_PREFIX.concat(shelf_image.filename);
   return(
     <div className="found_spine_box">
-      {/*TODO: fix formatting on header*/}
       <div className="found_spine_head">
           {from_profile && <span className={"arrow arrow-left arrow_".concat(colorScheme)} style={{marginTop:".5em"}}onClick={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}></span>}
           <span style={{width:"100%"}}>{shelf_image.bookshelf_name ? shelf_image.bookshelf_name : "Your Shelf"}</span>
