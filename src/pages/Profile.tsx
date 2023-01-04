@@ -7,6 +7,7 @@ import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
 import { alphabetize_list_by_title } from './SortBy';
+import { YourShelf } from './YourShelf';
 
 interface setusergridRes{
   statusCode : number,
@@ -100,16 +101,16 @@ export function Profile({widgetCallback} : defaultProps){
         let title = bookshelf_name ? bookshelf_name : date_str;
         if(title.length > 10) title = title.substring(0,7).concat("...");
 
-        //TODO: Add functionality to edit name of saved shelf
-        //TODO: Allow user to delete saved shelf
-        //TODO: maybe move all the functionality - when you click on a given shelf, it pops up full screen, and then you can mess with it
+        const open_shelf_image = () => {
+          widgetCallback(<YourShelf shelf_image={s} from_profile={true} widgetCallback={widgetCallback}/>);
+        };
+
         return (
-        <div className={"shelf_image_element_container shelf_image_element_container_".concat(colorScheme)}>
-          <span className="shelf_image_date">{title}</span>
-          <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str}/>
-          <a href={shelf_url} download="myshelf" className={"a_".concat(colorScheme)}>
-            <button className="bs_shelf_buttons" style={{transform: "scale(.7)", width:"100px"}}>download</button>
-          </a>
+        <div className="shelf_image_container_container" key={nextId()}>
+          <div className={"shelf_image_element_container shelf_image_element_container_".concat(colorScheme)} onClick={open_shelf_image} key={nextId()}>
+            <span className="shelf_image_date" key={nextId()}>{title}</span>
+            <img src={shelf_url} className="shelf_image_element_img" alt={"shelf generated on " + date_str} key={nextId()}/>
+          </div>
         </div>
         );
       }

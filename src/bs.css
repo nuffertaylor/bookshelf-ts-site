@@ -491,13 +491,19 @@ text-align:center;
   cursor:not-allowed;
   filter:grayscale(1);
 }
-.shelf_image_element_container{
-  width: 100px;
+.shelf_image_container_container{
+  width:120px;
   height:225px;
   display: grid;
   place-items: center;
+}
+.shelf_image_element_container{
+  width: 80%;
+  height: 90%;
+  padding: 5px;
   border-radius:10px;
   box-shadow: #696969;
+  cursor: pointer;
 }
 .shelf_image_element_container_light{
   background:#eaeaea;
@@ -519,6 +525,7 @@ text-align:center;
 .shelf_image_date{
   font-weight:600;
   margin-top: 5px;
+  user-select: none;
 }
 .profile_err_text_container{
   margin-bottom:15px;

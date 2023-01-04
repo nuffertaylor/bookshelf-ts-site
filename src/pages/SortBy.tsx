@@ -224,7 +224,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
         return;
       }
       const shelfImage : shelfImage = resObj.body as shelfImage;
-      widgetCallback(<YourShelf shelf_image={shelfImage} widgetCallback={widgetCallback} saved_shelf={false}/>)
+      widgetCallback(<YourShelf shelf_image={shelfImage} widgetCallback={widgetCallback} from_profile={false}/>)
     });
   }
 

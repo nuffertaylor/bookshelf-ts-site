@@ -6,11 +6,12 @@ import { defaultProps, shelfImage } from '../types/interfaces';
 import { getCookie, get_cur_date_str, sendPostRequestToServer } from '../utils/utilities';
 import { Loading } from './Loading';
 import { IconPencil } from '@tabler/icons';
+import { Profile } from './Profile';
 
 
 interface YourShelfProps extends defaultProps {
   shelf_image : shelfImage
-  saved_shelf : boolean,
+  from_profile : boolean,
 }
 interface setshelfownerRequest{
   username : string,
@@ -22,7 +23,7 @@ interface setshelfownerResponse{
   statusCode : number,
   body : shelfImage
 }
-export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelfProps){
+export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShelfProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const { colorScheme } = useContext(ColorSchemeCtx);
@@ -59,7 +60,7 @@ export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelf
       const success_msg = renaming ? "Successfully renamed shelf!" : "Successfully saved this shelf to your profile!";
       if(parsedRes.statusCode === 200) toast.success(success_msg);
       else toast.error("something went wrong, please try again later.");
-      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} saved_shelf={true}/>);
+      widgetCallback(<YourShelf shelf_image={parsedRes.body} widgetCallback={widgetCallback} from_profile={false}/>);
     });
   };
 
@@ -73,8 +74,9 @@ export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelf
     <div className="found_spine_box">
       {/*TODO: fix formatting on header*/}
       <div className="found_spine_head">
-          {saved_shelf ? shelf_image.bookshelf_name : "Your Shelf"}
-          {saved_shelf && 
+          {from_profile && <span className={"arrow arrow-left arrow_".concat(colorScheme)} onClick={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}></span>}
+          {shelf_image.bookshelf_name ? shelf_image.bookshelf_name : "Your Shelf"}
+          {shelf_image.owner && 
             <div className="bs_edit_pencil_yourshelf" onClick={rename_shelf}>
               <IconPencil color="#FFFFFF" size={20} stroke={1.5}/>
             </div>
@@ -85,7 +87,7 @@ export function YourShelf({shelf_image, widgetCallback, saved_shelf} : YourShelf
         <a href={shelf_img_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">Download</button>
         </a>
-        <button className={"bs_shelf_buttons".concat(saved_shelf ? " bs_delete_bg_color" : "")} onClick={saved_shelf ? delete_shelf : save_to_profile}>{saved_shelf ? "Delete Shelf" : "Save to Profile"}</button>
+        <button className={"bs_shelf_buttons".concat(shelf_image.owner ? " bs_delete_bg_color" : "")} onClick={shelf_image.owner ? delete_shelf : save_to_profile}>{shelf_image.owner ? "Delete Shelf" : "Save to Profile"}</button>
       </div>
     </div>
   );
