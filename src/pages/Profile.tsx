@@ -52,8 +52,7 @@ export function Profile({widgetCallback} : defaultProps){
         return;
       }
 
-      //TODO: We could add a section here that expands the information on book spines you've already uploaded (since we have it all).
-      //We could even make the expanded information edit-able, if they want to adjust any of the fields. And honestly, let them change any of the data. It's alright if they screw up their own uploads.
+      //TODO: when you click the title of any book here, open the "Upload" widget, but prefill the data, and allow the user to edit it and even replace the image.
       const built = foundBooks.map(b => {
         let title = b.title;
         if(title.length > 30) title = title.substring(0, 27) + "...";
