@@ -7,6 +7,7 @@ import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
 import { alphabetize_list_by_title } from './SortBy';
+import { Upload } from './Upload';
 import { YourShelf } from './YourShelf';
 
 interface setusergridRes{
@@ -52,13 +53,12 @@ export function Profile({widgetCallback} : defaultProps){
         return;
       }
 
-      //TODO: when you click the title of any book here, open the "Upload" widget, but prefill the data, and allow the user to edit it and even replace the image.
       const built = foundBooks.map(b => {
         let title = b.title;
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
         <div key={b.upload_id}>
-          <a key={b.upload_id.concat(b.fileName)} href={IMG_URL_PREFIX + b.fileName} className={"a_".concat(colorScheme)}>{title}</a>
+          <span key={b.upload_id.concat(b.fileName)} onClick={()=>{widgetCallback(<Upload foundBook={b} widgetCallback={widgetCallback} originCallback={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}/>)}} className={"a_".concat(colorScheme)}>{title}</span>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
         );

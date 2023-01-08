@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
-import { book, defaultProps } from "../types/interfaces";
+import { book, defaultProps, foundBook } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
 import ColorThief from "colorthief"; //needed suppression for this error:   Try `npm i --save-dev @types/pioug__colorthief` if it exists or add a new declaration (.d.ts) file containing `declare module 'colorthief';`
@@ -12,6 +12,7 @@ const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
 interface uploadProps extends defaultProps{
   prefill ?: book,
+  foundBook ?: foundBook,
   originCallback : Function
 }
 interface uploadForm {
@@ -49,7 +50,7 @@ interface spinePostResponse {
 
 //TODO: if a user uploads a landscape image, it totally messes up the CSS. Now, this might not be a problem, as almost all book spines should be portrait, but if we get a landscape image, maybe we can rotate it for the user.
 
-export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
+export function Upload({widgetCallback, prefill, originCallback, foundBook} : uploadProps){
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
   const { colorScheme } = useContext(ColorSchemeCtx);
   
@@ -64,6 +65,12 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
     disable_pubDate = !!prefill.pubDate;
     disable_genre = !!prefill.genre;
   }
+  if(foundBook) {
+    //TODO: display saved image
+    //TODO: run different function to save changes rather than upload new book
+    defaultFormState = {title : foundBook.title, book_id : foundBook.book_id, dimensions : foundBook.dimensions, pubDate : foundBook.pubDate, authorName : foundBook.author, genre : foundBook.genre};
+  }
+
   const [formState, setFormState] = React.useState<uploadForm>(defaultFormState);
   const [b64Image, setB64Image] = React.useState<string>("");
   const [display_uploaded, set_display_uploaded] = React.useState<boolean>(false);
@@ -208,7 +215,7 @@ export function Upload({widgetCallback, prefill, originCallback} : uploadProps){
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} disabled={disable_genre}/>
-          <button className="bs_button" type="submit" id="uploadButton" onClick={submit}>Upload</button>
+          <button className="bs_button" type="submit" id="uploadButton" onClick={submit}>{foundBook ? "Save Changes" : "Upload"}</button>
         </div>
       </div>
     </div>
