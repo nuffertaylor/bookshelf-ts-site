@@ -66,14 +66,12 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     disable_genre = !!prefill.genre;
   }
   if(foundBook) {
-    //TODO: display saved image
-    //TODO: run different function to save changes rather than upload new book
     defaultFormState = {title : foundBook.title, book_id : foundBook.book_id, dimensions : foundBook.dimensions, pubDate : foundBook.pubDate, authorName : foundBook.author, genre : foundBook.genre};
   }
 
   const [formState, setFormState] = React.useState<uploadForm>(defaultFormState);
-  const [b64Image, setB64Image] = React.useState<string>("");
-  const [display_uploaded, set_display_uploaded] = React.useState<boolean>(false);
+  const [b64Image, setB64Image] = React.useState<string>(foundBook ? IMG_URL_PREFIX + foundBook.fileName : "");
+  const [display_uploaded, set_display_uploaded] = React.useState<boolean>(foundBook ? true : false);
   const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
     if(!event.target.files || event.target.files.length === 0) return;
     const file : File = event.target.files[0];
@@ -132,6 +130,7 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     if(!validInput) return;
 
     widgetCallback(<Loading/>);
+    //TODO : write a different slightly different handler here for submitting an edit
 
     let tempImage = new Image();
     tempImage.src = b64Image;

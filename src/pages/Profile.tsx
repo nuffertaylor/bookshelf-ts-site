@@ -57,7 +57,7 @@ export function Profile({widgetCallback} : defaultProps){
         let title = b.title;
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
-        <div key={b.upload_id}>
+        <div key={b.upload_id} style={{userSelect: "none", cursor: "pointer"}}>
           <span key={b.upload_id.concat(b.fileName)} onClick={()=>{widgetCallback(<Upload foundBook={b} widgetCallback={widgetCallback} originCallback={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}/>)}} className={"a_".concat(colorScheme)}>{title}</span>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
