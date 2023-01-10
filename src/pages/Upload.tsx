@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
+import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer, validUrl } from "../utils/utilities";
 import { book, defaultProps, foundBook } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore
@@ -37,7 +37,8 @@ interface spinePostRequest {
   authtoken : string,
   domColor : string,
   upload_id ?: string,
-  replace_img ?: boolean
+  replace_img ?: boolean,
+  keep_upload ?: boolean
 }
 interface spinePostResponse {
   statusCode : number, 
@@ -130,20 +131,8 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     if(!validInput) return;
 
     widgetCallback(<Loading/>);
-    //TODO: if the image hasn't changed, don't attempt to upload it.
-    //likewise don't allow the user to "Save Changes" if no changes have been made. Probably best to disable to button.
-
-    let tempImage = new Image();
-    tempImage.src = b64Image;
-    tempImage.onload = ()=>{
-      const colorThief = new ColorThief();
-      const res = colorThief.getColor(tempImage);
-      const convertRGBArrToHex = (arr : Array<number>) => {
-        let str = "#";
-        arr.forEach(d => str = str.concat(d.toString(16)));
-        return str;
-      };
-      const domColor = convertRGBArrToHex(res);
+    //TODO: don't allow the user to "Save Changes" if no changes have been made. Probably best to disable to button.
+    const genSpinePostRequest = (domColor : string, keep_upload : boolean) : spinePostRequest => {
       let data : spinePostRequest = {
         title : formState.title,
         book_id : formState.book_id,
@@ -161,9 +150,13 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
       if(foundBook) {
         data.replace_img = true;
         data.upload_id = foundBook.upload_id;
+        data.keep_upload = keep_upload;
       }
-      const sendSpinePost = (data : spinePostRequest) => {
-        sendPostRequestToServer("spine", data, (res : string) => {
+      return data;
+    }
+
+    const sendSpinePost = (data : spinePostRequest) => {
+      sendPostRequestToServer("spine", data, (res : string) => {
         const parsed_res : spinePostResponse = JSON.parse(res);
         if(parsed_res.statusCode !== 200) {
           toast.error("something went wrong with your upload. Try again later?");
@@ -199,9 +192,33 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
         }
       });
     };
-    sendSpinePost(data);
-  }
+
+
+
+    //if b64image is a URL, that means we've previously uploaded a spine and we're keeping the previous upload. Inform the backend so it keeps the same file and domColor
+    if(validUrl(b64Image)){
+      sendSpinePost(genSpinePostRequest("", true));
+    }
+    else {
+      let tempImage = new Image();
+      tempImage.src = b64Image;
+      tempImage.onload = () => {
+        const colorThief = new ColorThief();
+        const res = colorThief.getColor(tempImage);
+        const convertRGBArrToHex = (arr : Array<number>) => {
+          let str = "#";
+          arr.forEach(d => str = str.concat(d.toString(16)));
+          return str;
+        };
+        const domColor = convertRGBArrToHex(res);
+        sendSpinePost(genSpinePostRequest(domColor, false));
+      };
+    }
+
+
+
   };
+    
   return(
     <div className="upload_super_container">
       <Title title="Upload Spine" backArrowOnClick={return_to_prev_page}/>
