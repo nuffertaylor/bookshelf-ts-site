@@ -43,8 +43,8 @@ export function onlyDigits(str : string){
   return /^\d+$/.test(str);
 }
 
-export function onlyNumbers(string : string) { 
-  return (string.match(/^[0-9]+$/) != null); 
+export function onlyNumbers(str : string) { 
+  return /^[0-9]+$/.test(str); 
 }
 
 export function getRequest(path : string, callback : any){

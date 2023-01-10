@@ -130,6 +130,8 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     if(!validInput) return;
 
     widgetCallback(<Loading/>);
+    //TODO: if the image hasn't changed, don't attempt to upload it.
+    //likewise don't allow the user to "Save Changes" if no changes have been made. Probably best to disable to button.
 
     let tempImage = new Image();
     tempImage.src = b64Image;
