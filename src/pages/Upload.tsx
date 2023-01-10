@@ -130,7 +130,6 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     if(!validInput) return;
 
     widgetCallback(<Loading/>);
-    //TODO : write a different slightly different handler here for submitting an edit
 
     let tempImage = new Image();
     tempImage.src = b64Image;
@@ -157,6 +156,10 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
         authtoken : getCookie("authtoken"),
         domColor : domColor
       };
+      if(foundBook) {
+        data.replace_img = true;
+        data.upload_id = foundBook.upload_id;
+      }
       const sendSpinePost = (data : spinePostRequest) => {
         sendPostRequestToServer("spine", data, (res : string) => {
         const parsed_res : spinePostResponse = JSON.parse(res);
