@@ -151,6 +151,7 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
         data.replace_img = true;
         data.upload_id = foundBook.upload_id;
         data.keep_upload = keep_upload;
+        if(keep_upload) data.image = "empty";
       }
       return data;
     }
@@ -195,28 +196,24 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
 
 
 
-    //if b64image is a URL, that means we've previously uploaded a spine and we're keeping the previous upload. Inform the backend so it keeps the same file and domColor
-    if(validUrl(b64Image)){
+    //if b64image is a the foundBook URL, that means we've previously uploaded a spine and we're keeping the previous upload. Inform the backend so it keeps the same file and domColor
+    if(foundBook && b64Image === IMG_URL_PREFIX + foundBook.fileName) {
       sendSpinePost(genSpinePostRequest("", true));
+      return;
     }
-    else {
-      let tempImage = new Image();
-      tempImage.src = b64Image;
-      tempImage.onload = () => {
-        const colorThief = new ColorThief();
-        const res = colorThief.getColor(tempImage);
-        const convertRGBArrToHex = (arr : Array<number>) => {
-          let str = "#";
-          arr.forEach(d => str = str.concat(d.toString(16)));
-          return str;
-        };
-        const domColor = convertRGBArrToHex(res);
-        sendSpinePost(genSpinePostRequest(domColor, false));
+    let tempImage = new Image();
+    tempImage.src = b64Image;
+    tempImage.onload = () => {
+      const colorThief = new ColorThief();
+      const res = colorThief.getColor(tempImage);
+      const convertRGBArrToHex = (arr : Array<number>) => {
+        let str = "#";
+        arr.forEach(d => str = str.concat(d.toString(16)));
+        return str;
       };
-    }
-
-
-
+      const domColor = convertRGBArrToHex(res);
+      sendSpinePost(genSpinePostRequest(domColor, false));
+    };
   };
     
   return(
