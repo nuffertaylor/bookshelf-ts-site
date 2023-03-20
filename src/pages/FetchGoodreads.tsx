@@ -30,9 +30,14 @@ export function FetchGoodreads({ widgetCallback } : defaultProps){
       const originCallback = ()=>{widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);}
       const responseObject : getgrbookdetailsResponse = JSON.parse(res);
       if(responseObject.statusCode !== 200) {
-        toast.error("Something went wrong fetching the book details - please fill out the form manually.");
-        widgetCallback(<Upload widgetCallback={widgetCallback} prefill={{book_id: responseObject.body.book_id, author: "", title: ""}} originCallback={originCallback}/>);
-        // widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);
+        if(responseObject.body && responseObject.body.book_id) {
+          toast.info("Something went wrong fetching the book details - please fill out the form manually.");
+          widgetCallback(<Upload widgetCallback={widgetCallback} prefill={{book_id: responseObject.body.book_id, author: "", title: ""}} originCallback={originCallback}/>);
+        }
+        else {
+          toast.error("Something went wrong fetching the book details - maybe an invalid URL/book_id?");
+          widgetCallback(<FetchGoodreads widgetCallback={widgetCallback} />);
+        }
         return;
       }
       let book : book = responseObject.body;
