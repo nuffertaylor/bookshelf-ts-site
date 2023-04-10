@@ -38,6 +38,7 @@ export function Profile({widgetCallback} : defaultProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
   const [viewSelected, setViewSelected] = useState<null | ReactElement>(null);
   const setViewSelectedCallback = (re: ReactElement) => setViewSelected(re);
+  let scrollPosition = 0;
 
   //async load submissions section
   const async_load_submissions = () => {
@@ -60,8 +61,24 @@ export function Profile({widgetCallback} : defaultProps){
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
         <div key={b.upload_id} style={{userSelect: "none", cursor: "pointer"}}>
-          <span key={b.upload_id.concat(b.fileName)} onClick={()=>{
-            setViewSelected(<Upload foundBook={b} widgetCallback={setViewSelectedCallback} originCallback={()=>setViewSelected(null)}/>)}} className={"a_".concat(colorScheme)}>{title}</span>
+          <span
+            className={"a_".concat(colorScheme)}
+            key={b.upload_id.concat(b.fileName)} 
+            onClick={() => {
+              scrollPosition = window.pageYOffset;
+              setViewSelected(
+                <Upload 
+                  foundBook={b}
+                  widgetCallback={setViewSelectedCallback}
+                  originCallback={() => {
+                    setViewSelected(null);
+                    setTimeout(() => window.scrollTo(0, scrollPosition), 0);
+                  }}
+                />);
+            }}
+          >
+            {title}
+          </span>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
         );
