@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import nextId from 'react-id-generator';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
@@ -36,6 +36,8 @@ export function Profile({widgetCallback} : defaultProps){
   const [loadedSubmissions, setLoadedSubmissions] = useState(false);
   const [loadedShelves, setLoadedShelves] = useState(false);
   const { colorScheme } = useContext(ColorSchemeCtx);
+  const [viewSelected, setViewSelected] = useState<null | ReactElement>(null);
+  const setViewSelectedCallback = (re: ReactElement) => setViewSelected(re);
 
   //async load submissions section
   const async_load_submissions = () => {
@@ -58,7 +60,8 @@ export function Profile({widgetCallback} : defaultProps){
         if(title.length > 30) title = title.substring(0, 27) + "...";
         return (
         <div key={b.upload_id} style={{userSelect: "none", cursor: "pointer"}}>
-          <span key={b.upload_id.concat(b.fileName)} onClick={()=>{widgetCallback(<Upload foundBook={b} widgetCallback={widgetCallback} originCallback={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}/>)}} className={"a_".concat(colorScheme)}>{title}</span>
+          <span key={b.upload_id.concat(b.fileName)} onClick={()=>{
+            setViewSelected(<Upload foundBook={b} widgetCallback={setViewSelectedCallback} originCallback={()=>setViewSelected(null)}/>)}} className={"a_".concat(colorScheme)}>{title}</span>
           <div key={b.upload_id.concat("line")} style={{marginTop:"10px"}} className="bs_box_line"></div>
         </div>
         );
@@ -172,33 +175,38 @@ export function Profile({widgetCallback} : defaultProps){
   }
 
   return(
-    <div className="bs_profile_box">
-    <div className="bs_profile_title">
-      <span className="bs_unfound_title">{username}'s Profile</span>
+    <div>
+      <div className={viewSelected ? "" : "hide"}>
+        {viewSelected}
+      </div>
+      <div className={viewSelected ? "hide" : "bs_profile_box"}>
+        <div className="bs_profile_title">
+          <span className="bs_unfound_title">{username}'s Profile</span>
+        </div>
+        <div className="bs_profile_body">
+          <div className="bs_submissions_row" onClick={flipSubmissions}>
+            <span>Your Spine Submissions</span>
+            <span className={("arrow " + yourSubmissionsArrow) + " arrow_" + colorScheme}></span>
+          </div>
+          <div style={{display : yourSubmissionsArrow === "arrow-right" ? "none" : "block"}}>
+            {submissionsSection}
+          </div>
+          <div className="bs_submissions_row" onClick={flipBookshelves}>
+            <span>Your Saved Virtual Bookshelves</span>
+            <span className={("arrow " + yourBookshelvesArrow) + " arrow_" + colorScheme}></span>
+          </div>
+          <div className={yourBookshelvesArrow === "arrow-right" ? "hide" :  loadedShelves ? "shelves_section_grid" : ""}>
+            {shelvesSection}
+          </div>
+          <div className="bs_gr_id_row">
+            <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />
+            <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
+          </div>
+        </div>
+        <div className="bs_center_grid">
+          <button onClick={logout} className="bs_button bs_logout_button">logout</button>
+        </div>
+      </div>
     </div>
-    <div className="bs_profile_body">
-      <div className="bs_submissions_row" onClick={flipSubmissions}>
-        <span>Your Spine Submissions</span>
-        <span className={("arrow " + yourSubmissionsArrow) + " arrow_" + colorScheme}></span>
-      </div>
-      <div style={{display : yourSubmissionsArrow === "arrow-right" ? "none" : "block"}}>
-        {submissionsSection}
-      </div>
-      <div className="bs_submissions_row" onClick={flipBookshelves}>
-        <span>Your Saved Virtual Bookshelves</span>
-        <span className={("arrow " + yourBookshelvesArrow) + " arrow_" + colorScheme}></span>
-      </div>
-      <div className={yourBookshelvesArrow === "arrow-right" ? "hide" :  loadedShelves ? "shelves_section_grid" : ""}>
-        {shelvesSection}
-      </div>
-      <div className="bs_gr_id_row">
-        <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />
-        <button onClick={changeId} className="bs_button bs_enter_button bs_gr_id_button">Save your ID</button>
-      </div>
-    </div>
-    <div className="bs_center_grid">
-      <button onClick={logout} className="bs_button bs_logout_button">logout</button>
-    </div>
-  </div>
   )
 }
