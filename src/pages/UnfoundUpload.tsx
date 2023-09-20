@@ -3,7 +3,7 @@ import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
 import { Title } from './Title';
-import { sendGetRequestToServer } from '../utils/utilities';
+import { getCookie, sendGetRequestToServer, sendPostRequestToServer } from '../utils/utilities';
 import { book, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
@@ -51,11 +51,26 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
 
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u}/>);
   const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
+  const saveUnfound = ()=>{
+    sendPostRequestToServer("saveUnfoundToProfile", {
+      unfound: unfound,
+      username : getCookie("username"),
+      authtoken : getCookie("authtoken"),
+    }, (res : string) => {
+      const parsed_res: {statusCode: number} = JSON.parse(res);
+      if (parsed_res.statusCode === 200) {
+        toast.success("You've saved these books to your profile to upload later.");
+      }
+      else {
+        toast.error("Something went wrong. Try again later?");
+      }
+    });
+  }
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>
       <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button bs_gray" style={{marginBottom: '10px'}}>Save Missing Spines To Profile</button>
+        <button className="bs_adaptive_button bs_gray" style={{marginBottom: '10px'}} onClick={()=>{saveUnfound()}}>Save Missing Spines To Profile</button>
         <div className="bs_box_line"></div>
       </div>
       {unfoundMapped}
