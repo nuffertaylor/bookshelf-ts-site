@@ -9,6 +9,12 @@ import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
 import { toast } from 'react-toastify';
 
+interface SaveUnfoundToProfileReq {
+  unfound: book[],
+  username: string,
+  authtoken: string
+}
+
 export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
@@ -51,12 +57,14 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
 
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u}/>);
   const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
+  const authtoken = getCookie("authtoken");
   const saveUnfound = ()=>{
-    sendPostRequestToServer("saveUnfoundToProfile", {
+    const req: SaveUnfoundToProfileReq = {
       unfound: unfound,
-      username : getCookie("username"),
-      authtoken : getCookie("authtoken"),
-    }, (res : string) => {
+      username: getCookie("username"),
+      authtoken: authtoken,
+    };
+    sendPostRequestToServer("saveUnfoundToProfile", req, (res : string) => {
       const parsed_res: {statusCode: number} = JSON.parse(res);
       if (parsed_res.statusCode === 200) {
         toast.success("You've saved these books to your profile to upload later.");
@@ -66,13 +74,14 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
       }
     });
   }
+
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>
-      <div className="bs_button_wrapper">
+      { authtoken && <div className="bs_button_wrapper">
         <button className="bs_adaptive_button bs_gray" style={{marginBottom: '10px'}} onClick={()=>{saveUnfound()}}>Save Missing Spines To Profile</button>
         <div className="bs_box_line"></div>
-      </div>
+      </div> }
       {unfoundMapped}
     </div>
   );
