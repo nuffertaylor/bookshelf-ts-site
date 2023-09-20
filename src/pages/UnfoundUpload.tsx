@@ -54,6 +54,10 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>
+      <div className="bs_button_wrapper">
+        <button className="bs_adaptive_button bs_gray" style={{marginBottom: '10px'}}>Save Missing Spines To Profile</button>
+        <div className="bs_box_line"></div>
+      </div>
       {unfoundMapped}
     </div>
   );
