@@ -156,9 +156,10 @@ export function Profile({widgetCallback} : defaultProps){
         setUnfoundSection([<span>Something went wrong</span>]);
         return;
       }
-      const originCallback = () => {};
       const sortedUnfound = parsedRes.body.sort(alphabetize_by_title_algo);
-      const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
+      const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={() => {
+        widgetCallback(<Profile widgetCallback={widgetCallback}/>);
+      }}/>);
       setLoadedUnfound(true);
       setUnfoundSection(unfoundMapped);
     });
