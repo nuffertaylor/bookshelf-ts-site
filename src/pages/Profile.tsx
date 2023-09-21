@@ -3,12 +3,13 @@ import nextId from 'react-id-generator';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { IMG_URL_PREFIX } from '../types/constants';
-import { defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
+import { book, defaultProps, foundBook, shelfImage, user } from '../types/interfaces';
 import { getCookie, logout, onlyNumbers, remove_non_numeric_char_from_str, remove_query_string, remove_text_title, sendGetRequestToServer, sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Loading } from './Loading';
-import { alphabetize_list_by_title } from './SortBy';
+import { alphabetize_by_title_algo, alphabetize_list_by_title } from './SortBy';
 import { Upload } from './Upload';
 import { YourShelf } from './YourShelf';
+import { UnfoundRow } from './UnfoundUpload';
 
 interface setusergridRes{
   statusCode : number,
@@ -23,18 +24,26 @@ interface getownershelvesResponse{
   body : shelfImage[]
 }
 
+interface getunfoundtouploadResponse{
+  statusCode : number,
+  body : book[]
+}
+
 export function Profile({widgetCallback} : defaultProps){
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const [yourSubmissionsArrow, setYourSubmissionsArrow] = useState("arrow-right");
   const [yourBookshelvesArrow, setYourBookshelvesArrow] = useState("arrow-right");
+  const [yourUnfoundArrow, setYourUnfoundArrow] = useState("arrow-right");
   const gr_id = getCookie("goodreads_id");
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
   const loading = [<Loading/>];
   const [submissionsSection, setSubmissionsSection] = useState(loading);
   const [shelvesSection, setShelvesSection] = useState(loading);
+  const [unfoundSection, setUnfoundSection] = useState(loading);
   const [loadedSubmissions, setLoadedSubmissions] = useState(false);
   const [loadedShelves, setLoadedShelves] = useState(false);
+  const [loadedUnfound, setLoadedUnfound] = useState(false);
   const { colorScheme } = useContext(ColorSchemeCtx);
   const [viewSelected, setViewSelected] = useState<null | ReactElement>(null);
   const setViewSelectedCallback = (re: ReactElement) => setViewSelected(re);
@@ -140,6 +149,21 @@ export function Profile({widgetCallback} : defaultProps){
     });
   };
 
+  const async_load_unfound = ()=>{
+    sendGetRequestToServer("getunfoundtoupload", "username=".concat(username) + "&authtoken=".concat(authtoken), (res:string)=>{
+      const parsedRes = JSON.parse(res) as getunfoundtouploadResponse;
+      if (parsedRes.statusCode !== 200) {
+        setUnfoundSection([<span>Something went wrong</span>]);
+        return;
+      }
+      const originCallback = () => {};
+      const sortedUnfound = parsedRes.body.sort(alphabetize_by_title_algo);
+      const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
+      setLoadedUnfound(true);
+      setUnfoundSection(unfoundMapped);
+    });
+  }
+
   const flipArrow = (prev:string)=>{
     if(prev==="arrow-right") return "arrow-down";
     return "arrow-right";
@@ -153,6 +177,12 @@ export function Profile({widgetCallback} : defaultProps){
   const flipBookshelves = ()=>{
     setYourBookshelvesArrow(flipArrow);
     if(!loadedShelves) async_load_shelves();
+  }
+
+  const flipUnfound = ()=>{
+    setYourUnfoundArrow(flipArrow);
+    if(!loadedUnfound) async_load_unfound();
+
   }
 
   const changeId = ()=>{
@@ -214,6 +244,13 @@ export function Profile({widgetCallback} : defaultProps){
           </div>
           <div className={yourBookshelvesArrow === "arrow-right" ? "hide" :  loadedShelves ? "shelves_section_grid" : ""}>
             {shelvesSection}
+          </div>
+          <div className="bs_submissions_row" onClick={flipUnfound}>
+            <span>Unfound to Upload</span>
+            <span className={("arrow " + yourUnfoundArrow) + " arrow_" + colorScheme}></span>
+          </div>
+          <div className={yourUnfoundArrow === "arrow-right" ? "hide" :  ""}>
+            {unfoundSection}
           </div>
           <div className="bs_gr_id_row">
             <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />

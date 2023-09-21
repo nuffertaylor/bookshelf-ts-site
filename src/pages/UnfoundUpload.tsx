@@ -4,7 +4,7 @@ import {Upload} from "./Upload";
 import nextId from "react-id-generator";
 import { Title } from './Title';
 import { getCookie, sendGetRequestToServer, sendPostRequestToServer } from '../utils/utilities';
-import { book, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
 import { toast } from 'react-toastify';
@@ -13,6 +13,22 @@ interface SaveUnfoundToProfileReq {
   unfound: book[],
   username: string,
   authtoken: string
+}
+
+export interface unfoundRowProps extends defaultProps { book : book, originCallback : Function }
+export const UnfoundRow = function({widgetCallback, book, originCallback} : unfoundRowProps){
+  const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)};
+  let book_title = book.title;
+  if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
+  return (
+    <div key={nextId()}>
+      <div key={nextId()} className="unfound_row">
+        <span className="bs_unfound_book_title" key={nextId()}>{book_title}</span>
+        <button className="bs_button bs_upload_unfound" key={nextId()} onClick={openUpload}>Upload</button>
+      </div>
+      <div className="bs_box_line"></div>
+    </div>
+  );
 }
 
 export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
@@ -39,23 +55,7 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
     widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
-  interface unfoundRowProps { book : book }
-  const UnfoundRow = function({book} : unfoundRowProps){
-    const openUpload = ()=>{widgetCallback(<Upload widgetCallback={widgetCallback} prefill={book} originCallback={originCallback}/>)};
-    let book_title = book.title;
-    if(book_title.length > 30) book_title = book_title.substring(0, 27) + "...";
-    return (
-      <div key={nextId()}>
-        <div key={nextId()} className="unfound_row">
-          <span className="bs_unfound_book_title" key={nextId()}>{book_title}</span>
-          <button className="bs_button bs_upload_unfound" key={nextId()} onClick={openUpload}>Upload</button>
-        </div>
-        <div className="bs_box_line"></div>
-      </div>
-    );
-  }
-
-  const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u}/>);
+  const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
   const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
   const authtoken = getCookie("authtoken");
   const saveUnfound = ()=>{
@@ -64,7 +64,7 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
       username: getCookie("username"),
       authtoken: authtoken,
     };
-    sendPostRequestToServer("saveUnfoundToProfile", req, (res : string) => {
+    sendPostRequestToServer("addunfoundtoupload", req, (res : string) => {
       const parsed_res: {statusCode: number} = JSON.parse(res);
       if (parsed_res.statusCode === 200) {
         toast.success("You've saved these books to your profile to upload later.");
