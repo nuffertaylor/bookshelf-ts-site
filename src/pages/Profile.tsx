@@ -247,7 +247,7 @@ export function Profile({widgetCallback} : defaultProps){
             {shelvesSection}
           </div>
           <div className="bs_submissions_row" onClick={flipUnfound}>
-            <span>Unfound to Upload</span>
+            <span>{"Unfound to Upload " + (loadedUnfound ? "(" + unfoundSection.length.toString() + ")" : "")}</span>
             <span className={("arrow " + yourUnfoundArrow) + " arrow_" + colorScheme}></span>
           </div>
           <div className={yourUnfoundArrow === "arrow-right" ? "hide" :  ""}>
