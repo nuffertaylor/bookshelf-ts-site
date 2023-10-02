@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, useState } from 'react';
 import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
@@ -8,6 +8,7 @@ import { book, defaultProps, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
 import { getgrbookshelfResponse } from './Create';
 import { toast } from 'react-toastify';
+import { Loading } from './Loading';
 
 interface SaveUnfoundToProfileReq {
   unfound: book[],
@@ -58,16 +59,24 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
   const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
   const authtoken = getCookie("authtoken");
+  const [saveUnfoundButton, setSaveUnfoundButton] = useState<ReactElement>(
+    <button
+      className="bs_adaptive_button bs_gray margin-bottom-10"
+      onClick={()=>{saveUnfound()}}
+    >Save Missing Spines To Profile</button>
+  );
   const saveUnfound = ()=>{
     const req: SaveUnfoundToProfileReq = {
       unfound: unfound,
       username: getCookie("username"),
       authtoken: authtoken,
     };
+    setSaveUnfoundButton(<Loading/>);
     sendPostRequestToServer("addunfoundtoupload", req, (res : string) => {
       const parsed_res: {statusCode: number} = JSON.parse(res);
       if (parsed_res.statusCode === 200) {
         toast.success("You've saved these books to your profile to upload later.");
+        setSaveUnfoundButton(<div className="margin-bottom-10">These unfound books are stored on your profile.</div>)
       }
       else {
         toast.error("Something went wrong. Try again later?");
@@ -75,13 +84,15 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
     });
   }
 
+
+
   return(
     <div className="unfound_box">
       <Title title="Unfound Book Spines" backArrowOnClick={returnToPrevPage}/>
-      { authtoken && <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button bs_gray" style={{marginBottom: '10px'}} onClick={()=>{saveUnfound()}}>Save Missing Spines To Profile</button>
+      { authtoken && (<div className="bs_button_wrapper">
+       { saveUnfoundButton }
         <div className="bs_box_line"></div>
-      </div> }
+      </div>) }
       {unfoundMapped}
     </div>
   );

@@ -560,3 +560,7 @@ a {
 .bs_delete_bg_color {
   background: crimson;
 }
+
+.margin-bottom-10 {
+  margin-bottom: 10px;
+}
