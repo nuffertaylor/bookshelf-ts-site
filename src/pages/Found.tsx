@@ -3,6 +3,7 @@ import {Loading} from "./Loading";
 import { UnfoundUpload } from './UnfoundUpload';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { SortBy } from './SortBy';
+import { download_imgs_in_zip } from '../utils/utilities';
 
 export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
@@ -25,6 +26,11 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
     widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
   }
 
+
+  const downloadBookSpines = () => {
+    download_imgs_in_zip(found);
+  }
+
   return(
     <div className="found_spine_box">
       <div className="bs_head">Found {found.length} Spines</div>
@@ -44,6 +50,9 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
         <button className="bs_adaptive_button bs_gray" onClick={createUnfoundUpload}>Upload Missing Spines</button>
       </div>
       }
+      <div className="bs_button_wrapper">
+        <button className="bs_adaptive_button bs_gray" onClick={downloadBookSpines}>Download Book Spines</button>
+      </div>
     </div>
   );
 }

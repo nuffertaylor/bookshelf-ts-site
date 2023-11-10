@@ -16,6 +16,8 @@
     "client-info": "0.0.5",
     "color-util": "^2.2.3",
     "colorthief": "npm:@pioug/colorthief@^3.0.1",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "react": "^18.1.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.1.0",
@@ -50,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/react-beautiful-dnd": "^13.1.2"
   }
 }

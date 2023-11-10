@@ -1,3 +1,7 @@
+import { IMG_URL_PREFIX } from "../types/constants";
+import { foundBook } from "../types/interfaces";
+import JSZip from "jszip"
+import { saveAs } from 'file-saver';
 
 export function getCookie(cname : string) {
   let name = cname + "=";
@@ -129,3 +133,16 @@ export const split_dimensions_str_into_h_w_l = (dimensions : string) => {
   if(l === 0) l = h; //we have a square book
   return { h : h, w : w, l : l };
 };
+
+export const download_imgs_in_zip = async (books: foundBook[]) => {
+  const zip = new JSZip();
+  for (const book of books) {
+    const response = await fetch(IMG_URL_PREFIX + book.fileName);
+    const bookData = await response.blob();
+    zip.file(book.fileName, bookData);
+  }
+
+  zip.generateAsync({type:"blob"}).then(function(content) {
+    saveAs(content, 'yourBookSpines.zip');
+  });
+}
