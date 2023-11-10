@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer, validUrl } from "../utils/utilities";
+import { getCookie, loggedIn, onlyNumbers, sendPostRequestToServer } from "../utils/utilities";
 import { book, defaultProps, foundBook } from "../types/interfaces";
 import { Loading } from "./Loading";
 // @ts-ignore

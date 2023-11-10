@@ -4,6 +4,7 @@ import { UnfoundUpload } from './UnfoundUpload';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { SortBy } from './SortBy';
 import { download_imgs_in_zip } from '../utils/utilities';
+import { toast } from 'react-toastify';
 
 export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
@@ -26,9 +27,14 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
     widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
   }
 
+  // state 1 = not downloading, 2 = currently downloading, 3 = finished downloading
+  const [downloadingFound, setDownloadingFound] = React.useState<number>(1);
 
-  const downloadBookSpines = () => {
-    download_imgs_in_zip(found);
+  const downloadBookSpines = async () => {
+    setDownloadingFound(2);
+    await download_imgs_in_zip(found);
+    setDownloadingFound(3);
+    toast.success("Successfully downloaded your book spines!");
   }
 
   return(
@@ -50,9 +56,10 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
         <button className="bs_adaptive_button bs_gray" onClick={createUnfoundUpload}>Upload Missing Spines</button>
       </div>
       }
-      <div className="bs_button_wrapper">
+      {downloadingFound === 1 && <div className="bs_button_wrapper">
         <button className="bs_adaptive_button bs_gray" onClick={downloadBookSpines}>Download Book Spines</button>
-      </div>
+      </div>}
+      {downloadingFound === 2 && <Loading/>}
     </div>
   );
 }

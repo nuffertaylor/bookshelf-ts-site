@@ -142,7 +142,6 @@ export const download_imgs_in_zip = async (books: foundBook[]) => {
     zip.file(book.fileName, bookData);
   }
 
-  zip.generateAsync({type:"blob"}).then(function(content) {
-    saveAs(content, 'yourBookSpines.zip');
-  });
+  const content = await zip.generateAsync({type:"blob"});
+  saveAs(content, 'yourBookSpines.zip');
 }
