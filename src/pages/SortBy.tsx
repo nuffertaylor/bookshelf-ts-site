@@ -50,13 +50,10 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
   const alphabetize_list_by_author = (list : Array<foundBook>)=> {
     const sort_by_series = (a : string, b : string) : -1 | 0 | 1 => {
-      if(a.charAt(a.length-1) !== ')' || b.charAt(b.length-1) !== ')') return 0;
+      if(a.charAt(a.length-1) !== ')' || b.charAt(b.length-1) !== ')') { return 0; }
       const find_index_of_opening_prin = (s : string) => {
         for(let i = s.length-1; i > 0; i--){
-          let closing_prin_counter = 0;
-          if(s.charAt(i) === ')') closing_prin_counter += 1;
-          else if(s.charAt(i) === '(') closing_prin_counter -= 1;
-          if(closing_prin_counter === 0) return i;
+          if(s.charAt(i) === '(') return i;
         }
         return -1;
       };
@@ -65,8 +62,22 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       //if either index is -1, we know something went wrong finding the opening parenthesis
       if(indexA === -1 || indexB === -1) return 0;
 
-      const seriesA = a.substring(indexA);
-      const seriesB = b.substring(indexB);
+      const seriesAFull = a.substring(indexA);
+      const seriesBFull = b.substring(indexB);
+      // check if they're the same series.
+      const seriesA = seriesAFull.split('#')[0];
+      const seriesB = seriesBFull.split('#')[0];
+      // If so, sort by the # annotation.
+      if (seriesA === seriesB) {
+        // some series may match and not have a specific 'num' annotation. In which case, just sort by title.
+        if (seriesAFull.indexOf('#') === -1) {
+          return a < b ? -1 : 1;
+        }
+        const seriesANum = Number(seriesAFull.split('#')[1].replace(')', ''));
+        const seriesBNum = Number(seriesBFull.split('#')[1].replace(')', ''));
+        return seriesANum < seriesBNum ? -1 : 1;
+      }
+      // else, sort alphabetically
       if(seriesA < seriesB) return -1;
       if(seriesA > seriesB) return 1;
       return 0;
