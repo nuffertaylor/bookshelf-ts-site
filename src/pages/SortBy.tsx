@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { book, defaultProps, foundBook, shelfImage } from '../types/interfaces';
 import { Select } from '@mantine/core';
 import { getCookie, get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
@@ -180,7 +180,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     });
   };
 
-  const submit_main_click = ()=>{
+  const sortBookList = () => {
     if(selectValue === null) return;
     switch(selectValue){
       case "Author":
@@ -213,9 +213,16 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       case "Publication Year":
         booklist = sort_books_by_year(booklist);
         break;
-      case "Sort Manually":
-        widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
-        return;
+    }
+  };
+
+  useEffect(sortBookList, [selectValue]);
+
+  const submit_main_click = ()=>{
+    if (selectValue === null) return;
+    if (selectValue === "Sort Manually") {
+      widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
+      return;
     }
     generateShelf(booklist);
   }
