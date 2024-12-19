@@ -971,110 +971,117 @@ const bookTestData = [
 ]
 const IMG_URL_PREFIX = "https://bookshelf-spines.s3.amazonaws.com/";
 
-const renderImage = () => {
-  // create and place image
-  const b64 = canvas.toDataURL("image/png");
+class BookshelfRenderer {
+  books = [];
 
-  const canvasContainer = document.getElementById("canvasContainer");
-  canvasContainer.src = b64;
-}
+  borderWidth = 50;
+  shelfWidth = 1500;
+  shelfWidthInches = 24;
+  inchPixelRatio = this.shelfWidth / this.shelfWidthInches;
+  rowHeight = 750;
+  // the number of shelves is dynamic. A new shelf should be added after each row is completed.
+  // TODO: Allow for max number of vertical shelves, then go horizontal.
+  shelfBgColor = "#afb2b6";
+  shelfBorderColor = "#454856";
+  canvas = null;
+  ctx = null;
 
-const borderWidth = 50;
-const shelfWidth = 1500;
-const shelfWidthInches = 24;
-const inchPixelRatio = shelfWidth / shelfWidthInches;
-const rowHeight = 750;
-// the number of shelves is dynamic. A new shelf should be added after each row is completed.
-// TODO: Allow for max number of vertical shelves, then go horizontal.
-const shelfBgColor = "#afb2b6";
-const shelfBorderColor = "#454856";
-let canvas = null;
-let ctx = null;
+  leftStart = this.borderWidth;
+  leftCurrent = this.leftStart;
+  bottomStart = this.rowHeight - this.borderWidth;
+  bottomCurrent = this.bottomStart;
 
-let leftStart = borderWidth;
-let leftCurrent = leftStart;
-let bottomStart = rowHeight - borderWidth;
-let bottomCurrent = bottomStart;
-
-const convertBookDimensionsToPx = (book) => {
-  const dimensions = book.dimensions.split('x');
-  const pxValues = dimensions.map(dimension => {
-    const floatValue = Number(dimension.trim());
-    return floatValue * inchPixelRatio;
-  }).sort((a, b) => a - b);
-  // smallest value should be spine width, largest should be height
-  return {
-    width: pxValues[0],
-    height: pxValues[2],
-  }
-}
-
-const addNewShelfRow = async () => {
-  const initialHeight = canvas.height;
-  let image = null;
-  if (initialHeight > 0) {
-    // this means something has already been rendered.
-    // changing the canvas size erases what was there previously
-    // so we'll store what has been genereated so far and replace it after changing the height
-    image = new Image();
-    image.src = canvas.toDataURL("image/png");
-    await image.decode();
-  }
-  canvas.height = initialHeight + rowHeight;
-  if (image !== null) {
-    ctx.drawImage(image, 0, 0,);
+  constructor(books) {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = this.shelfWidth;
+    this.canvas.height = 0;
+    this.ctx = this.canvas.getContext("2d");
+    this.books = books;
   }
 
-  // draw background
-  ctx.fillStyle = shelfBgColor;
-  ctx.fillRect(0, initialHeight, shelfWidth, rowHeight);
-  // draw borders
-  ctx.fillStyle = shelfBorderColor;
-  // left border
-  ctx.fillRect(0, initialHeight, borderWidth, rowHeight);
-  // right border
-  ctx.fillRect(shelfWidth - borderWidth, initialHeight, borderWidth, rowHeight);
-  // top border
-  ctx.fillRect(0, initialHeight, shelfWidth, borderWidth);
-  // bottom border
-  ctx.fillRect(0, rowHeight - borderWidth + initialHeight, shelfWidth, borderWidth);
-}
+  async render() {
+    await this.addNewShelfRow();
+    this.loadSpines();
+  }
 
-const loadImages = async () => {
-  for (const book of bookTestData) {
-    const spine = new Image();
-    spine.crossOrigin = "anonymous";
-    spine.src = IMG_URL_PREFIX + book.fileName;
-    // need to convert inches to px
-    const dimensions = convertBookDimensionsToPx(book);
-    // wait for image to load
-    await spine.decode();
-    if (leftCurrent > shelfWidth - (borderWidth * 2)) {
-      leftCurrent = borderWidth;
-      bottomCurrent += rowHeight;
-      await addNewShelfRow();
+  // todo make private
+  renderImage() {
+    // create and place image
+    const b64 = this.canvas.toDataURL("image/png");
+
+    const canvasContainer = document.getElementById("canvasContainer");
+    canvasContainer.src = b64;
+  }
+
+  convertBookDimensionsToPx(book) {
+    const dimensions = book.dimensions.split('x');
+    const pxValues = dimensions.map(dimension => {
+      const floatValue = Number(dimension.trim());
+      return floatValue * this.inchPixelRatio;
+    }).sort((a, b) => a - b);
+    // smallest value should be spine width, largest should be height
+    return {
+      width: pxValues[0],
+      height: pxValues[2],
     }
-
-    // because canvas places the image from the top-left corner, we need to add the calculated height to the bottom
-    ctx.drawImage(spine, leftCurrent, bottomCurrent - dimensions.height, dimensions.width, dimensions.height);
-    leftCurrent += dimensions.width;
-
-    renderImage();
   }
 
-  renderImage();
+  addNewShelfRow = async () => {
+    const initialHeight = this.canvas.height;
+    let image = null;
+    if (initialHeight > 0) {
+      // this means something has already been rendered.
+      // changing the canvas size erases what was there previously
+      // so we'll store what has been genereated so far and replace it after changing the height
+      image = new Image();
+      image.src = this.canvas.toDataURL("image/png");
+      await image.decode();
+    }
+    this.canvas.height = initialHeight + this.rowHeight;
+    if (image !== null) {
+      this.ctx.drawImage(image, 0, 0,);
+    }
+  
+    // draw background
+    this.ctx.fillStyle = this.shelfBgColor;
+    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.rowHeight);
+    // draw borders
+    this.ctx.fillStyle = this.shelfBorderColor;
+    // left border
+    this.ctx.fillRect(0, initialHeight, this.borderWidth, this.rowHeight);
+    // right border
+    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, this.rowHeight);
+    // top border
+    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.borderWidth);
+    // bottom border
+    this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
+  }
+
+  loadSpines = async () => {
+    for (const book of this.books) {
+      const spine = new Image();
+      spine.crossOrigin = "anonymous";
+      spine.src = IMG_URL_PREFIX + book.fileName;
+      // need to convert inches to px
+      const dimensions = this.convertBookDimensionsToPx(book);
+      // wait for image to load
+      await spine.decode();
+      if (this.leftCurrent > this.shelfWidth - (this.borderWidth * 2)) {
+        this.leftCurrent = this.borderWidth;
+        this.bottomCurrent += this.rowHeight;
+        await this.addNewShelfRow();
+      }
+  
+      // because canvas places the image from the top-left corner, we need to add the calculated height to the bottom
+      this.ctx.drawImage(spine, this.leftCurrent, this.bottomCurrent - dimensions.height, dimensions.width, dimensions.height);
+      this.leftCurrent += dimensions.width;
+  
+      this.renderImage();
+    }
+  
+  }
 
 }
 
-const main = async () => {
-  canvas = document.createElement("canvas");
-  canvas.width = shelfWidth;
-  canvas.height = 0;
-  ctx = canvas.getContext("2d");
-  
-  await addNewShelfRow();
-  
-  loadImages();
-}
-
-main();
+const bookshelfRenderer = new BookshelfRenderer(bookTestData);
+bookshelfRenderer.render();
