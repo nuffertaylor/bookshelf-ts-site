@@ -1013,11 +1013,15 @@ class BookshelfRenderer {
     canvasContainer.src = b64;
   }
 
+  convertInchesToPx(inches) {
+    return inches * this.inchPixelRatio;
+  }
+
   convertBookDimensionsToPx(book) {
     const dimensions = book.dimensions.split('x');
     const pxValues = dimensions.map(dimension => {
       const floatValue = Number(dimension.trim());
-      return floatValue * this.inchPixelRatio;
+      return this.convertInchesToPx(floatValue);
     }).sort((a, b) => a - b);
     // smallest value should be spine width, largest should be height
     return {
@@ -1039,7 +1043,7 @@ class BookshelfRenderer {
     }
     this.canvas.height = initialHeight + this.rowHeight;
     if (image !== null) {
-      this.ctx.drawImage(image, 0, 0,);
+      this.ctx.drawImage(image, 0, 0);
     }
   
     // draw background
@@ -1078,10 +1082,112 @@ class BookshelfRenderer {
   
       this.renderImage();
     }
+  }
+
+  getAuthorLastName(author) {
+    const authorNames = author.split(' ');
+    return authorNames[authorNames.length - 1]; // this won't work if they're a JR or something
+  }
+
+  getRandomFloatInIntRange(minimum, maximum) {
+    return (Math.random() * (maximum - minimum)) + minimum;
+  }
+
+  generateFakeSpine(incompleteBook) {
+    // create a new canvas
+    const spineCanvas = document.createElement("canvas");
+
+    // Come up with a random height and width in a certain inch range, then convert to px
+    const MINIMUM_HEIGHT_INCHES = 7;
+    const MAXIMUM_HEIGHT_INCHES = 10;
+    const MINIMUM_WIDTH_INCHES = .75;
+    const MAXIMUM_WIDTH_INCHES = 2;
+    const widthInPx = Math.floor(this.convertInchesToPx(this.getRandomFloatInIntRange(MINIMUM_WIDTH_INCHES, MAXIMUM_WIDTH_INCHES)));
+    const heightInPx = Math.floor(this.convertInchesToPx(this.getRandomFloatInIntRange(MINIMUM_HEIGHT_INCHES, MAXIMUM_HEIGHT_INCHES)));
+    
+    // inverse height and width so the book is laying on its side (easier for writing text)
+    spineCanvas.height = widthInPx;
+    spineCanvas.width = heightInPx;
+    const spineCtx = spineCanvas.getContext("2d");
+    
+    // select random background color and fill
+    // could be completely random, but probably better to select from a list of approved colors for good contrast
+    // all colors should look good in contrast with black
+    const BG_COLORS = [
+        "#f1faee",
+        "#a8dadc",
+        "#ff758f",
+        "#ffddd2",
+        "#ddb892",
+        "#dde5b6"
+    ];
+    spineCtx.fillStyle = BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
+    spineCtx.fillRect(0, 0, heightInPx, widthInPx);
+
+    // extract authors last name from the book
+    const lastName = this.getAuthorLastName(incompleteBook.author);
+
+    // TODO select random font from list of available fonts
+    const font = "serif";
+
+    // keep calculating the font until its between 20-30% of the spine
+    const maxLastNameWidth = Math.floor(heightInPx * .3);
+    const minLastNameWidth = Math.floor(heightInPx * .2);
+    let currentFontSize = 48;
+    let validMeasuredNameText = null;
+    while (validMeasuredNameText == null) {
+      spineCtx.font = currentFontSize.toString() + "px " + font;
+      const measuredText = spineCtx.measureText(lastName);
+      if (measuredText.fontBoundingBoxAscent > widthInPx || measuredText.width > maxLastNameWidth) {
+        currentFontSize -= 1;
+        continue;
+      }
+      if (measuredText.width < minLastNameWidth) {
+        currentFontSize += 1;
+        continue;
+      }
+      validMeasuredNameText = measuredText;
+    }
+
+    const nameXPosition = heightInPx - validMeasuredNameText.width - 10;
+    let nameYPosition = Math.floor(widthInPx - validMeasuredNameText.fontBoundingBoxAscent);
+    nameYPosition = nameYPosition + (nameYPosition / 2);
+    console.log(nameYPosition);
+
+    // place the last name on the book
+    spineCtx.fillStyle = "#000000";
+    spineCtx.fillText(lastName, nameXPosition, nameYPosition);
+
+    // place the title on the book
+    // rotate
+    // convert to dataUrl
+    const b64 = spineCanvas.toDataURL("image/png");
+
+    // return object with dataurl string, heightInPx and widthInPx 
+    return {
+      dataURL: b64,
+      heightInPx: heightInPx,
+      widthInPx: widthInPx,
+    }
+  }
+
+  getRandomHexColor() {
+    // Generate a random number between 0 and 16777215 (FFFFFF in decimal)
+    const randomNumber = Math.floor(Math.random() * 16777216);
   
+    // Convert the random number to a hexadecimal string
+    const hexString = randomNumber.toString(16);
+  
+    // Pad the hexadecimal string with leading zeros if necessary
+    const paddedHexString = hexString.padStart(6, '0');
+  
+    // Return the hexadecimal color code with a "#" prefix
+    return `#${paddedHexString}`;
   }
 
 }
 
 const bookshelfRenderer = new BookshelfRenderer(bookTestData);
-bookshelfRenderer.render();
+const canvasContainer = document.getElementById("canvasContainer");
+    canvasContainer.src = bookshelfRenderer.generateFakeSpine({author: 'John Smith'}).dataURL;
+// bookshelfRenderer.render();
