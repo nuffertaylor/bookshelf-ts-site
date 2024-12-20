@@ -1093,6 +1093,34 @@ class BookshelfRenderer {
     return (Math.random() * (maximum - minimum)) + minimum;
   }
 
+  // TODO: this creates an error with short titles (eg four characters)
+  calculateStringFontSizeInRange(stringValue, font, startingFontSize, minWidthInPx, maxWidthInPx, maxHeightInPx, ctx) {
+    let currentFontSize = startingFontSize;
+    let validMeasuredText = null;
+    while (validMeasuredText == null) {
+      ctx.font = currentFontSize.toString() + "px " + font;
+      let measuredText = ctx.measureText(stringValue);
+      // if the text if vertically too big, the string might be too short. shrink it till it fits and return that
+      if (measuredText.fontBoundingBoxAscent >= maxHeightInPx) {
+        while (measuredText.fontBoundingBoxAscent >= maxHeightInPx) {
+          currentFontSize -= 1;
+          measuredText = ctx.measureText(stringValue);
+        }
+        return measuredText;
+      }
+      if (measuredText.width > maxWidthInPx) {
+        currentFontSize -= 1;
+        continue;
+      }
+      if (measuredText.width < minWidthInPx) {
+        currentFontSize += 1;
+        continue;
+      }
+      validMeasuredText = measuredText;
+    }
+    return validMeasuredText;
+  }
+
   generateFakeSpine(incompleteBook) {
     // create a new canvas
     const spineCanvas = document.createElement("canvas");
@@ -1124,42 +1152,44 @@ class BookshelfRenderer {
     spineCtx.fillStyle = BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
     spineCtx.fillRect(0, 0, heightInPx, widthInPx);
 
+    // LAST NAME
     // extract authors last name from the book
     const lastName = this.getAuthorLastName(incompleteBook.author);
 
     // TODO select random font from list of available fonts
     const font = "serif";
 
-    // keep calculating the font until its between 20-30% of the spine
-    const maxLastNameWidth = Math.floor(heightInPx * .3);
-    const minLastNameWidth = Math.floor(heightInPx * .2);
-    let currentFontSize = 48;
-    let validMeasuredNameText = null;
-    while (validMeasuredNameText == null) {
-      spineCtx.font = currentFontSize.toString() + "px " + font;
-      const measuredText = spineCtx.measureText(lastName);
-      if (measuredText.fontBoundingBoxAscent > widthInPx || measuredText.width > maxLastNameWidth) {
-        currentFontSize -= 1;
-        continue;
-      }
-      if (measuredText.width < minLastNameWidth) {
-        currentFontSize += 1;
-        continue;
-      }
-      validMeasuredNameText = measuredText;
-    }
+    // keep calculating the font until its between 20-25% of the spine
+    const MIN_NAME_WIDTH = Math.floor(heightInPx * .2);
+    const MAX_NAME_WIDTH = Math.floor(heightInPx * .25);
+    let validMeasuredNameText = this.calculateStringFontSizeInRange(lastName, font, 48, MIN_NAME_WIDTH, MAX_NAME_WIDTH, widthInPx, spineCtx);
 
-    const nameXPosition = heightInPx - validMeasuredNameText.width - 10;
-    let nameYPosition = Math.floor(widthInPx - validMeasuredNameText.fontBoundingBoxAscent);
-    nameYPosition = nameYPosition + (nameYPosition / 2);
-    console.log(nameYPosition);
-
-    // place the last name on the book
-    spineCtx.fillStyle = "#000000";
+    // place the last name on the spine
+    const NAME_PADDING_RIGHT = 10;
+    const nameXPosition = heightInPx - validMeasuredNameText.width - NAME_PADDING_RIGHT;
+    const nameYPosition = widthInPx - Math.ceil((widthInPx - validMeasuredNameText.fontBoundingBoxAscent) / 2);
+    spineCtx.fillStyle = "#000000"; // black, maybe customizable TODO?
     spineCtx.fillText(lastName, nameXPosition, nameYPosition);
 
-    // place the title on the book
+    // TITLE
+    // remove parenthesised series (if applicable)
+    const title = incompleteBook.title;
+
+    // get text between 50-70% of spine width
+    // TODO: if title is longer than certain number of chars (and has above certain number of white space) divide to two lines
+    const MIN_TITLE_WIDTH = Math.floor(heightInPx * .6);
+    const MAX_WIDTH_WIDTH = Math.floor(heightInPx * .7);
+    let validMeasuredTitleText = this.calculateStringFontSizeInRange(title, font, 10, MIN_TITLE_WIDTH, MAX_WIDTH_WIDTH, widthInPx, spineCtx);
+    
+    // place title on spine
+    const TITLE_PADDING_LEFT = 10;
+    const titleXPosition = TITLE_PADDING_LEFT;
+    const titleYPosition = widthInPx - Math.ceil((widthInPx - validMeasuredTitleText.fontBoundingBoxAscent) / 2);
+    spineCtx.fillText(title, titleXPosition, titleYPosition);
+
     // rotate
+    // spineCtx.rotate(90);
+
     // convert to dataUrl
     const b64 = spineCanvas.toDataURL("image/png");
 
@@ -1189,5 +1219,5 @@ class BookshelfRenderer {
 
 const bookshelfRenderer = new BookshelfRenderer(bookTestData);
 const canvasContainer = document.getElementById("canvasContainer");
-    canvasContainer.src = bookshelfRenderer.generateFakeSpine({author: 'John Smith'}).dataURL;
+canvasContainer.src = bookshelfRenderer.generateFakeSpine({author: 'John Smith', title: 'The Left Hand of Darkness'}).dataURL;
 // bookshelfRenderer.render();
