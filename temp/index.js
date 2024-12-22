@@ -1,4 +1,8 @@
 const bookTestData = [
+    {
+        "title": "The Left Hand of Darkness",
+        "author": "Ursula K. Le Guin",
+    },
   {
       "upload_id": "efd771f9-7a46-413f-906a-4f2e30dacaba",
       "book_id": "625603",
@@ -1065,9 +1069,15 @@ class BookshelfRenderer {
     for (const book of this.books) {
       const spine = new Image();
       spine.crossOrigin = "anonymous";
-      spine.src = IMG_URL_PREFIX + book.fileName;
-      // need to convert inches to px
-      const dimensions = this.convertBookDimensionsToPx(book);
+      let dimensions;
+      if (book?.fileName) {
+        spine.src = IMG_URL_PREFIX + book.fileName;
+        dimensions = this.convertBookDimensionsToPx(book);
+      } else { // we're generating a fake spine
+        const fakeSpineData = this.generateFakeSpine(book);
+        spine.src = fakeSpineData.dataURL;
+        dimensions = { height: fakeSpineData.heightInPx, width: fakeSpineData.widthInPx }
+      }
       // wait for image to load
       await spine.decode();
       if (this.leftCurrent > this.shelfWidth - (this.borderWidth * 2)) {
@@ -1134,6 +1144,8 @@ class BookshelfRenderer {
     // select random background color and fill
     // could be completely random, but probably better to select from a list of approved colors for good contrast
     // all colors should look good in contrast with black
+    // TODO: expand the approved colors, maybe make each color a set with bg color and text color
+    // TODO: allow user to create a personal color pallet for their fake spine generation
     const BG_COLORS = [
         "#f1faee",
         "#a8dadc",
@@ -1142,14 +1154,17 @@ class BookshelfRenderer {
         "#ddb892",
         "#dde5b6"
     ];
-    spineCtx.fillStyle = BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
+    spineCtx.fillStyle = this.getRandomHexColor(); 
+    // this line gets a random color from the provided list
+    // spineCtx.fillStyle = BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
     spineCtx.fillRect(0, 0, heightInPx, widthInPx);
 
     // LAST NAME
     // extract authors last name from the book
     const lastName = this.getAuthorLastName(incompleteBook.author);
 
-    // TODO select random font from list of available fonts
+    // TODO: select random font from list of available fonts
+    // TODO: allow user customization of the list of fonts
     const font = "serif";
 
     // keep calculating the font until its between 20-25% of the spine
@@ -1171,18 +1186,16 @@ class BookshelfRenderer {
     // get text between 50-70% of spine width
     // TODO: if title is longer than certain number of chars (and has above certain number of white space) divide to two lines
     const MIN_TITLE_WIDTH = 0; // No minimum width (in case title is short)
-    const MAX_TITLE_WIDTH = Math.floor(heightInPx * .7);
+    const MAX_TITLE_WIDTH = Math.floor(heightInPx * .7) - 10;
     let validMeasuredTitleText = this.calculateStringFontSizeInRange(title, font, 60, MIN_TITLE_WIDTH, MAX_TITLE_WIDTH, widthInPx - 6, spineCtx);
-    console.log(validMeasuredTitleText);
 
     // place title on spine
-    const titleXPosition = Math.floor((MAX_TITLE_WIDTH - validMeasuredTitleText.width) / 2);
-    console.log(titleXPosition);
+    const titleXPosition = Math.floor((MAX_TITLE_WIDTH - validMeasuredTitleText.width) / 2) + 10;
     const titleYPosition = widthInPx - Math.ceil((widthInPx - validMeasuredTitleText.fontBoundingBoxAscent) / 2);
     spineCtx.fillText(title, titleXPosition, titleYPosition);
 
     // rotate
-    // spineCtx.rotate(90);
+    this.rotateCanvas90(spineCanvas, spineCtx);
 
     // convert to dataUrl
     const b64 = spineCanvas.toDataURL("image/png");
@@ -1209,9 +1222,30 @@ class BookshelfRenderer {
     return `#${paddedHexString}`;
   }
 
+  rotateCanvas90(canvas) {
+    const width = canvas.width;
+    const height = canvas.height;
+  
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.drawImage(canvas, 0, 0);
+  
+    canvas.width = height; // Swap width and height
+    canvas.height = width;
+    const ctx = canvas.getContext('2d');
+  
+    ctx.translate(canvas.width / 2, canvas.height / 2); // Translate to center
+    ctx.rotate(Math.PI / 2); // Rotate 90 degrees
+    // draw the rotated image
+    ctx.drawImage(tempCanvas, -width / 2, -height / 2, width, height);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2); // Translate back
+  }
+
 }
 
 const bookshelfRenderer = new BookshelfRenderer(bookTestData);
-const canvasContainer = document.getElementById("canvasContainer");
-canvasContainer.src = bookshelfRenderer.generateFakeSpine({author: 'John S', title: 'Hand'}).dataURL;
-// bookshelfRenderer.render();
+// const canvasContainer = document.getElementById("canvasContainer");
+// canvasContainer.src = bookshelfRenderer.generateFakeSpine({author: "Margaret Atwood", title: "The Handmaid's Tale"}).dataURL;
+bookshelfRenderer.render();
