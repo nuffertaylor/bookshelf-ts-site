@@ -1080,7 +1080,7 @@ class BookshelfRenderer {
       }
       // wait for image to load
       await spine.decode();
-      if (this.leftCurrent > this.shelfWidth - (this.borderWidth * 2)) {
+      if (this.leftCurrent + dimensions.width > this.shelfWidth - this.borderWidth) {
         this.leftCurrent = this.borderWidth;
         this.bottomCurrent += this.rowHeight;
         await this.addNewShelfRow();
