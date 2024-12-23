@@ -19,7 +19,8 @@ interface setshelfownerRequest{
   authtoken : string,
   filename : string,
   bookshelf_name ?: string,
-  delete_owner ?: boolean
+  delete_owner ?: boolean,
+  b64_shelf_image?: string,
 }
 interface setshelfownerResponse{
   statusCode : number,
@@ -36,17 +37,17 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
   const rename_shelf = () => {set_shelf_name(true)};
 
   const set_shelf_name = (renaming : boolean) => {
-    if(!username) {
+    if (!username) {
       toast.info("Login or register to save the generated shelf to your profile!");
       return;
     }
     const bookshelf_name = prompt("What would you like to name the shelf?", get_cur_date_str());
-    if(!bookshelf_name) {
+    if (!bookshelf_name) {
       if(renaming) toast.info("Canceled renaming shelf.");
       else toast.info("Canceled saving shelf to profile.");
       return;
     }
-    if(bookshelf_name.length > 64) {
+    if (bookshelf_name.length > 64) {
       toast.error("That shelf name is too long! The max length is 64 characters. Try again with a shorter name.");
       return;
     }
@@ -72,7 +73,8 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
       username : username, 
       authtoken : authtoken, 
       filename : shelf_image?.filename ?? '', // todo
-      delete_owner : true
+      delete_owner : true,
+      b64_shelf_image : b64ShelfImage ?? '',
     };
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{
@@ -110,3 +112,5 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
     </div>
   );
 }
+
+// TODO: Make download and save to profile work with new b64ShelfImage

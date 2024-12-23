@@ -14,6 +14,8 @@ interface FakeSpineData {
 
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
+  // can be manually overriden
+  inProgressRenderCallback: ((b64ShelfString: string) => void) | null = null;
 
   private borderWidth = 50;
   private shelfWidth = 1500;
@@ -92,6 +94,10 @@ export class BookshelfRenderer {
     this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.borderWidth);
     // bottom border
     this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
+  
+    if (this.inProgressRenderCallback != null) {
+      this.inProgressRenderCallback(this.canvas.toDataURL());
+    }
   }
 
   private loadSpines = async (): Promise<void> => {
@@ -117,7 +123,11 @@ export class BookshelfRenderer {
   
       // because canvas places the image from the top-left corner, we need to add the calculated height to the bottom
       this.ctx.drawImage(spine, this.leftCurrent, this.bottomCurrent - dimensions.height, dimensions.width, dimensions.height);
-      this.leftCurrent += dimensions.width;  
+      this.leftCurrent += dimensions.width;
+
+      if (this.inProgressRenderCallback != null) {
+        this.inProgressRenderCallback(this.canvas.toDataURL());
+      }
     }
   }
 

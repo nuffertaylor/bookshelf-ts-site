@@ -230,8 +230,12 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
 
   const generateShelf = async (bookList : foundBook[]) => { 
     const bookshelfRenderer = new BookshelfRenderer(bookList);
-    widgetCallback(<Loading/>);
+
+    bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
+      widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);
+    }
     const b64ShelfImage = await bookshelfRenderer.render();
+
     widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
   }
 
