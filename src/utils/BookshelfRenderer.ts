@@ -1,6 +1,17 @@
 import { IMG_URL_PREFIX } from "../types/constants";
 import { book, foundBook } from "../types/interfaces";
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+interface FakeSpineData {
+    dataURL: string;
+    heightInPx: number;
+    widthInPx: number;
+}
+
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
 
@@ -34,19 +45,11 @@ export class BookshelfRenderer {
     this.loadSpines();
   }
 
-  renderImage() {
-    // create and place image
-    // const b64 = this.canvas.toDataURL("image/png");
-
-    // const canvasContainer = document.getElementById("canvasContainer");
-    // canvasContainer.src = b64;
-  }
-
-  convertInchesToPx(inches: number) {
+  convertInchesToPx(inches: number): number {
     return inches * this.inchPixelRatio;
   }
 
-  convertBookDimensionsToPx(book: foundBook) {
+  convertBookDimensionsToPx(book: foundBook): Dimensions {
     const dimensions = book.dimensions.split('x');
     const pxValues = dimensions.map(dimension => {
       const floatValue = Number(dimension.trim());
@@ -59,7 +62,7 @@ export class BookshelfRenderer {
     }
   }
 
-  addNewShelfRow = async () => {
+  addNewShelfRow = async (): Promise<void> => {
     const initialHeight = this.canvas.height;
     let image = null;
     if (initialHeight > 0) {
@@ -90,7 +93,7 @@ export class BookshelfRenderer {
     this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
   }
 
-  loadSpines = async () => {
+  loadSpines = async (): Promise<void> => {
     for (const book of this.books) {
       const spine = new Image();
       spine.crossOrigin = "anonymous";
@@ -113,18 +116,16 @@ export class BookshelfRenderer {
   
       // because canvas places the image from the top-left corner, we need to add the calculated height to the bottom
       this.ctx.drawImage(spine, this.leftCurrent, this.bottomCurrent - dimensions.height, dimensions.width, dimensions.height);
-      this.leftCurrent += dimensions.width;
-  
-      this.renderImage();
+      this.leftCurrent += dimensions.width;  
     }
   }
 
-  getAuthorLastName(author: string) {
+  getAuthorLastName(author: string): string {
     const authorNames = author.split(' ');
     return authorNames[authorNames.length - 1]; // this won't work if they're a JR or something
   }
 
-  getRandomFloatInIntRange(minimum: number, maximum: number) {
+  getRandomFloatInIntRange(minimum: number, maximum: number): number {
     return (Math.random() * (maximum - minimum)) + minimum;
   }
 
@@ -136,7 +137,7 @@ export class BookshelfRenderer {
                                  maxWidthInPx: number,
                                  maxHeightInPx: number,
                                  ctx: CanvasRenderingContext2D
-  ) {
+  ): TextMetrics {
     let currentFontSize = startingFontSize;
     let validMeasuredText = null;
     // note, this could loop infinitely if the string is too short. It will grow vertically beyond the box, then be shrunk but it isn't big enough yet,
@@ -156,7 +157,7 @@ export class BookshelfRenderer {
     return validMeasuredText;
   }
 
-  generateFakeSpine(incompleteBook: book) {
+  generateFakeSpine(incompleteBook: book): FakeSpineData {
     // create a new canvas
     const spineCanvas = document.createElement("canvas");
 
@@ -240,7 +241,7 @@ export class BookshelfRenderer {
     }
   }
 
-  getRandomHexColor() {
+  getRandomHexColor(): string {
     // Generate a random number between 0 and 16777215 (FFFFFF in decimal)
     const randomNumber = Math.floor(Math.random() * 16777216);
   
@@ -254,7 +255,7 @@ export class BookshelfRenderer {
     return `#${paddedHexString}`;
   }
 
-  rotateCanvas90(canvas: HTMLCanvasElement) {
+  rotateCanvas90(canvas: HTMLCanvasElement): void {
     const width = canvas.width;
     const height = canvas.height;
   
