@@ -1143,20 +1143,19 @@ class BookshelfRenderer {
     
     // select random background color and fill
     // could be completely random, but probably better to select from a list of approved colors for good contrast
-    // all colors should look good in contrast with black
-    // TODO: expand the approved colors, maybe make each color a set with bg color and text color
     // TODO: allow user to create a personal color pallet for their fake spine generation
-    const BG_COLORS = [
-        "#f1faee",
-        "#a8dadc",
-        "#ff758f",
-        "#ffddd2",
-        "#ddb892",
-        "#dde5b6"
+    const COLORS = [
+        {bg: "#f1faee", fg: "#000000"},
+        {bg: "#a8dadc", fg: "#000000"},
+        {bg: "#ff758f", fg: "#000000"},
+        {bg: "#ffddd2", fg: "#000000"},
+        {bg: "#ddb892", fg: "#000000"},
+        {bg: "#dde5b6", fg: "#000000"},
     ];
     spineCtx.fillStyle = this.getRandomHexColor(); 
     // this line gets a random color from the provided list
-    // spineCtx.fillStyle = BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)];
+    // const selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+    // spineCtx.fillStyle = selectedColor.bg;
     spineCtx.fillRect(0, 0, heightInPx, widthInPx);
 
     // LAST NAME
@@ -1176,7 +1175,8 @@ class BookshelfRenderer {
     const NAME_PADDING_RIGHT = 10;
     const nameXPosition = heightInPx - validMeasuredNameText.width - NAME_PADDING_RIGHT;
     const nameYPosition = widthInPx - Math.ceil((widthInPx - validMeasuredNameText.fontBoundingBoxAscent) / 2);
-    spineCtx.fillStyle = "#000000"; // black, maybe customizable TODO?
+    spineCtx.fillStyle = "#000000"; // TODO?
+    // spineCtx.fillStyle = COLORS.fg;
     spineCtx.fillText(lastName, nameXPosition, nameYPosition);
 
     // TITLE
