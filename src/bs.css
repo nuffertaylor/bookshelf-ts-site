@@ -92,7 +92,7 @@ body {
 .bs_needsauth{
   grid-template-rows: repeat(2, 1fr) !important;
 }
-.bs_input_section {
+.bs_input_section, .grid-center {
   display: grid;
   place-items: center;
 }

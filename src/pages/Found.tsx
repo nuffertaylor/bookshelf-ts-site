@@ -5,6 +5,7 @@ import { book, defaultProps, foundBook } from '../types/interfaces';
 import { SortBy } from './SortBy';
 import { download_imgs_in_zip } from '../utils/utilities';
 import { toast } from 'react-toastify';
+import { Checkbox } from '@mantine/core';
 
 export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
@@ -18,12 +19,14 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
     widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
+  const [generateFakes, setGenerateFakes] = React.useState<boolean>(true);
+
   const openSortBy = ()=>{
     widgetCallback(<Loading/>);
     let booklist : Array<foundBook> = found;
-    // if((document.getElementById("generate_fakes") as HTMLInputElement)?.checked && unfound) {
-    //   unfound.forEach(u=>booklist.push(u.book as foundBook));
-    // }
+    if (generateFakes && unfound) {
+      unfound.forEach(u => booklist.push(u as foundBook));
+    }
     widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
   }
 
@@ -43,9 +46,14 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
       {unfound && unfound.length > 0 &&
       <div>
         <div className="unfound_spine_subhead">Missing {unfound.length} Spines</div>
-        {/* comment in when fake spine generator fixed
-        <input type="checkbox" id="generate_fakes"/>
-        <label htmlFor="generate_fakes">generate fake spines</label> */}
+        <div className="grid-center">
+          <Checkbox
+            label="generate fake spines"
+            id="generate_fakes"
+            checked={generateFakes}
+            onChange={(event) => setGenerateFakes(event.currentTarget.checked)}
+          />
+        </div>      
       </div>
       }
       <div className="bs_button_wrapper">
