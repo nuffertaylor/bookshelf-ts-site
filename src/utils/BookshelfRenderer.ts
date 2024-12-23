@@ -15,22 +15,22 @@ interface FakeSpineData {
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
 
-  borderWidth = 50;
-  shelfWidth = 1500;
-  shelfWidthInches = 24;
-  inchPixelRatio = this.shelfWidth / this.shelfWidthInches;
-  rowHeight = 750;
+  private borderWidth = 50;
+  private shelfWidth = 1500;
+  private shelfWidthInches = 24;
+  private inchPixelRatio = this.shelfWidth / this.shelfWidthInches;
+  private rowHeight = 750;
   // the number of shelves is dynamic. A new shelf should be added after each row is completed.
   // TODO: Allow for max number of vertical shelves, then go horizontal.
-  shelfBgColor = "#afb2b6";
-  shelfBorderColor = "#454856";
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+  private shelfBgColor = "#afb2b6";
+  private shelfBorderColor = "#454856";
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
 
-  leftStart = this.borderWidth;
-  leftCurrent = this.leftStart;
-  bottomStart = this.rowHeight - this.borderWidth;
-  bottomCurrent = this.bottomStart;
+  private leftStart = this.borderWidth;
+  private leftCurrent = this.leftStart;
+  private bottomStart = this.rowHeight - this.borderWidth;
+  private bottomCurrent = this.bottomStart;
 
   constructor(books: (foundBook | book)[]) {
     this.canvas = document.createElement("canvas");
@@ -40,16 +40,17 @@ export class BookshelfRenderer {
     this.books = books;
   }
 
-  async render() {
+  public async render(): Promise<string> {
     await this.addNewShelfRow();
-    this.loadSpines();
+    await this.loadSpines();
+    return this.canvas.toDataURL();
   }
 
-  convertInchesToPx(inches: number): number {
+  private convertInchesToPx(inches: number): number {
     return inches * this.inchPixelRatio;
   }
 
-  convertBookDimensionsToPx(book: foundBook): Dimensions {
+  private convertBookDimensionsToPx(book: foundBook): Dimensions {
     const dimensions = book.dimensions.split('x');
     const pxValues = dimensions.map(dimension => {
       const floatValue = Number(dimension.trim());
@@ -62,7 +63,7 @@ export class BookshelfRenderer {
     }
   }
 
-  addNewShelfRow = async (): Promise<void> => {
+  private addNewShelfRow = async (): Promise<void> => {
     const initialHeight = this.canvas.height;
     let image = null;
     if (initialHeight > 0) {
@@ -93,7 +94,7 @@ export class BookshelfRenderer {
     this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
   }
 
-  loadSpines = async (): Promise<void> => {
+  private loadSpines = async (): Promise<void> => {
     for (const book of this.books) {
       const spine = new Image();
       spine.crossOrigin = "anonymous";
@@ -120,17 +121,16 @@ export class BookshelfRenderer {
     }
   }
 
-  getAuthorLastName(author: string): string {
+  private getAuthorLastName(author: string): string {
     const authorNames = author.split(' ');
     return authorNames[authorNames.length - 1]; // this won't work if they're a JR or something
   }
 
-  getRandomFloatInIntRange(minimum: number, maximum: number): number {
+  private getRandomFloatInIntRange(minimum: number, maximum: number): number {
     return (Math.random() * (maximum - minimum)) + minimum;
   }
 
-  // TODO: this creates an error with short titles (eg four characters)
-  calculateStringFontSizeInRange(stringValue: string,
+  private calculateStringFontSizeInRange(stringValue: string,
                                  font: string,
                                  startingFontSize: number,
                                  minWidthInPx: number,
@@ -157,7 +157,7 @@ export class BookshelfRenderer {
     return validMeasuredText;
   }
 
-  generateFakeSpine(incompleteBook: book): FakeSpineData {
+  private generateFakeSpine(incompleteBook: book): FakeSpineData {
     // create a new canvas
     const spineCanvas = document.createElement("canvas");
 
@@ -241,7 +241,7 @@ export class BookshelfRenderer {
     }
   }
 
-  getRandomHexColor(): string {
+  private getRandomHexColor(): string {
     // Generate a random number between 0 and 16777215 (FFFFFF in decimal)
     const randomNumber = Math.floor(Math.random() * 16777216);
   
@@ -255,7 +255,7 @@ export class BookshelfRenderer {
     return `#${paddedHexString}`;
   }
 
-  rotateCanvas90(canvas: HTMLCanvasElement): void {
+  private rotateCanvas90(canvas: HTMLCanvasElement): void {
     const width = canvas.width;
     const height = canvas.height;
   

@@ -8,6 +8,7 @@ import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
 import { Landing } from './Landing';
 import { toast } from 'react-toastify';
+import { BookshelfRenderer } from '../utils/BookshelfRenderer';
 
 interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
@@ -227,23 +228,11 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     generateShelf(booklist);
   }
 
-  const generateShelf = (bl : foundBook[])=>{
+  const generateShelf = async (bookList : foundBook[]) => { 
+    const bookshelfRenderer = new BookshelfRenderer(bookList);
     widgetCallback(<Loading/>);
-    const data : genshelfRequest = {
-      bookList : bl,
-      gr_shelf_name : getCookie("gr_shelf_name"),
-      gr_user_id : getCookie("gr_user_id")
-    }
-    sendPostRequestToServer("genshelf", data, (res : string)=>{
-      const resObj : genshelfResponse = JSON.parse(res);
-      if(resObj.statusCode !== 200) {
-        toast.error("something went wrong generating your shelf. Please try again later.");
-        widgetCallback(<Landing widgetCallback={widgetCallback} />);
-        return;
-      }
-      const shelfImage : shelfImage = resObj.body as shelfImage;
-      widgetCallback(<YourShelf shelf_image={shelfImage} widgetCallback={widgetCallback} from_profile={false}/>)
-    });
+    const b64ShelfImage = await bookshelfRenderer.render();
+    widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
   }
 
   const alterSelectValue = (val:string)=>{

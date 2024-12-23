@@ -10,8 +10,9 @@ import { Profile } from './Profile';
 
 
 interface YourShelfProps extends defaultProps {
-  shelf_image : shelfImage
-  from_profile : boolean,
+  shelf_image?: shelfImage,
+  from_profile: boolean,
+  b64ShelfImage?: string,
 }
 interface setshelfownerRequest{
   username : string,
@@ -24,7 +25,7 @@ interface setshelfownerResponse{
   statusCode : number,
   body : shelfImage
 }
-export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShelfProps){
+export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfImage} : YourShelfProps) {
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const { colorScheme } = useContext(ColorSchemeCtx);
@@ -52,7 +53,7 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
     let req : setshelfownerRequest = {
       username : username, 
       authtoken : authtoken, 
-      filename : shelf_image.filename, 
+      filename : shelf_image?.filename ?? '', // TODO
       bookshelf_name : bookshelf_name
     };
     widgetCallback(<Loading/>);
@@ -70,7 +71,7 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
     let req : setshelfownerRequest = {
       username : username, 
       authtoken : authtoken, 
-      filename : shelf_image.filename,
+      filename : shelf_image?.filename ?? '', // todo
       delete_owner : true
     };
     widgetCallback(<Loading/>);
@@ -86,13 +87,14 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
     });
   };
 
-  const shelf_img_url = IMG_URL_PREFIX.concat(shelf_image.filename);
+  // if no filename is provided, it's a newly generated b64 image.
+  const shelf_img_url = !!shelf_image?.filename ? IMG_URL_PREFIX.concat(shelf_image.filename) : b64ShelfImage;
   return(
     <div className="found_spine_box">
       <div className="found_spine_head">
           {from_profile && <span className={"arrow arrow-left arrow_".concat(colorScheme)} style={{marginTop:".5em"}}onClick={()=>{widgetCallback(<Profile widgetCallback={widgetCallback}/>)}}></span>}
-          <span style={{width:"100%"}}>{shelf_image.bookshelf_name ? shelf_image.bookshelf_name : "Your Shelf"}</span>
-          {shelf_image.owner && 
+          <span style={{width:"100%"}}>{shelf_image?.bookshelf_name ? shelf_image?.bookshelf_name : "Your Shelf"}</span>
+          {shelf_image?.owner && 
             <div className="bs_edit_pencil_yourshelf" onClick={rename_shelf}>
               <IconPencil color="#FFFFFF" size={20} stroke={1.5}/>
             </div>
@@ -103,7 +105,7 @@ export function YourShelf({shelf_image, widgetCallback, from_profile} : YourShel
         <a href={shelf_img_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">Download</button>
         </a>
-        <button className={"bs_shelf_buttons".concat(shelf_image.owner ? " bs_delete_bg_color" : "")} onClick={shelf_image.owner ? delete_shelf : save_to_profile}>{shelf_image.owner ? "Delete Shelf" : "Save to Profile"}</button>
+        <button className={"bs_shelf_buttons".concat(shelf_image?.owner ? " bs_delete_bg_color" : "")} onClick={shelf_image?.owner ? delete_shelf : save_to_profile}>{shelf_image?.owner ? "Delete Shelf" : "Save to Profile"}</button>
       </div>
     </div>
   );
