@@ -223,8 +223,11 @@ export class BookshelfRenderer {
     spineCtx.fillText(lastName, nameXPosition, nameYPosition);
 
     // TITLE
-    // TODO remove parenthesised series (if applicable)
-    const title = incompleteBook.title;
+    let title = incompleteBook.title;
+    // goodreads includes series info like so "Title (Series, #2)"
+    // so if there's a parenthesis, we'll cut everything out. If the titles has parens those will be removed, but kind of an edge case.
+    const indexOfParen = title.indexOf('(');
+    if (indexOfParen > 0) { title = title.slice(0, indexOfParen - 1); }
 
     // get text between 50-70% of spine width
     // TODO: if title is longer than certain number of chars (and has above certain number of white space) divide to two lines
