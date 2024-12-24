@@ -54,8 +54,9 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
     let req : setshelfownerRequest = {
       username : username, 
       authtoken : authtoken, 
-      filename : shelf_image?.filename ?? '', // TODO
-      bookshelf_name : bookshelf_name
+      filename : shelf_image?.filename ?? '',
+      bookshelf_name : bookshelf_name,
+      b64_shelf_image: b64ShelfImage ?? '',
     };
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{
@@ -72,9 +73,8 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
     let req : setshelfownerRequest = {
       username : username, 
       authtoken : authtoken, 
-      filename : shelf_image?.filename ?? '', // todo
+      filename : shelf_image?.filename ?? '',
       delete_owner : true,
-      b64_shelf_image : b64ShelfImage ?? '',
     };
     widgetCallback(<Loading/>);
     sendPostRequestToServer("setshelfowner", req, (res:string)=>{

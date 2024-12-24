@@ -45,7 +45,7 @@ export class BookshelfRenderer {
   public async render(): Promise<string> {
     await this.addNewShelfRow();
     await this.loadSpines();
-    return this.canvas.toDataURL();
+    return this.canvas.toDataURL("image/jpeg"); // to save space
   }
 
   private convertInchesToPx(inches: number): number {
@@ -96,7 +96,7 @@ export class BookshelfRenderer {
     this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
   
     if (this.inProgressRenderCallback != null) {
-      this.inProgressRenderCallback(this.canvas.toDataURL());
+      this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
     }
   }
 
@@ -126,7 +126,7 @@ export class BookshelfRenderer {
       this.leftCurrent += dimensions.width;
 
       if (this.inProgressRenderCallback != null) {
-        this.inProgressRenderCallback(this.canvas.toDataURL());
+        this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
       }
     }
   }
