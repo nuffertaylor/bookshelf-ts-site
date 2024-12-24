@@ -112,5 +112,3 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
     </div>
   );
 }
-
-// TODO: Make download and save to profile work with new b64ShelfImage
