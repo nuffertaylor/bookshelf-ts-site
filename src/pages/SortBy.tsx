@@ -234,9 +234,14 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
       widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);
     }
-    const b64ShelfImage = await bookshelfRenderer.render();
 
-    widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
+    try {
+      const b64ShelfImage = await bookshelfRenderer.render();
+      widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong generating your shelf. Please report this error on the discord so we can get it fixed :)")
+    }
   }
 
   const alterSelectValue = (val:string)=>{
