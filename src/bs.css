@@ -564,3 +564,7 @@ a {
 .margin-bottom-10 {
   margin-bottom: 10px;
 }
+
+.text-left {
+  text-align: left;
+}

@@ -4,6 +4,10 @@ import { sortManualProps } from "./SortManual";
 
 export function CustomizeShelf({widgetCallback, booklist, genShelf}: sortManualProps) {
 
+  // TODO: iterate through the booklist to find the tallest book. This plus .5 will be the default shelf height
+
+  // TODO: If the user inputs a shelfHeight smaller than the tallest book, print a warning
+
   const [shelfBgColor, setShelfBgColor] = useState("#afb2b6");
   const [shelfFgColor, setShelfFgColor] = useState("#454856");
 
@@ -19,8 +23,8 @@ export function CustomizeShelf({widgetCallback, booklist, genShelf}: sortManualP
 
   return(
   <div>
-      <div className="bs_head">Customize Shelf Appearance</div>
-      <div className="">
+      <div className="bs_head">Customize Shelf</div>
+      <div className="text-left">
         <ColorInput
           radius="md"
           label="Background Color"
@@ -29,7 +33,7 @@ export function CustomizeShelf({widgetCallback, booklist, genShelf}: sortManualP
           onChange={setShelfBgColor}
         />
       </div>
-      <div className="">
+      <div className="text-left">
         <ColorInput
           radius="md"
           label="Foreground Color"
