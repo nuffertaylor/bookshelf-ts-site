@@ -12,6 +12,15 @@ interface FakeSpineData {
   widthInPx: number;
 }
 
+export interface BookshelfRendererParams {
+  books: (foundBook | book)[],
+  shelfWidthInches?: number,
+  shelfHeightInches?: number,
+  borderWidthInches?: number,
+  shelfBgColor?: string,
+  shelfFgColor?: string,
+}
+
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
   // can be manually overriden
@@ -60,14 +69,7 @@ export class BookshelfRenderer {
   private bottomStart = 0;
   private bottomCurrent = 0;
 
-  constructor(params: {
-    books: (foundBook | book)[],
-    shelfWidthInches?: number,
-    shelfHeightInches?: number,
-    borderWidthInches?: number,
-    shelfBgColor?: string,
-    shelfFgColor?: string,
-  }) {
+  constructor(params: BookshelfRendererParams) {
     Object.assign(this, params);
     this.shelfWidth = this.shelfWidthInches * this.inchPixelRatio;
     this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;

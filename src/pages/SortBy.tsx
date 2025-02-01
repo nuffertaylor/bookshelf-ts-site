@@ -8,9 +8,10 @@ import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
 import { Landing } from './Landing';
 import { toast } from 'react-toastify';
-import { BookshelfRenderer } from '../utils/BookshelfRenderer';
+import { BookshelfRenderer, BookshelfRendererParams } from '../utils/BookshelfRenderer';
+import { CustomizeShelf } from './CustomizeShelf';
 
-interface sortByProps extends defaultProps{
+export interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
 }
 interface genshelfRequest {
@@ -44,10 +45,12 @@ export const alphabetize_list_by_title = (list : Array<foundBook>) => {
   return list.sort((a, b) => alphabetize_by_title_algo(a, b));
 };
 
-export function SortBy({widgetCallback, booklist} : sortByProps){
+export function SortBy({widgetCallback, booklist} : sortByProps) {
   const [selectValue, setSelectValue] = useState<string | null>(null);
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
   const [disabledClass, setDisabledClass] = useState<string>("bs_disabled");
+  const [showCustomizeButton, setShowCustomizeButton] = useState<string>("");
+
 
   const alphabetize_list_by_author = (list : Array<foundBook>)=> {
     const sort_by_series = (a : string, b : string) : -1 | 0 | 1 => {
@@ -220,16 +223,24 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
   useEffect(sortBookList, [selectValue]);
 
   const submit_main_click = ()=>{
-    if (selectValue === null) return;
+    if (selectValue === null) { return; }
     if (selectValue === "Sort Manually") {
       widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
       return;
     }
-    generateShelf(booklist);
-  }
+    generateShelf({books: booklist});
+  };
 
-  const generateShelf = async (bookList : foundBook[]) => { 
-    const bookshelfRenderer = new BookshelfRenderer(bookList);
+  const customize_shelf_click = () => {
+    if (selectValue === null || selectValue === "Sort Manually") {
+      return;
+    }
+    widgetCallback(<CustomizeShelf widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
+    return;
+  };
+
+  const generateShelf = async (params: BookshelfRendererParams) => { 
+    const bookshelfRenderer = new BookshelfRenderer(params);
 
     bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
       widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);
@@ -244,11 +255,17 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
     }
   }
 
-  const alterSelectValue = (val:string)=>{
-    if(disabledClass) setDisabledClass("");
+  const alterSelectValue = (val: string) => {
+    if (disabledClass) { setDisabledClass(""); }
     setSelectValue(val);
-    if(val === "Sort Manually") setButtonText("Start Manual Sort");
-    else setButtonText("Generate Shelf");
+    if (val === "Sort Manually") {
+      setButtonText("Start Manual Sort");
+      setShowCustomizeButton("hide");
+    }
+    else {
+      setButtonText("Generate Shelf");
+      setShowCustomizeButton("");
+    }
   }
 
   return(
@@ -274,7 +291,22 @@ export function SortBy({widgetCallback, booklist} : sortByProps){
       />
     </div>
     <div className="bs_button_wrapper">
-      <button className={disabledClass + " bs_button"} id="sort_main_button" onClick={submit_main_click}>{buttonText}</button>
+      <button
+        className={disabledClass + " bs_button"}
+        id="sort_main_button"
+        onClick={submit_main_click}
+      >
+        {buttonText}
+      </button>
+    </div>
+    <div className="bs_button_wrapper">
+      <button 
+        className={disabledClass + " bs_button " + showCustomizeButton}
+        id="customize_shelf_button"
+        onClick={customize_shelf_click}
+      >
+        Customize Shelf
+      </button>
     </div>
   </div>
   )

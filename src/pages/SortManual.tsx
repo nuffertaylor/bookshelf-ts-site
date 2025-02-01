@@ -3,14 +3,15 @@ import { defaultProps, foundBook } from '../types/interfaces';
 import { DragAndDropList } from './DragAndDropList';
 import { SortBy } from './SortBy';
 import { Title } from './Title';
+import { BookshelfRendererParams } from '../utils/BookshelfRenderer';
 
-interface sortManualProps extends defaultProps{
+export interface sortManualProps extends defaultProps{
   booklist : Array<foundBook>,
-  genShelf : Function
+  genShelf : (params: BookshelfRendererParams) => void
 }
 export function SortManual({widgetCallback, booklist, genShelf} : sortManualProps){
   const returnToSortBy = ()=>{widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>)};
-  const submit_man_sort = ()=>{ genShelf(booklist) };
+  const submit_man_sort = ()=>{ genShelf({books: booklist}) };
   const update_booklist = (bl : foundBook[]) => { booklist = bl };
 
   //should I make the submit button sticky?
