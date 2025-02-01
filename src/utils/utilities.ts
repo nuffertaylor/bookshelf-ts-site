@@ -145,3 +145,12 @@ export const download_imgs_in_zip = async (books: foundBook[]) => {
   const content = await zip.generateAsync({type:"blob"});
   saveAs(content, 'yourBookSpines.zip');
 }
+
+export const convert_cm_to_in = (cmValue: number): number => {
+  return cmValue / 2.54;
+}
+
+export const convert_in_to_cm = (inValue: number): number => {
+  return inValue * 2.54;
+}
+
