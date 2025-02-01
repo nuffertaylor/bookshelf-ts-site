@@ -7,9 +7,9 @@ interface Dimensions {
 }
 
 interface FakeSpineData {
-    dataURL: string;
-    heightInPx: number;
-    widthInPx: number;
+  dataURL: string;
+  heightInPx: number;
+  widthInPx: number;
 }
 
 export class BookshelfRenderer {
@@ -43,7 +43,7 @@ export class BookshelfRenderer {
     this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
     this.recalculateStartingPositions();
   }
-  private _shelfHeightInches = 12;
+  private _shelfHeightInches = 10.5;
   private shelfHeight: number;
 
   private inchPixelRatio = 60;
@@ -60,8 +60,15 @@ export class BookshelfRenderer {
   private bottomStart = 0;
   private bottomCurrent = 0;
 
-  constructor(books: (foundBook | book)[]) {
-    this.books = books;
+  constructor(params: {
+    books: (foundBook | book)[],
+    shelfWidthInches?: number,
+    shelfHeightInches?: number,
+    borderWidthInches?: number,
+    shelfBgColor?: string,
+    shelfFgColor?: string,
+  }) {
+    Object.assign(this, params);
     this.shelfWidth = this.shelfWidthInches * this.inchPixelRatio;
     this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
     this.borderWidth = this.borderWidthInches * this.inchPixelRatio;
@@ -78,7 +85,7 @@ export class BookshelfRenderer {
   private recalculateStartingPositions(): void {
     this.leftStart = this.borderWidth;
     this.leftCurrent = this.leftStart;
-    this.bottomStart = this.shelfHeight - this.borderWidth;
+    this.bottomStart = this.shelfHeight + this.borderWidth;
     this.bottomCurrent = this.bottomStart;
   }
 
@@ -108,6 +115,9 @@ export class BookshelfRenderer {
   private addNewShelfRow = async (): Promise<void> => {
     const initialHeight = this.canvas.height;
     let image = null;
+    let additionalHeight = this.shelfHeight + (this.borderWidth * 2);
+    let bottomBorderStart = this.shelfHeight + initialHeight + this.borderWidth;
+    let borderTopStart = 0;
     if (initialHeight > 0) {
       // this means something has already been rendered.
       // changing the canvas size erases what was there previously
@@ -115,25 +125,33 @@ export class BookshelfRenderer {
       image = new Image();
       image.src = this.canvas.toDataURL("image/png");
       await image.decode();
+      // we need to remove borderWidth on every row after the first because
+      // the bottom of the previous row and the top of this row are the same line
+      additionalHeight -= this.borderWidth;
+      bottomBorderStart -= this.borderWidth;
+      borderTopStart = initialHeight - this.borderWidth;
     }
-    this.canvas.height = initialHeight + this.shelfHeight;
+    this.canvas.height = initialHeight + additionalHeight;
     if (image !== null) {
       this.ctx.drawImage(image, 0, 0);
     }
   
     // draw background
     this.ctx.fillStyle = this.shelfBgColor;
-    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.shelfHeight);
+    this.ctx.fillRect(0, initialHeight, this.shelfWidth, additionalHeight);
     // draw borders
     this.ctx.fillStyle = this.shelfFgColor;
     // left border
-    this.ctx.fillRect(0, initialHeight, this.borderWidth, this.shelfHeight);
+    this.ctx.fillRect(0, initialHeight, this.borderWidth, additionalHeight);
     // right border
-    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, this.shelfHeight);
+    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, additionalHeight);
     // top border
-    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.borderWidth);
+    // (we only need to draw this on the first row)
+    if (borderTopStart === 0) {
+      this.ctx.fillRect(0, borderTopStart, this.shelfWidth, this.borderWidth);
+    }
     // bottom border
-    this.ctx.fillRect(0, this.shelfHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
+    this.ctx.fillRect(0, bottomBorderStart, this.shelfWidth, this.borderWidth);
   
     if (this.inProgressRenderCallback != null) {
       this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
@@ -157,7 +175,7 @@ export class BookshelfRenderer {
       await spine.decode();
       if (this.leftCurrent + dimensions.width > this.shelfWidth - this.borderWidth) {
         this.leftCurrent = this.borderWidth;
-        this.bottomCurrent += this.shelfHeight;
+        this.bottomCurrent += this.shelfHeight + this.borderWidth;
         await this.addNewShelfRow();
       }
   
@@ -212,8 +230,8 @@ export class BookshelfRenderer {
     const spineCanvas = document.createElement("canvas");
 
     // Come up with a random height and width in a certain inch range, then convert to px
-    const MINIMUM_HEIGHT_INCHES = 7;
-    const MAXIMUM_HEIGHT_INCHES = 10;
+    const MINIMUM_HEIGHT_INCHES = 6.5;
+    const MAXIMUM_HEIGHT_INCHES = this.shelfHeightInches - 1; // 1 inch shorter than shelf height
     const MINIMUM_WIDTH_INCHES = .75;
     const MAXIMUM_WIDTH_INCHES = 2;
     const widthInPx = Math.floor(this.convertInchesToPx(this.getRandomFloatInIntRange(MINIMUM_WIDTH_INCHES, MAXIMUM_WIDTH_INCHES)));
