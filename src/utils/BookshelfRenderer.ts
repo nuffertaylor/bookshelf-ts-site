@@ -17,29 +17,69 @@ export class BookshelfRenderer {
   // can be manually overriden
   inProgressRenderCallback: ((b64ShelfString: string) => void) | null = null;
 
-  private borderWidth = 50;
-  private shelfWidth = 1500;
-  private shelfWidthInches = 24;
-  private inchPixelRatio = this.shelfWidth / this.shelfWidthInches;
-  private rowHeight = 750;
+  public get borderWidthInches() { return this._borderWidthInches; }
+  set borderWidthInches(borderWidthInches: number) {
+    this._borderWidthInches = borderWidthInches;
+    this.borderWidth = borderWidthInches * this.inchPixelRatio;
+    this.recalculateStartingPositions();
+  }
+  private _borderWidthInches = 1;
+  private borderWidth: number;
+
+  public get shelfWidthInches() { return this._shelfWidthInches; }
+  set shelfWidthInches(widthInches: number) {
+    this._shelfWidthInches = widthInches;
+    this.shelfWidth = this.shelfWidthInches * this.inchPixelRatio;
+    if (this.canvas) {
+      this.canvas.width = this.shelfWidth;
+    }
+  }
+  private _shelfWidthInches = 30;
+  private shelfWidth: number;
+
+  public get shelfHeightInches() { return this._shelfHeightInches; }
+  set shelfHeightInches(heightInches: number) {
+    this._shelfHeightInches = heightInches;
+    this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
+    this.recalculateStartingPositions();
+  }
+  private _shelfHeightInches = 12;
+  private shelfHeight: number;
+
+  private inchPixelRatio = 60;
+
   // the number of shelves is dynamic. A new shelf should be added after each row is completed.
   // TODO: Allow for max number of vertical shelves, then go horizontal.
   private shelfBgColor = "#afb2b6";
-  private shelfBorderColor = "#454856";
+  private shelfFgColor = "#454856";
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
-  private leftStart = this.borderWidth;
-  private leftCurrent = this.leftStart;
-  private bottomStart = this.rowHeight - this.borderWidth;
-  private bottomCurrent = this.bottomStart;
+  private leftStart = 0;
+  private leftCurrent = 0;
+  private bottomStart = 0;
+  private bottomCurrent = 0;
 
   constructor(books: (foundBook | book)[]) {
+    this.books = books;
+    this.shelfWidth = this.shelfWidthInches * this.inchPixelRatio;
+    this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
+    this.borderWidth = this.borderWidthInches * this.inchPixelRatio;
+
+    // same content as recalculateStartingPositions
+    this.recalculateStartingPositions();
+
     this.canvas = document.createElement("canvas");
     this.canvas.width = this.shelfWidth;
     this.canvas.height = 0;
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.books = books;
+  }
+
+  private recalculateStartingPositions(): void {
+    this.leftStart = this.borderWidth;
+    this.leftCurrent = this.leftStart;
+    this.bottomStart = this.shelfHeight - this.borderWidth;
+    this.bottomCurrent = this.bottomStart;
   }
 
   public async render(): Promise<string> {
@@ -76,24 +116,24 @@ export class BookshelfRenderer {
       image.src = this.canvas.toDataURL("image/png");
       await image.decode();
     }
-    this.canvas.height = initialHeight + this.rowHeight;
+    this.canvas.height = initialHeight + this.shelfHeight;
     if (image !== null) {
       this.ctx.drawImage(image, 0, 0);
     }
   
     // draw background
     this.ctx.fillStyle = this.shelfBgColor;
-    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.rowHeight);
+    this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.shelfHeight);
     // draw borders
-    this.ctx.fillStyle = this.shelfBorderColor;
+    this.ctx.fillStyle = this.shelfFgColor;
     // left border
-    this.ctx.fillRect(0, initialHeight, this.borderWidth, this.rowHeight);
+    this.ctx.fillRect(0, initialHeight, this.borderWidth, this.shelfHeight);
     // right border
-    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, this.rowHeight);
+    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, this.shelfHeight);
     // top border
     this.ctx.fillRect(0, initialHeight, this.shelfWidth, this.borderWidth);
     // bottom border
-    this.ctx.fillRect(0, this.rowHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
+    this.ctx.fillRect(0, this.shelfHeight - this.borderWidth + initialHeight, this.shelfWidth, this.borderWidth);
   
     if (this.inProgressRenderCallback != null) {
       this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
@@ -117,7 +157,7 @@ export class BookshelfRenderer {
       await spine.decode();
       if (this.leftCurrent + dimensions.width > this.shelfWidth - this.borderWidth) {
         this.leftCurrent = this.borderWidth;
-        this.bottomCurrent += this.rowHeight;
+        this.bottomCurrent += this.shelfHeight;
         await this.addNewShelfRow();
       }
   
