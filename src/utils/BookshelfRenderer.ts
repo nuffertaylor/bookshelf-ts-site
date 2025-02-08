@@ -102,7 +102,7 @@ export class BookshelfRenderer {
   }
 
   private convertBookDimensionsToPx(book: foundBook): Dimensions {
-    const dimensions = book.dimensions.split('x');
+    const dimensions = book.dimensions.toLowerCase().split('x');
     const pxValues = dimensions.map(dimension => {
       const floatValue = Number(dimension.trim());
       return this.convertInchesToPx(floatValue);
