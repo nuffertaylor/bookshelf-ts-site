@@ -27,6 +27,28 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 700,
     width: 60,
   },
+
+  titleContainer: {
+    width: '100%',
+    marginLeft: '10px',
+    overflow: 'hidden',
+  },
+
+  titleText: {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    '&.scrolling': {
+      animation: 'scrollText 12s linear infinite',
+      '@keyframes scrollText': {
+        '0%': {
+          transform: 'translateX(0)',
+        },
+        '100%': {
+          transform: 'translateX(-34%)',
+        },
+      },
+    },
+  },
 }));
 
 interface dragAndDropListProps {
@@ -51,10 +73,15 @@ export function DragAndDropList({ data, updateParent }: dragAndDropListProps) {
           ref={provided.innerRef}
         >
           <div style={{background : item.domColor, minWidth:"25px", minHeight:"25px"}}></div>
-          <div style={{width:"100%", marginLeft:"10px"}}>
-            <Text style={{fontWeight:700}}>{item.title.length > 25 ? item.title.substring(0,25) + "..." : item.title}</Text>
+          <div className={classes.titleContainer}>
+            <Text 
+              style={{fontWeight:700}}
+              className={cx(classes.titleText, { scrolling: item.title.length > 25 })}
+            >
+              {item.title.length > 25 ? `${item.title} • ${item.title} • ${item.title}` : item.title}
+            </Text>
             <Text color="dimmed" size="sm" style={{fontStyle:"italic"}}>
-              Author: {item.author} • Published: {item.pubDate}
+              Author: {item.author} {!!item.pubDate ? '• Published: ' + item.pubDate : ''}
             </Text>
           </div>
         </div>
