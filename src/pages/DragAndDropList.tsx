@@ -32,6 +32,7 @@ const useStyles = createStyles((theme) => ({
     width: '100%',
     marginLeft: '10px',
     overflow: 'hidden',
+    minWidth: 0,
   },
 
   titleText: {

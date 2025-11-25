@@ -24,7 +24,9 @@ html {
 }
 @media only screen and (max-width: 400px) {
 .bs_main_tile {
-    width:100%;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 }
 .mantine-Header-root{
