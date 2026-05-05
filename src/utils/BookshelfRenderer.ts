@@ -247,18 +247,7 @@ export class BookshelfRenderer {
     // select random background color and fill
     // could be completely random, but probably better to select from a list of approved colors for good contrast
     // TODO: allow user to create a personal color pallet for their fake spine generation
-    const COLORS = [
-        {bg: "#f1faee", fg: "#000000"},
-        {bg: "#a8dadc", fg: "#000000"},
-        {bg: "#ff758f", fg: "#000000"},
-        {bg: "#ffddd2", fg: "#000000"},
-        {bg: "#ddb892", fg: "#000000"},
-        {bg: "#dde5b6", fg: "#000000"},
-    ];
-    spineCtx.fillStyle = this.getRandomHexColor(); 
-    // this line gets a random color from the provided list
-    // const selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-    // spineCtx.fillStyle = selectedColor.bg;
+    spineCtx.fillStyle = this.getRandomHexColor();
     spineCtx.fillRect(0, 0, heightInPx, widthInPx);
 
     // LAST NAME

@@ -1,27 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { book, defaultProps, foundBook, shelfImage } from '../types/interfaces';
+import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { getCookie, get_year_from_date_str, sendPostRequestToServer, split_dimensions_str_into_h_w_l } from '../utils/utilities';
-import { Loading } from './Loading';
+import { get_year_from_date_str, split_dimensions_str_into_h_w_l } from '../utils/utilities';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
-import { Landing } from './Landing';
 import { toast } from 'react-toastify';
 import { BookshelfRenderer, BookshelfRendererParams } from '../utils/BookshelfRenderer';
 import { CustomizeShelf } from './CustomizeShelf';
 
 export interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
-}
-interface genshelfRequest {
-  bookList : Array<foundBook>,
-  gr_shelf_name : string,
-  gr_user_id : string
-}
-interface genshelfResponse {
-  statusCode : number,
-  body : shelfImage
 }
 
 export const alphabetize_by_title_algo = (a : book, b : book) => {
@@ -50,6 +39,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
   const [buttonText, setButtonText] = useState<string>("Generate Shelf");
   const [disabledClass, setDisabledClass] = useState<string>("bs_disabled");
   const [showCustomizeButton, setShowCustomizeButton] = useState<string>("");
+  const [sortedBooklist, setSortedBooklist] = useState<Array<foundBook>>(booklist);
 
 
   const alphabetize_list_by_author = (list : Array<foundBook>)=> {
@@ -186,56 +176,60 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
 
   const sortBookList = () => {
     if(selectValue === null) return;
+    let sorted: Array<foundBook>;
     switch(selectValue){
       case "Author":
-        booklist = alphabetize_list_by_author(booklist);
+        sorted = alphabetize_list_by_author(booklist);
         break;
       case "Average Rating":
-        booklist = sort_books_by_rating(booklist, "average_rating");
+        sorted = sort_books_by_rating(booklist, "average_rating");
         break;
       case "Color":
-        booklist = sort_books_by_color(booklist);
+        sorted = sort_books_by_color(booklist);
         break;
       case "Date Read by User":
         //TODO: This sort method is just busted and I haven't figured out why
-        booklist = sort_books_by_date(booklist, "user_read_at");
-        let x = booklist.map(b => {return {title : b.title, date: b.user_read_at}});
+        sorted = sort_books_by_date(booklist, "user_read_at");
+        let x = sorted.map(b => {return {title : b.title, date: b.user_read_at}});
         console.table(x);
         // let x = booklist.map(b => {return {title : b.title, date: b.user_read_at}});
         // console.table(x);
         return;
         // break;
       case "Height":
-        booklist = sort_books_by_height(booklist);
+        sorted = sort_books_by_height(booklist);
         break;
       case "Title":
-        booklist = alphabetize_list_by_title(booklist);
+        sorted = alphabetize_list_by_title(booklist);
         break;
       case "User Rating":
-        booklist = sort_books_by_rating(booklist, "user_rating");
+        sorted = sort_books_by_rating(booklist, "user_rating");
         break;
       case "Publication Year":
-        booklist = sort_books_by_year(booklist);
+        sorted = sort_books_by_year(booklist);
         break;
+      default:
+        sorted = booklist;
     }
+    setSortedBooklist(sorted);
   };
 
-  useEffect(sortBookList, [selectValue]);
+  useEffect(sortBookList, [selectValue, booklist]);
 
   const submit_main_click = ()=>{
     if (selectValue === null) { return; }
     if (selectValue === "Sort Manually") {
-      widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
+      widgetCallback(<SortManual widgetCallback={widgetCallback} booklist={sortedBooklist} genShelf={generateShelf}/>)
       return;
     }
-    generateShelf({books: booklist});
+    generateShelf({books: sortedBooklist});
   };
 
   const customize_shelf_click = () => {
     if (selectValue === null || selectValue === "Sort Manually") {
       return;
     }
-    widgetCallback(<CustomizeShelf widgetCallback={widgetCallback} booklist={booklist} genShelf={generateShelf}/>)
+    widgetCallback(<CustomizeShelf widgetCallback={widgetCallback} booklist={sortedBooklist} genShelf={generateShelf}/>)
     return;
   };
 
