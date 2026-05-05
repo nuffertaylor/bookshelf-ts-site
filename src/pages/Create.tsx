@@ -15,7 +15,7 @@ interface CreateProps extends defaultProps{
 export interface getgrbookshelfResponse {
   statusCode : number,
   body : {
-    found : foundBook[],
+    found : foundBook[][],  // array of spine options for each book
     unfound : book[]
   }
 }
@@ -36,7 +36,9 @@ export function Create({ widgetCallback, props }: CreateProps){
       }
       setCookie("gr_shelf_name", shelfname);
       setCookie("gr_user_id", userid);
-      const found : Array<foundBook> = resObj["body"]["found"];
+      // Backend now returns array of spine options for each book - take the first option
+      const foundWithOptions : Array<foundBook[]> = resObj["body"]["found"];
+      const found : Array<foundBook> = foundWithOptions.map(spineOptions => spineOptions[0]);
       const unfound : Array<book> = resObj["body"]["unfound"];
       widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
     });

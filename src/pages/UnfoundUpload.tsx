@@ -43,7 +43,9 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
           document.location.reload();
           return;
         }
-        const f : Array<foundBook> = resObj["body"]["found"];
+        // Backend now returns array of spine options for each book - take the first option
+        const fWithOptions : Array<foundBook[]> = resObj["body"]["found"];
+        const f : Array<foundBook> = fWithOptions.map(spineOptions => spineOptions[0]);
         const u : Array<book> = resObj["body"]["unfound"];
         if(u.length === 0) {
           toast.success("You've uploaded all the missing spines from this shelf!");
