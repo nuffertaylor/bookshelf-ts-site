@@ -573,10 +573,18 @@ a {
 
 .reorder_shelf_host {
   touch-action: none; /* lets touch drags move books instead of scrolling the page */
+  /* stops iOS from selecting the canvas / showing the long-press callout while dragging */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .reorder_shelf {
   height: auto;
   cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 .reorder_button_wrapper {
   margin-top: 0;

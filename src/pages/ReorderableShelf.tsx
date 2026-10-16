@@ -133,6 +133,7 @@ export function ReorderableShelf({ renderer, onDone, onCancel }: ReorderableShel
         onPointerMove={onPointerMove}
         onPointerUp={(e) => endDrag(e, true)}
         onPointerCancel={(e) => endDrag(e, false)}
+        onContextMenu={(e) => e.preventDefault()}
       />
       <div className="multiple_button_wrapper">
         <button className="bs_shelf_buttons" onClick={cancel}>Cancel</button>
