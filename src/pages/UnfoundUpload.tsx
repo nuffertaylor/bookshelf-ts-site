@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
 import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
@@ -32,7 +33,8 @@ export const UnfoundRow = function({widgetCallback, book, originCallback} : unfo
   );
 }
 
-export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
+export function UnfoundUpload({found, foundOptions, unfound, widgetCallback, querystr} : FoundProps){
+  const { colorScheme } = useContext(ColorSchemeCtx);
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
     if(changesMade){
@@ -43,27 +45,27 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
           document.location.reload();
           return;
         }
-        // Backend now returns array of spine options for each book - take the first option
+        // Backend returns array of spine options for each book - default to the first option
         const fWithOptions : Array<foundBook[]> = resObj["body"]["found"];
         const f : Array<foundBook> = fWithOptions.map(spineOptions => spineOptions[0]);
         const u : Array<book> = resObj["body"]["unfound"];
         if(u.length === 0) {
           toast.success("You've uploaded all the missing spines from this shelf!");
-          widgetCallback(<Found found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
+          widgetCallback(<Found found={f} foundOptions={fWithOptions} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
         }
-        else { widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>); }
+        else { widgetCallback(<UnfoundUpload found={f} foundOptions={fWithOptions} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>); }
       });
       return;
     }
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} foundOptions={foundOptions} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
-  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
+  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} foundOptions={foundOptions} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
   const authtoken = getCookie("authtoken");
   const [saveUnfoundButton, setSaveUnfoundButton] = useState<ReactElement>(
     <button
-      className="bs_adaptive_button bs_gray margin-bottom-10"
+      className={"bs_adaptive_button bs_outline margin-bottom-10 bs_outline_".concat(colorScheme)}
       onClick={()=>{saveUnfound()}}
     >Save Missing Spines To Profile</button>
   );

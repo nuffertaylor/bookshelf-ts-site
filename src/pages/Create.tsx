@@ -36,11 +36,11 @@ export function Create({ widgetCallback, props }: CreateProps){
       }
       setCookie("gr_shelf_name", shelfname);
       setCookie("gr_user_id", userid);
-      // Backend now returns array of spine options for each book - take the first option
+      // Backend returns array of spine options for each book - default to the first option
       const foundWithOptions : Array<foundBook[]> = resObj["body"]["found"];
       const found : Array<foundBook> = foundWithOptions.map(spineOptions => spineOptions[0]);
       const unfound : Array<book> = resObj["body"]["unfound"];
-      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+      widgetCallback(<Found found={found} foundOptions={foundWithOptions} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
     });
   };
 

@@ -1,0 +1,5 @@
+- automatically edit uploaded spine images - user draws a simple rectangle around the spine image and the site properly crops, rotates, and adjusts the perspective so the uploaded image perfectly fits in an upright rectangle.
+- only require the height of the image on upload - everything else can be calculated using an inch to pixel ratio on the image. That way the HxW ratio will exactly match the picture
+- persist the chosen edition per user/shelf (selection is session-only right now and resets when the shelf is re-fetched, except right after uploading an alternative edition)
+- allow dragging image from window into browser on "upload image" section
+- allow user to reset password

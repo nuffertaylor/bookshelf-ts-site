@@ -43,7 +43,7 @@ interface spinePostRequest {
 interface spinePostResponse {
   statusCode : number, 
   body: {
-    upload_id : string,
+    upload_id : string | string[],  // a new upload returns a one-element array, an already_uploaded response returns a string
     already_uploaded : boolean,
     fileName ?: string
   } | string
@@ -166,11 +166,12 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
         }
         if(typeof parsed_res.body === 'object' && !parsed_res.body.already_uploaded) {
           toast.success("Congrats! Your spine for " + data.title + " was successfully uploaded.");
-          originCallback(true);
+          const new_upload_id = parsed_res.body.upload_id;
+          originCallback(true, Array.isArray(new_upload_id) ? new_upload_id[0] : new_upload_id);
           return;
         }
         if(typeof parsed_res.body === 'object' && parsed_res.body.already_uploaded && parsed_res.body.fileName && parsed_res.body.upload_id) {
-          const upload_id : string = parsed_res.body.upload_id;
+          const upload_id : string = Array.isArray(parsed_res.body.upload_id) ? parsed_res.body.upload_id[0] : parsed_res.body.upload_id;
           const replace_upload = () => {
             data.replace_img = true;
             data.upload_id = upload_id;
