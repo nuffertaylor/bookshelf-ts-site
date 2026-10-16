@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { Select } from '@mantine/core';
-import { get_year_from_date_str, split_dimensions_str_into_h_w_l } from '../utils/utilities';
+import { get_default_shelf_height_inches, get_year_from_date_str, split_dimensions_str_into_h_w_l } from '../utils/utilities';
 import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
@@ -234,7 +234,10 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
   };
 
   const generateShelf = async (params: BookshelfRendererParams) => { 
-    const bookshelfRenderer = new BookshelfRenderer(params);
+    const bookshelfRenderer = new BookshelfRenderer({
+      ...params,
+      shelfHeightInches: params.shelfHeightInches ?? get_default_shelf_height_inches(params.books),
+    });
 
     bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
       widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);

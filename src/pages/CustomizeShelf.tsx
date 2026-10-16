@@ -1,21 +1,22 @@
 import { ColorInput, NumberInput, Select } from "@mantine/core";
 import { useState } from "react";
 import { sortManualProps } from "./SortManual";
-import { convert_cm_to_in, convert_in_to_cm } from "../utils/utilities";
+import { convert_cm_to_in, convert_in_to_cm, get_default_shelf_height_inches, get_tallest_book_inches } from "../utils/utilities";
 
 type ShelfUnits = "IN" | "CM";
 
 export function CustomizeShelf({widgetCallback, booklist, genShelf}: sortManualProps) {
 
-  // TODO: iterate through the booklist to find the tallest book. This plus .5 will be the default shelf height
-
-  // TODO: If the user inputs a shelfHeight smaller than the tallest book, print a warning
-
   const [shelfBgColor, setShelfBgColor] = useState("#afb2b6");
   const [shelfFgColor, setShelfFgColor] = useState("#454856");
-  const [shelfHeight, setShelfHeight] = useState<number | undefined>(10.5);
+  const [shelfHeight, setShelfHeight] = useState<number | undefined>(() => get_default_shelf_height_inches(booklist));
   const [shelfWidth, setShelfWidth] = useState<number | undefined>(24);
   const [shelfUnits, setShelfUnits] = useState<ShelfUnits>("IN");
+
+  const tallestBookInches = get_tallest_book_inches(booklist);
+  const shelfHeightInches = shelfUnits === "CM" ? convert_cm_to_in(shelfHeight ?? 0) : (shelfHeight ?? 0);
+  const shelfTooShort = shelfHeight !== undefined && shelfHeightInches < tallestBookInches;
+  const tallestBookDisplay = shelfUnits === "CM" ? convert_in_to_cm(tallestBookInches) : tallestBookInches;
 
   const submitCustomization = () => {
     if (shelfUnits === "CM") {
@@ -90,6 +91,9 @@ export function CustomizeShelf({widgetCallback, booklist, genShelf}: sortManualP
             precision={2}
             value={shelfHeight}
             onChange={setShelfHeight}
+            error={shelfTooShort
+              ? `Warning: your tallest book is ${tallestBookDisplay.toFixed(2)} ${shelfUnits === "CM" ? "cm" : "in"}, which won't fit on a shelf this short`
+              : undefined}
           />
       </div>
       <div className="bs_button_wrapper">
