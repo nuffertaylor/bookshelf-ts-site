@@ -653,3 +653,15 @@ a {
 .bs_help_icon:hover{
   opacity:1;
 }
+.upload_super_container{
+  padding:15px;
+  border-radius:20px;
+}
+.bs_dragging{
+  outline:3px dashed #085df8;
+  outline-offset:0;
+}
+/* inputs (especially disabled ones) swallow drop events, so let the container receive them while dragging */
+.bs_dragging *{
+  pointer-events:none;
+}
