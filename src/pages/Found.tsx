@@ -1,33 +1,32 @@
-import React from 'react';
-import {Loading} from "./Loading";
+import React, { useContext } from 'react';
+import { ColorSchemeCtx } from '../ColorSchemeContext';
+import { Loading } from './Loading';
 import { UnfoundUpload } from './UnfoundUpload';
 import { book, defaultProps, foundBook } from '../types/interfaces';
-import { SortBy } from './SortBy';
 import { download_imgs_in_zip } from '../utils/utilities';
+import { SelectEdition } from './SelectEdition';
 import { toast } from 'react-toastify';
 import { Checkbox } from '@mantine/core';
 
 export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
+  foundOptions : Array<foundBook[]>,  // every spine option for each found book; found holds the selected option
   unfound : Array<book>,
-  querystr : string
+  querystr : string,
+  initialGenerateFakes ?: boolean  // restores the checkbox when returning from Select Editions
 }
 
 //TODO: if there are 0 spines found, display an alternate screen.
-export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
+export function Found({found, foundOptions, unfound, widgetCallback, querystr, initialGenerateFakes = true} : FoundProps){
+  const { colorScheme } = useContext(ColorSchemeCtx);
   const createUnfoundUpload =()=>{
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} foundOptions={foundOptions} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
   }
 
-  const [generateFakes, setGenerateFakes] = React.useState<boolean>(true);
+  const [generateFakes, setGenerateFakes] = React.useState<boolean>(initialGenerateFakes);
 
-  const openSortBy = ()=>{
-    widgetCallback(<Loading/>);
-    let booklist : Array<foundBook> = found;
-    if (generateFakes && unfound) {
-      unfound.forEach(u => booklist.push(u as foundBook));
-    }
-    widgetCallback(<SortBy widgetCallback={widgetCallback} booklist={booklist}/>);
+  const openSelectEdition = ()=>{
+    widgetCallback(<SelectEdition widgetCallback={widgetCallback} found={found} foundOptions={foundOptions} unfound={unfound} querystr={querystr} generateFakes={generateFakes}/>);
   }
 
   // state 1 = not downloading, 2 = currently downloading, 3 = finished downloading
@@ -57,15 +56,15 @@ export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
       </div>
       }
       <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button" onClick={openSortBy}>Sort your Books</button>
+        <button className="bs_adaptive_button" onClick={openSelectEdition}>Select Editions</button>
       </div>
       {unfound && unfound.length > 0 &&
       <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button bs_gray" onClick={createUnfoundUpload}>Upload Missing Spines</button>
+        <button className={"bs_adaptive_button bs_outline bs_outline_".concat(colorScheme)} onClick={createUnfoundUpload}>Upload Missing Spines</button>
       </div>
       }
       {downloadingFound === 1 && <div className="bs_button_wrapper">
-        <button className="bs_adaptive_button bs_gray" onClick={downloadBookSpines}>Download Book Spines</button>
+        <button className={"bs_adaptive_button bs_outline bs_outline_".concat(colorScheme)} onClick={downloadBookSpines}>Download Book Spines</button>
       </div>}
       {downloadingFound === 2 && <Loading/>}
     </div>
