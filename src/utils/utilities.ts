@@ -68,7 +68,7 @@ export function loggedIn(){
 export const sendGetRequestToServer = async function (method : string, querystr : string, callback : Function){
   const httpGet = new XMLHttpRequest();
   httpGet.ontimeout = (e) => { callback(JSON.stringify({statusCode : 500})); };
-  const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method + "?" + querystr;
+  const path = process.env.REACT_APP_API_URL + method + "?" + querystr;
   httpGet.onreadystatechange = function() {
       if(this.readyState === 4) callback(httpGet.responseText);
   };
@@ -80,7 +80,7 @@ export const sendPostRequestToServer = async function(method : string, data : ob
 {
   const httpPost = new XMLHttpRequest();
   httpPost.ontimeout = (e) => { callback(JSON.stringify({statusCode : 500})); };
-  const path = "https://vi64h2xk34.execute-api.us-east-1.amazonaws.com/alpha/" + method;
+  const path = process.env.REACT_APP_API_URL + method;
   let json_data = JSON.stringify(data);
   httpPost.onreadystatechange = (err) => {
     if(httpPost.readyState === 4) callback(httpPost.responseText);
