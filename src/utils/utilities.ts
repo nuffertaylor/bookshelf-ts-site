@@ -1,5 +1,5 @@
 import { IMG_URL_PREFIX } from "../types/constants";
-import { foundBook } from "../types/interfaces";
+import { book, foundBook } from "../types/interfaces";
 import JSZip from "jszip"
 import { saveAs } from 'file-saver';
 
@@ -154,3 +154,25 @@ export const convert_in_to_cm = (inValue: number): number => {
   return inValue * 2.54;
 }
 
+
+
+const DEFAULT_SHELF_HEIGHT_INCHES = 10.5;
+const SHELF_HEIGHT_MARGIN_INCHES = .1;
+
+// height in inches of the tallest book with known dimensions, or 0 if none are known
+export function get_tallest_book_inches(books: Array<book | foundBook>): number {
+  let tallest = 0;
+  for (const b of books) {
+    if (!('dimensions' in b) || !b.dimensions) { continue; }
+    const height = Math.max(...b.dimensions.toLowerCase().split('x').map(d => Number(d.trim())));
+    if (Number.isFinite(height) && height > tallest) { tallest = height; }
+  }
+  return tallest;
+}
+
+// default shelf height is .1 inches taller than the tallest book with known dimensions
+export function get_default_shelf_height_inches(books: Array<book | foundBook>): number {
+  const tallest = get_tallest_book_inches(books);
+  if (tallest === 0) { return DEFAULT_SHELF_HEIGHT_INCHES; }
+  return Math.round((tallest + SHELF_HEIGHT_MARGIN_INCHES) * 100) / 100;
+}
