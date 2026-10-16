@@ -245,7 +245,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
 
     try {
       const b64ShelfImage = await bookshelfRenderer.render();
-      widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
+      widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage} renderer={bookshelfRenderer}/>)
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong generating your shelf. Please report this error on the discord so we can get it fixed :)")

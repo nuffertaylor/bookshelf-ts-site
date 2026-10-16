@@ -570,3 +570,15 @@ a {
 .text-left {
   text-align: left;
 }
+
+.reorder_shelf_host {
+  touch-action: none; /* lets touch drags move books instead of scrolling the page */
+}
+.reorder_shelf {
+  height: auto;
+  cursor: grab;
+}
+.reorder_button_wrapper {
+  margin-top: 0;
+  margin-bottom: 10px;
+}

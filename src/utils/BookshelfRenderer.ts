@@ -21,6 +21,20 @@ export interface BookshelfRendererParams {
   shelfFgColor?: string,
 }
 
+export interface Spine {
+  image: HTMLImageElement;
+  width: number;
+  height: number;
+}
+
+export interface SpinePlacement extends Spine {
+  book: foundBook | book;
+  // top-left corner of the spine in canvas pixels
+  x: number;
+  y: number;
+  row: number;
+}
+
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
   // can be manually overriden
@@ -30,7 +44,6 @@ export class BookshelfRenderer {
   set borderWidthInches(borderWidthInches: number) {
     this._borderWidthInches = borderWidthInches;
     this.borderWidth = borderWidthInches * this.inchPixelRatio;
-    this.recalculateStartingPositions();
   }
   private _borderWidthInches = 1;
   private borderWidth: number;
@@ -50,7 +63,6 @@ export class BookshelfRenderer {
   set shelfHeightInches(heightInches: number) {
     this._shelfHeightInches = heightInches;
     this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
-    this.recalculateStartingPositions();
   }
   private _shelfHeightInches = 10.5;
   private shelfHeight: number;
@@ -64,10 +76,9 @@ export class BookshelfRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
-  private leftStart = 0;
-  private leftCurrent = 0;
-  private bottomStart = 0;
-  private bottomCurrent = 0;
+  // loaded spine images, so the shelf can be redrawn (e.g. after reordering)
+  // without refetching images or regenerating the random fake spines
+  private spines = new Map<foundBook | book, Spine>();
 
   constructor(params: BookshelfRendererParams) {
     Object.assign(this, params);
@@ -75,26 +86,34 @@ export class BookshelfRenderer {
     this.shelfHeight = this.shelfHeightInches * this.inchPixelRatio;
     this.borderWidth = this.borderWidthInches * this.inchPixelRatio;
 
-    // same content as recalculateStartingPositions
-    this.recalculateStartingPositions();
-
     this.canvas = document.createElement("canvas");
     this.canvas.width = this.shelfWidth;
     this.canvas.height = 0;
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  private recalculateStartingPositions(): void {
-    this.leftStart = this.borderWidth;
-    this.leftCurrent = this.leftStart;
-    this.bottomStart = this.shelfHeight + this.borderWidth;
-    this.bottomCurrent = this.bottomStart;
+  public getCanvas(): HTMLCanvasElement { return this.canvas; }
+
+  public toDataURL(): string {
+    return this.canvas.toDataURL("image/jpeg"); // to save space
+  }
+
+  public getSpine(book: foundBook | book): Spine | undefined {
+    return this.spines.get(book);
   }
 
   public async render(): Promise<string> {
-    await this.addNewShelfRow();
-    await this.loadSpines();
-    return this.canvas.toDataURL("image/jpeg"); // to save space
+    const loaded: (foundBook | book)[] = [];
+    this.draw(loaded);
+    for (const book of this.books) {
+      await this.loadSpine(book);
+      loaded.push(book);
+      this.draw(loaded);
+      if (this.inProgressRenderCallback != null) {
+        this.inProgressRenderCallback(this.toDataURL());
+      }
+    }
+    return this.toDataURL();
   }
 
   private convertInchesToPx(inches: number): number {
@@ -114,81 +133,81 @@ export class BookshelfRenderer {
     }
   }
 
-  private addNewShelfRow = async (): Promise<void> => {
-    const initialHeight = this.canvas.height;
-    let image = null;
-    let additionalHeight = this.shelfHeight + (this.borderWidth * 2);
-    let bottomBorderStart = this.shelfHeight + initialHeight + this.borderWidth;
-    let borderTopStart = 0;
-    if (initialHeight > 0) {
-      // this means something has already been rendered.
-      // changing the canvas size erases what was there previously
-      // so we'll store what has been genereated so far and replace it after changing the height
-      image = new Image();
-      image.src = this.canvas.toDataURL("image/png");
-      await image.decode();
-      // we need to remove borderWidth on every row after the first because
-      // the bottom of the previous row and the top of this row are the same line
-      additionalHeight -= this.borderWidth;
-      bottomBorderStart -= this.borderWidth;
-      borderTopStart = initialHeight - this.borderWidth;
+  private async loadSpine(book: foundBook | book): Promise<void> {
+    if (this.spines.has(book)) { return; }
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    let dimensions;
+    if ('fileName' in book && book.fileName != null) {
+      image.src = IMG_URL_PREFIX + book.fileName;
+      dimensions = this.convertBookDimensionsToPx(book);
+    } else { // we're generating a fake spine
+      const fakeSpineData = this.generateFakeSpine(book);
+      image.src = fakeSpineData.dataURL;
+      dimensions = { height: fakeSpineData.heightInPx, width: fakeSpineData.widthInPx }
     }
-    this.canvas.height = initialHeight + additionalHeight;
-    if (image !== null) {
-      this.ctx.drawImage(image, 0, 0);
-    }
-  
-    // draw background
-    this.ctx.fillStyle = this.shelfBgColor;
-    this.ctx.fillRect(0, initialHeight, this.shelfWidth, additionalHeight);
-    // draw borders
-    this.ctx.fillStyle = this.shelfFgColor;
-    // left border
-    this.ctx.fillRect(0, initialHeight, this.borderWidth, additionalHeight);
-    // right border
-    this.ctx.fillRect(this.shelfWidth - this.borderWidth, initialHeight, this.borderWidth, additionalHeight);
-    // top border
-    // (we only need to draw this on the first row)
-    if (borderTopStart === 0) {
-      this.ctx.fillRect(0, borderTopStart, this.shelfWidth, this.borderWidth);
-    }
-    // bottom border
-    this.ctx.fillRect(0, bottomBorderStart, this.shelfWidth, this.borderWidth);
-  
-    if (this.inProgressRenderCallback != null) {
-      this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
-    }
+    // wait for image to load
+    await image.decode();
+    this.spines.set(book, { image, ...dimensions });
   }
 
-  private loadSpines = async (): Promise<void> => {
-    for (const book of this.books) {
-      const spine = new Image();
-      spine.crossOrigin = "anonymous";
-      let dimensions;
-      if ('fileName' in book && book.fileName != null) {
-        spine.src = IMG_URL_PREFIX + book.fileName;
-        dimensions = this.convertBookDimensionsToPx(book);
-      } else { // we're generating a fake spine
-        const fakeSpineData = this.generateFakeSpine(book);
-        spine.src = fakeSpineData.dataURL;
-        dimensions = { height: fakeSpineData.heightInPx, width: fakeSpineData.widthInPx }
-      }
-      // wait for image to load
-      await spine.decode();
-      if (this.leftCurrent + dimensions.width > this.shelfWidth - this.borderWidth) {
-        this.leftCurrent = this.borderWidth;
-        this.bottomCurrent += this.shelfHeight + this.borderWidth;
-        await this.addNewShelfRow();
-      }
-  
-      // because canvas places the image from the top-left corner, we need to add the calculated height to the bottom
-      this.ctx.drawImage(spine, this.leftCurrent, this.bottomCurrent - dimensions.height, dimensions.width, dimensions.height);
-      this.leftCurrent += dimensions.width;
+  // vertical position of the shelf surface (where spines sit) for a row, and the top of the row's open space
+  public getRowBounds(row: number): { top: number, bottom: number } {
+    const bottom = this.borderWidth + this.shelfHeight + row * (this.shelfHeight + this.borderWidth);
+    return { top: bottom - this.shelfHeight, bottom };
+  }
 
-      if (this.inProgressRenderCallback != null) {
-        this.inProgressRenderCallback(this.canvas.toDataURL("image/jpeg"));
+  public getRowAtY(y: number, rowCount: number): number {
+    const row = Math.floor(y / (this.shelfHeight + this.borderWidth));
+    return Math.max(0, Math.min(rowCount - 1, row));
+  }
+
+  // works out where each (already loaded) book goes, wrapping to a new row when the current one is full
+  public layout(order: (foundBook | book)[] = this.books): SpinePlacement[] {
+    const placements: SpinePlacement[] = [];
+    let x = this.borderWidth;
+    let row = 0;
+    for (const book of order) {
+      const spine = this.spines.get(book);
+      if (spine === undefined) { continue; }
+      if (x > this.borderWidth && x + spine.width > this.shelfWidth - this.borderWidth) {
+        x = this.borderWidth;
+        row++;
       }
+      // because canvas places the image from the top-left corner, we need to subtract the height from the bottom
+      placements.push({ ...spine, book, x, y: this.getRowBounds(row).bottom - spine.height, row });
+      x += spine.width;
     }
+    return placements;
+  }
+
+  // synchronously redraws the whole shelf from the loaded spines
+  public draw(order: (foundBook | book)[] = this.books): SpinePlacement[] {
+    const placements = this.layout(order);
+    const rowCount = Math.max(1, ...placements.map(p => p.row + 1));
+    // changing the canvas size erases it, so everything is redrawn from scratch
+    this.canvas.width = this.shelfWidth;
+    this.canvas.height = rowCount * (this.shelfHeight + this.borderWidth) + this.borderWidth;
+
+    // draw background
+    this.ctx.fillStyle = this.shelfBgColor;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // draw borders
+    this.ctx.fillStyle = this.shelfFgColor;
+    // left and right borders
+    this.ctx.fillRect(0, 0, this.borderWidth, this.canvas.height);
+    this.ctx.fillRect(this.shelfWidth - this.borderWidth, 0, this.borderWidth, this.canvas.height);
+    // top border, then the bottom border of every row
+    // (the bottom of one row and the top of the next are the same line)
+    this.ctx.fillRect(0, 0, this.shelfWidth, this.borderWidth);
+    for (let row = 0; row < rowCount; row++) {
+      this.ctx.fillRect(0, this.getRowBounds(row).bottom, this.shelfWidth, this.borderWidth);
+    }
+
+    for (const p of placements) {
+      this.ctx.drawImage(p.image, p.x, p.y, p.width, p.height);
+    }
+    return placements;
   }
 
   private getAuthorLastName(author: string): string {

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { IMG_URL_PREFIX } from '../types/constants';
@@ -7,12 +7,16 @@ import { getCookie, get_cur_date_str, sendPostRequestToServer } from '../utils/u
 import { Loading } from './Loading';
 import { IconPencil } from '@tabler/icons';
 import { Profile } from './Profile';
+import { BookshelfRenderer } from '../utils/BookshelfRenderer';
+import { ReorderableShelf } from './ReorderableShelf';
 
 
 interface YourShelfProps extends defaultProps {
   shelf_image?: shelfImage,
   from_profile: boolean,
   b64ShelfImage?: string,
+  // only available for newly generated shelves, enables reordering the books
+  renderer?: BookshelfRenderer,
 }
 interface setshelfownerRequest{
   username : string,
@@ -26,7 +30,9 @@ interface setshelfownerResponse{
   statusCode : number,
   body : shelfImage
 }
-export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfImage} : YourShelfProps) {
+export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfImage: initialB64ShelfImage, renderer} : YourShelfProps) {
+  const [b64ShelfImage, setB64ShelfImage] = useState(initialB64ShelfImage);
+  const [reordering, setReordering] = useState(false);
   const username = getCookie("username");
   const authtoken = getCookie("authtoken");
   const { colorScheme } = useContext(ColorSchemeCtx);
@@ -102,13 +108,27 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
             </div>
           }
         </div>
+      {reordering && renderer ?
+        <ReorderableShelf
+          renderer={renderer}
+          onDone={(newB64) => { setB64ShelfImage(newB64); setReordering(false); }}
+          onCancel={() => setReordering(false)}
+        /> :
+        <>
       <img alt="your_generated_shelf" src={shelf_img_url} className="display_shelf" />
+      {renderer && !shelf_image?.filename &&
+        <div className="bs_button_wrapper reorder_button_wrapper">
+          <button className="bs_button" onClick={() => setReordering(true)}>Reorder Books</button>
+        </div>
+      }
       <div className="multiple_button_wrapper">
         <a href={shelf_img_url} download="myshelf" className={"a_".concat(colorScheme)}>
           <button className="bs_shelf_buttons">Download</button>
         </a>
         <button className={"bs_shelf_buttons".concat(shelf_image?.owner ? " bs_delete_bg_color" : "")} onClick={shelf_image?.owner ? delete_shelf : save_to_profile}>{shelf_image?.owner ? "Delete Shelf" : "Save to Profile"}</button>
       </div>
+        </>
+      }
     </div>
   );
 }
