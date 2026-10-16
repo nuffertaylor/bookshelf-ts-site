@@ -73,9 +73,12 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
   const [formState, setFormState] = React.useState<uploadForm>(defaultFormState);
   const [b64Image, setB64Image] = React.useState<string>(foundBook ? IMG_URL_PREFIX + foundBook.fileName : "");
   const [display_uploaded, set_display_uploaded] = React.useState<boolean>(foundBook ? true : false);
-  const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
-    if(!event.target.files || event.target.files.length === 0) return;
-    const file : File = event.target.files[0];
+  const [dragging, setDragging] = React.useState<boolean>(false);
+  const loadImageFile = (file : File)=>{
+    if(!["image/png", "image/jpg", "image/jpeg"].includes(file.type)){
+      toast.info("Please select a png or jpg image.");
+      return;
+    }
     const FIVE_MB : number = 5242880;
     if(file.size > FIVE_MB){
       toast.info("Please select a file with a size less than 5 MB. (You can probably get this file size by running your image through a compressor or converting it to a jpg)");
@@ -91,6 +94,30 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
       }
     }
     reader.readAsDataURL(file);
+  }
+  const encodeImageFileAsURL = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    if(!event.target.files || event.target.files.length === 0) return;
+    loadImageFile(event.target.files[0]);
+  }
+  // preventDefault on dragover is required, otherwise the browser navigates to the dropped file
+  const handleDragOver = (event : React.DragEvent)=>{
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    setDragging(true);
+  }
+  const handleDragLeave = (event : React.DragEvent)=>{
+    // dragleave also fires when moving onto a child element, so only clear when leaving the container
+    if(event.currentTarget.contains(event.relatedTarget as Node)) return;
+    setDragging(false);
+  }
+  const handleDrop = (event : React.DragEvent)=>{
+    event.preventDefault();
+    setDragging(false);
+    if(event.dataTransfer.files.length === 0) {
+      toast.info("Drop an image file from your computer. Images dragged from other web pages can't be used, so save the image first.");
+      return;
+    }
+    loadImageFile(event.dataTransfer.files[0]);
   }
   const handleChange = (event : any)=>{
     setFormState((s)=>{
@@ -218,7 +245,7 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
   };
     
   return(
-    <div className="upload_super_container">
+    <div className={"upload_super_container" + (dragging ? " bs_dragging" : "")} onDragEnter={handleDragOver} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
       <Title title="Upload Spine" backArrowOnClick={return_to_prev_page}/>
       <div className="upload_activity">
         <div className="spine_preview">
