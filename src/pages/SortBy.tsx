@@ -6,6 +6,7 @@ import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
 import { toast } from 'react-toastify';
+import { Loading } from './Loading';
 import { BookshelfRenderer, BookshelfRendererParams } from '../utils/BookshelfRenderer';
 import { CustomizeShelf } from './CustomizeShelf';
 
@@ -239,9 +240,7 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
       shelfHeightInches: params.shelfHeightInches ?? get_default_shelf_height_inches(params.books),
     });
 
-    bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
-      widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);
-    }
+    widgetCallback(<Loading/>);
 
     try {
       const b64ShelfImage = await bookshelfRenderer.render();

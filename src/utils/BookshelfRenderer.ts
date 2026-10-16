@@ -37,8 +37,6 @@ export interface SpinePlacement extends Spine {
 
 export class BookshelfRenderer {
   books: (foundBook | book)[] = [];
-  // can be manually overriden
-  inProgressRenderCallback: ((b64ShelfString: string) => void) | null = null;
 
   public get borderWidthInches() { return this._borderWidthInches; }
   set borderWidthInches(borderWidthInches: number) {
@@ -103,16 +101,9 @@ export class BookshelfRenderer {
   }
 
   public async render(): Promise<string> {
-    const loaded: (foundBook | book)[] = [];
-    this.draw(loaded);
-    for (const book of this.books) {
-      await this.loadSpine(book);
-      loaded.push(book);
-      this.draw(loaded);
-      if (this.inProgressRenderCallback != null) {
-        this.inProgressRenderCallback(this.toDataURL());
-      }
-    }
+    // spines are fetched in parallel
+    await Promise.all(this.books.map(book => this.loadSpine(book)));
+    this.draw();
     return this.toDataURL();
   }
 
