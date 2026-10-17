@@ -130,7 +130,10 @@ export class BookshelfRenderer {
     image.crossOrigin = "anonymous";
     let dimensions;
     if ('fileName' in book && book.fileName != null) {
-      image.src = IMG_URL_PREFIX + book.fileName;
+      const res = await fetch(IMG_URL_PREFIX + book.fileName, { mode: 'cors', cache: 'reload' });
+      const blob = new Blob([await res.arrayBuffer()], { type: book.fileName.endsWith('.png') ? 'image/png' : 'image/jpeg' });
+      image.src = URL.createObjectURL(blob);
+      
       dimensions = this.convertBookDimensionsToPx(book);
     } else { // we're generating a fake spine
       const fakeSpineData = this.generateFakeSpine(book);
