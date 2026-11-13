@@ -20,6 +20,11 @@ export interface foundBook extends book {
   fileName : string,
   submitter : string
 }
+// A shelf of a Goodreads library export: the CSV text plus the shelf name chosen from it.
+export interface ShelfSource {
+  csv : string,
+  shelf : string
+}
 export interface bookContainer {
   book : book
 }
