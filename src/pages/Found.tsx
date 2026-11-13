@@ -1,7 +1,7 @@
 import React from 'react';
 import {Loading} from "./Loading";
 import { UnfoundUpload } from './UnfoundUpload';
-import { book, defaultProps, foundBook } from '../types/interfaces';
+import { book, defaultProps, foundBook, ShelfSource } from '../types/interfaces';
 import { SortBy } from './SortBy';
 import { download_imgs_in_zip } from '../utils/utilities';
 import { toast } from 'react-toastify';
@@ -10,13 +10,13 @@ import { Checkbox } from '@mantine/core';
 export interface FoundProps extends defaultProps{
   found : Array<foundBook>, 
   unfound : Array<book>,
-  querystr : string
+  source : ShelfSource
 }
 
 //TODO: if there are 0 spines found, display an alternate screen.
-export function Found({found, unfound, widgetCallback, querystr} : FoundProps){
+export function Found({found, unfound, widgetCallback, source} : FoundProps){
   const createUnfoundUpload =()=>{
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} source={source}/>);
   }
 
   const [generateFakes, setGenerateFakes] = React.useState<boolean>(true);

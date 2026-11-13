@@ -3,10 +3,10 @@ import {Found, FoundProps} from "./Found";
 import {Upload} from "./Upload";
 import nextId from "react-id-generator";
 import { Title } from './Title';
-import { getCookie, sendGetRequestToServer, sendPostRequestToServer } from '../utils/utilities';
+import { getCookie, sendPostRequestToServer } from '../utils/utilities';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
-import { getgrbookshelfResponse } from './Create';
+import { fetchShelfFromCsv } from './Create';
 import { toast } from 'react-toastify';
 import { Loading } from './Loading';
 
@@ -32,12 +32,11 @@ export const UnfoundRow = function({widgetCallback, book, originCallback} : unfo
   );
 }
 
-export function UnfoundUpload({found, unfound, widgetCallback, querystr} : FoundProps){
+export function UnfoundUpload({found, unfound, widgetCallback, source} : FoundProps){
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
     if(changesMade){
-      sendGetRequestToServer("getgrbookshelf", querystr, (res : string)=>{
-        const resObj : getgrbookshelfResponse = JSON.parse(res);
+      fetchShelfFromCsv(source, (resObj)=>{
         if(resObj.statusCode !== 200){
           toast.error("Something went wrong reloading your bookshelf.");
           document.location.reload();
@@ -49,17 +48,17 @@ export function UnfoundUpload({found, unfound, widgetCallback, querystr} : Found
         const u : Array<book> = resObj["body"]["unfound"];
         if(u.length === 0) {
           toast.success("You've uploaded all the missing spines from this shelf!");
-          widgetCallback(<Found found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>);
+          widgetCallback(<Found found={f} unfound={u} widgetCallback={widgetCallback} source={source}/>);
         }
-        else { widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} querystr={querystr}/>); }
+        else { widgetCallback(<UnfoundUpload found={f} unfound={u} widgetCallback={widgetCallback} source={source}/>); }
       });
       return;
     }
-    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>);
+    widgetCallback(<UnfoundUpload found={found} unfound={unfound} widgetCallback={widgetCallback} source={source}/>);
   }
 
   const unfoundMapped = sortedUnfound.map(u => <UnfoundRow book={u} widgetCallback={widgetCallback} originCallback={originCallback}/>);
-  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} querystr={querystr}/>)};
+  const returnToPrevPage = ()=>{widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} source={source}/>)};
   const authtoken = getCookie("authtoken");
   const [saveUnfoundButton, setSaveUnfoundButton] = useState<ReactElement>(
     <button
