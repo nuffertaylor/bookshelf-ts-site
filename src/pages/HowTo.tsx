@@ -4,7 +4,8 @@ import { ColorSchemeCtx } from "../ColorSchemeContext";
 import { Faq, FaqItem } from "./Faq";
 import { Title } from "./Title";
 
-export function HowTo(){
+interface HowToProps{ openItem ?: string }
+export function HowTo({ openItem } : HowToProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
   const faq_items : FaqItem[] = [
     {
@@ -18,12 +19,29 @@ export function HowTo(){
         <img className="bs_faq_img" src="https://i.imgur.com/5Kb8dGc.png" alt="add shelf from shelf page"/>
         <p>Add all the books you want to be displayed on your virtual bookshelf to that Goodreads shelf.</p>
         <p className={"a_ a_".concat(colorScheme)} onClick={()=>{document.getElementById("create")?.click()}}>Go to the Create tab</p>
-        <p>Here, paste your Goodreads profile URL (or your Goodreads User ID, there's another FAQ item explaining that) and the name of the shelf you're using. The name needs to match exactly, with the same capitalization. If Goodreads can't find the shelf name you provided, it will instead return a list of every book you've added on your Goodreads account, which probably isn't what you're looking for.</p>
-        <p>Click "Generate"</p>
+        <p>Goodreads no longer lets other sites read your shelves directly, so you'll give My Bookshelf a copy of your library instead. First, download your library from Goodreads as a CSV file. The next FAQ item, "How do I get my Goodreads CSV?", walks you through it.</p>
+        <p>Here, click "Choose CSV" and select the file you downloaded. The site lists every shelf in your library, so pick the one you made and click "Load Shelf".</p>
         <p>Now you'll be provided the option to sort your books, or to upload spine images for books on shelf that aren't in the system yet. That's a different objective, so for now, just click the sort button.</p>
         <p>Here you're given some sort options. There's a bunch of options, like sorting by author last name, or alphabetically. Pick the one you want. If none of those options are to your liking, click "Sort Manually" and you can drag and drop the books in a list until they're in the order you want. Once you've selected something, click "Generate."</p>
         <p>Once the website has finished creating your virtual bookshelf, it will show you the image it created. You can now either download it, and/or, if you've registered an account, save that bookshelf to your profile for later access.</p>
       </div>
+      )
+    },
+    {
+      value: "goodreads_csv",
+      control: "How do I get my Goodreads CSV?",
+      panel: (
+        <div key={nextId()}>
+          <p>Goodreads lets you download your whole library as a CSV file. My Bookshelf reads that file to find the books on each of your shelves. The file stays on your computer until you upload it on the Create tab, and the site doesn't store it.</p>
+          <ol>
+            <li>Log in to Goodreads on a computer. (The export isn't available in the mobile app, but it works in a mobile browser's desktop view.)</li>
+            <li>Go to <a href="https://www.goodreads.com/review/import" className={"a_".concat(colorScheme)}>goodreads.com/review/import</a>. You can also get there by clicking "My Books", then "Import and export" in the left sidebar.</li>
+            <li>Click "Export Library". Goodreads takes a moment to prepare the file, and larger libraries take longer.</li>
+            <li>When it's ready, a link appears under the button that says "Your export from" followed by a date. Click it to download the file, which is called goodreads_library_export.csv.</li>
+            <li><span className={"a_ a_".concat(colorScheme)} onClick={()=>{document.getElementById("create")?.click()}}>Go to the Create tab</span>, click "Choose CSV", and select that file.</li>
+          </ol>
+          <p>Goodreads only includes shelves that have books on them. If your shelf is missing from the list, check that you've added at least one book to it, then export again. The export reflects your library at the moment you download it, so re-export whenever you've added books you want to see.</p>
+        </div>
       )
     },
     {
@@ -138,7 +156,7 @@ export function HowTo(){
   return(
     <div>
       <Title title={"How to Use My Bookshelf"} includeArrow={false} includeBottomLine={false}/>
-      <Faq items={faq_items}/>
+      <Faq items={faq_items} defaultValue={openItem}/>
     </div>
   );
 }

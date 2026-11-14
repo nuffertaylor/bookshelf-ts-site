@@ -18,7 +18,7 @@ export interface FaqItem{
   control: string,
   panel: string | ReactElement
 }
-interface FaqProps{items : FaqItem[]}
+interface FaqProps{items : FaqItem[], defaultValue ?: string}
 interface AccordianItemProps{item : FaqItem}
 const AccordianItem = ({ item } : AccordianItemProps) => {
   const { classes } = useStyles();
@@ -29,10 +29,10 @@ const AccordianItem = ({ item } : AccordianItemProps) => {
     </Accordion.Item>
   );
 }
-export function Faq({ items } : FaqProps){
+export function Faq({ items, defaultValue } : FaqProps){
   const accordian_items = items.map(i => <AccordianItem item={i}/>)
   return (
-    <Accordion variant="separated">
+    <Accordion variant="separated" defaultValue={defaultValue}>
       {accordian_items}
     </Accordion>
   )
