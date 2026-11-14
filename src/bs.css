@@ -588,3 +588,8 @@ a {
   margin-top:0;
   text-align:center;
 }
+.bs_shelf_label{
+  margin-bottom:6px;
+  font-weight:bold;
+  font-size:.9em;
+}

@@ -117,14 +117,17 @@ export function Create({ widgetCallback, props }: CreateProps){
       </p>
     }
     {shelves.length > 0 &&
-      <select
-        id="shelfname"
-        className={"bs_text_input bs_text_input_".concat(colorScheme)}
-        value={shelf}
-        onChange={e => setShelf(e.target.value)}
-      >
-        {shelves.map(s => <option key={s.name} value={s.name}>{s.name} ({s.count})</option>)}
-      </select>
+      <>
+        <label htmlFor="shelfname" className="bs_shelf_label">Available Shelves</label>
+        <select
+          id="shelfname"
+          className={"bs_text_input bs_text_input_".concat(colorScheme)}
+          value={shelf}
+          onChange={e => setShelf(e.target.value)}
+        >
+          {shelves.map(s => <option key={s.name} value={s.name}>{s.name} ({s.count})</option>)}
+        </select>
+      </>
     }
     <button id="bs_enter_button" className="bs_button" onClick={loadShelf} disabled={!csv}>LOAD SHELF</button>
   </div>
