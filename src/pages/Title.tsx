@@ -1,15 +1,16 @@
-import React, { useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 
 interface titleProps {
     backArrowOnClick ?: Function,
     title : string,
     includeBottomLine ?: boolean
-    includeArrow ?: boolean
+    includeArrow ?: boolean,
+    titleExtra ?: ReactNode  // rendered inline right after the title, e.g. a help icon
 }
 
 //TODO: allow option for making the title bar sticky if the div scrolls
-export function Title({backArrowOnClick=()=>{}, title, includeBottomLine=true, includeArrow=true} : titleProps){
+export function Title({backArrowOnClick=()=>{}, title, includeBottomLine=true, includeArrow=true, titleExtra} : titleProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
     const onClickWrapper = () => {backArrowOnClick();}
     return (
@@ -20,7 +21,7 @@ export function Title({backArrowOnClick=()=>{}, title, includeBottomLine=true, i
             <span className={"arrow arrow-left arrow_".concat(colorScheme)} onClick={onClickWrapper}></span>
             }
             {!includeArrow && <div></div>}
-            <span className="bs_unfound_title">{title}</span>
+            <span className="bs_unfound_title">{title}{titleExtra}</span>
           </div>
         </div>
           {includeBottomLine &&

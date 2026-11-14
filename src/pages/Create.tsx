@@ -107,10 +107,11 @@ export function Create({ widgetCallback, props }: CreateProps){
         widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
         return;
       }
-      // Backend returns an array of spine options for each book - take the first option
-      const found : Array<foundBook> = resObj.body.found.map(spineOptions => spineOptions[0]);
+      // Backend returns an array of spine options for each book - default to the first option
+      const foundWithOptions : Array<foundBook[]> = resObj.body.found;
+      const found : Array<foundBook> = foundWithOptions.map(spineOptions => spineOptions[0]);
       const unfound : Array<book> = resObj.body.unfound;
-      widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} source={source}/>);
+      widgetCallback(<Found found={found} foundOptions={foundWithOptions} unfound={unfound} widgetCallback={widgetCallback} source={source}/>);
     });
   };
 
