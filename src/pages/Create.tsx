@@ -52,20 +52,29 @@ export function Create({ widgetCallback, props }: CreateProps){
   const [shelves, setShelves] = useState<shelfOption[]>([]);
   const [shelf, setShelf] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
+  const [readingCsv, setReadingCsv] = useState<boolean>(false);
 
   const onFileChosen = (e : React.ChangeEvent<HTMLInputElement>)=>{
     const file = e.target.files?.[0];
     if(!file) return;
     const chosenName = file.name;
+    // Clear the input so picking the same file again (after an error) still triggers onChange.
+    e.target.value = "";
+    setReadingCsv(true);
     const reader = new FileReader();
-    reader.onerror = ()=>{ toast.error("Couldn't read that file."); };
+    reader.onerror = ()=>{
+      setReadingCsv(false);
+      toast.error("Couldn't read that file.");
+    };
     reader.onload = ()=>{
       const text = String(reader.result ?? "");
       if(text.length > MAX_CSV_CHARS){
+        setReadingCsv(false);
         toast.error("That file is too large to upload.");
         return;
       }
       sendPostRequestToServer("importgrlibrary", { csv : text }, (res : string)=>{
+        setReadingCsv(false);
         const resObj = parseResponse<importShelvesResponse>(res);
         if(resObj.statusCode !== 200 || !resObj.body.shelves){
           toast.error(resObj.statusCode === 400 && resObj.body.error ? resObj.body.error : "Something went wrong reading that file, please try again.");
@@ -104,6 +113,8 @@ export function Create({ widgetCallback, props }: CreateProps){
       widgetCallback(<Found found={found} unfound={unfound} widgetCallback={widgetCallback} source={source}/>);
     });
   };
+
+  if(readingCsv) return <Loading/>;
 
   return (
   <div className="bs_input_section">
