@@ -45,6 +45,25 @@ a.nostyle:visited {
 .bs_gray {
   background: #888888 !important;
 }
+.bs_outline {
+  background: transparent !important;
+  color: #085df8 !important;
+  border: 2px solid #085df8 !important;
+}
+.bs_outline:hover {
+  background: rgba(8, 93, 248, 0.12) !important;
+}
+.bs_outline_dark {
+  color: #74a7ff !important;
+  border-color: #74a7ff !important;
+}
+.bs_outline_dark:hover {
+  background: rgba(116, 167, 255, 0.18) !important;
+}
+.bs_pointer_select input {
+  cursor: pointer;
+  user-select: none;
+}
 .bs_main_box {
   width: 100%;
   padding:20px;
@@ -592,4 +611,83 @@ a {
   margin-bottom:6px;
   font-weight:bold;
   font-size:.9em;
+}
+
+.reorder_shelf_host {
+  touch-action: none; /* lets touch drags move books instead of scrolling the page */
+  /* stops iOS from selecting the canvas / showing the long-press callout while dragging */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.reorder_shelf {
+  height: auto;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.reorder_button_wrapper {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.bs_edition_title{
+  font-weight:500;
+  margin-bottom:5px;
+}
+.bs_edition_options{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  overflow-x:auto;
+  margin-bottom:10px;
+}
+.bs_edition_img{
+  max-height:200px;
+  border:3px solid transparent;
+  cursor:pointer;
+}
+.bs_edition_img_selected{
+  border-color:#4c9aff;
+}
+
+.bs_button:hover,
+.bs_adaptive_button:hover {
+  background: #0647c4;
+}
+.bs_button:active,
+.bs_adaptive_button:active {
+  background: #053a9e;
+}
+
+.bs_edition_help{
+  font-size:0.9em;
+  opacity:0.8;
+  margin:0 auto 15px;
+}
+.bs_help_icon{
+  vertical-align:middle;
+  margin-left:6px;
+  cursor:pointer;
+  opacity:0.7;
+}
+.bs_help_icon:hover{
+  opacity:1;
+}
+.upload_super_container{
+  padding:15px;
+  border-radius:20px;
+}
+.bs_dragging{
+  outline:3px dashed #085df8;
+  outline-offset:0;
+}
+/* inputs (especially disabled ones) swallow drop events, so let the container receive them while dragging */
+.bs_dragging *{
+  pointer-events:none;
+}
+.bs_button:disabled:hover{
+  background:#085df8;
 }

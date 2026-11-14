@@ -6,6 +6,7 @@ import { YourShelf } from './YourShelf';
 import { sort_by_color } from '../utils/colorSort';
 import { SortManual } from './SortManual';
 import { toast } from 'react-toastify';
+import { Loading } from './Loading';
 import { BookshelfRenderer, BookshelfRendererParams } from '../utils/BookshelfRenderer';
 import { CustomizeShelf } from './CustomizeShelf';
 
@@ -239,13 +240,11 @@ export function SortBy({widgetCallback, booklist} : sortByProps) {
       shelfHeightInches: params.shelfHeightInches ?? get_default_shelf_height_inches(params.books),
     });
 
-    bookshelfRenderer.inProgressRenderCallback = (b64ShelfImage) => {
-      widgetCallback(<img alt="shelf_in_progress_render" src={b64ShelfImage} className="display_shelf" />);
-    }
+    widgetCallback(<Loading/>);
 
     try {
       const b64ShelfImage = await bookshelfRenderer.render();
-      widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage}/>)
+      widgetCallback(<YourShelf widgetCallback={widgetCallback} from_profile={false} b64ShelfImage={b64ShelfImage} renderer={bookshelfRenderer}/>)
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong generating your shelf. Please report this error on the discord so we can get it fixed :)")
