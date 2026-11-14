@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import { book, foundBook } from '../types/interfaces';
-import { getCookie, sendPostRequestToServer, setCookie } from './utilities';
+import { deleteCookie, getCookie, sendPostRequestToServer, setCookie } from './utilities';
 
 // sessionStorage keys that survive the redirect to Hardcover and back.
 const STATE_KEY = "hardcover_oauth_state";
@@ -89,6 +89,18 @@ export function takePendingHardcoverAuth() : { state : string, mode : HardcoverA
 
 export function setHardcoverUsername(name : string | undefined | null){
   if(name) setCookie("hardcover_username", name);
+}
+
+// Remembers whether this account has Hardcover linked (and whether it needs reconnecting), from a login response.
+export function setHardcoverLink(name : string | undefined | null, needsReauth ?: boolean){
+  if(!name){
+    deleteCookie("hardcover_username");
+    deleteCookie("hardcover_needs_reauth");
+    return;
+  }
+  setCookie("hardcover_username", name);
+  if(needsReauth) setCookie("hardcover_needs_reauth", "1");
+  else deleteCookie("hardcover_needs_reauth");
 }
 
 export type hardcoverLibraryResult =

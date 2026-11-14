@@ -100,6 +100,7 @@ export function clearSession() {
   deleteCookie("authtoken");
   deleteCookie("goodreads_id");
   deleteCookie("hardcover_username");
+  deleteCookie("hardcover_needs_reauth");
 }
 
 // Ends the session on the server too (which also revokes the Hardcover connection), then clears the cookies.

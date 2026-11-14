@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { defaultProps } from '../types/interfaces';
-import { apiErrorText, hardcoverAuthErrorMessage, parseApiResponse, setHardcoverUsername, takePendingHardcoverAuth } from '../utils/hardcover';
+import { apiErrorText, hardcoverAuthErrorMessage, parseApiResponse, setHardcoverLink, takePendingHardcoverAuth } from '../utils/hardcover';
 import { sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Create } from './Create';
 import { Landing } from './Landing';
@@ -75,7 +75,7 @@ export function HardcoverCallback({ widgetCallback, setLoginStatus } : Hardcover
 
         if(pending.mode === "link"){
           const linked = data as linkBody;
-          setHardcoverUsername(linked.hardcover_username);
+          setHardcoverLink(linked.hardcover_username);
           toast.success("Hardcover linked" + (linked.hardcover_username ? " as " + linked.hardcover_username : "") + ".");
           if(pending.returnTo === "profile") widgetCallback(<Profile widgetCallback={widgetCallback}/>);
           else widgetCallback(<Create widgetCallback={widgetCallback} initialSource="hardcover"/>);
@@ -90,7 +90,7 @@ export function HardcoverCallback({ widgetCallback, setLoginStatus } : Hardcover
         setCookie("username", session.username);
         setCookie("authtoken", session.authtoken);
         if(session.goodreads_id) setCookie("goodreads_id", session.goodreads_id);
-        setHardcoverUsername(session.hardcover_username);
+        setHardcoverLink(session.hardcover_username);
         setLoginStatus("profile");
         toast.success((session.is_new_account ? "Welcome, " : "Welcome back, ") + session.username + "!");
         widgetCallback(<Create widgetCallback={widgetCallback} initialSource="hardcover"/>);

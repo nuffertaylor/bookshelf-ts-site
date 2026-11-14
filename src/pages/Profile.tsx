@@ -39,6 +39,7 @@ export function Profile({widgetCallback} : defaultProps){
   const gr_id = getCookie("goodreads_id");
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
   const hardcoverUsername = getCookie("hardcover_username");
+  const hardcoverNeedsReauth = !!getCookie("hardcover_needs_reauth");
   const [linkingHardcover, setLinkingHardcover] = useState(false);
   const loading = [<Loading/>];
   const [submissionsSection, setSubmissionsSection] = useState(loading);
@@ -262,8 +263,8 @@ export function Profile({widgetCallback} : defaultProps){
             {unfoundSection}
           </div>
           <div className="bs_gr_id_row">
-            <span className="bs_hardcover_status">{hardcoverUsername ? "Hardcover: " + hardcoverUsername : "Link Hardcover to build shelves from your Hardcover lists."}</span>
-            <button onClick={linkHardcover} disabled={linkingHardcover} className="bs_button bs_enter_button bs_gr_id_button">{linkingHardcover ? "Opening Hardcover..." : hardcoverUsername ? "Reconnect Hardcover" : "Link Hardcover"}</button>
+            <span className="bs_hardcover_status">{hardcoverUsername ? "Hardcover: " + hardcoverUsername + (hardcoverNeedsReauth ? " (needs reconnecting)" : "") : "Link Hardcover to build shelves from your Hardcover lists."}</span>
+            <button onClick={linkHardcover} disabled={linkingHardcover} className="bs_button bs_enter_button bs_gr_id_button">{linkingHardcover ? "Opening Hardcover..." : hardcoverUsername ? (hardcoverNeedsReauth ? "Reconnect Hardcover" : "Relink Hardcover") : "Link Hardcover"}</button>
           </div>
           <div className="bs_gr_id_row">
             <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />

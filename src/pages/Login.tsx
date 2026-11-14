@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { sendPostRequestToServer, setCookie } from '../utils/utilities';
-import { startHardcoverAuth } from '../utils/hardcover';
+import { setHardcoverLink, startHardcoverAuth } from '../utils/hardcover';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
@@ -17,7 +17,9 @@ interface loginregisterResponse {
   body: {
     username : string,
     authtoken : string,
-    goodreads_id ?: string
+    goodreads_id ?: string,
+    hardcover_username ?: string | null,   // set when Hardcover is already linked, so the user isn't asked to link again
+    hardcover_needs_reauth ?: boolean
   } | string
 }
 
@@ -66,6 +68,7 @@ export function Login({widgetCallback, setLoginStatus} : loginProps){
         setCookie("username", parsed_res.body.username);
         setCookie("authtoken", parsed_res.body.authtoken);
         if(parsed_res.body.goodreads_id) setCookie("goodreads_id", parsed_res.body.goodreads_id);
+        setHardcoverLink(parsed_res.body.hardcover_username, parsed_res.body.hardcover_needs_reauth);
         setLoginStatus("profile");
         widgetCallback(<Profile widgetCallback={widgetCallback}/>);
       }
