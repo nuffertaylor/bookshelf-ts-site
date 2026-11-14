@@ -45,6 +45,23 @@ export function HowTo({ openItem } : HowToProps){
       )
     },
     {
+      value: "hardcover",
+      control: "How do I use Hardcover with My Bookshelf?",
+      panel: (
+        <div key={nextId()}>
+          <p><a href="https://hardcover.app" className={"a_".concat(colorScheme)}>Hardcover</a> is a book tracking site. If you use it, you can sign in to My Bookshelf with your Hardcover account and build shelves straight from your Hardcover lists, with no CSV file needed.</p>
+          <p>To get started, <strong>sign in with Hardcover</strong>:</p>
+          <ol>
+            <li><span className={"a_ a_".concat(colorScheme)} onClick={()=>{document.getElementById("login")?.click()}}>Go to the Login tab</span> and click "Sign in with Hardcover".</li>
+            <li>Hardcover asks whether to let My Bookshelf read your library. Approve it, and you'll be sent back here already signed in. If it's your first time, a My Bookshelf account is created for you, named after your Hardcover username.</li>
+          </ol>
+          <p>If you <strong>already have a My Bookshelf account</strong>, don't sign in with Hardcover from the login page, because that creates a second, empty account. Log in with your username and password first, then open your Profile and click "Link Hardcover". From then on your spine uploads and shelves stay on the one account.</p>
+          <p>To <strong>make a shelf from a Hardcover list</strong>, go to the Create tab and choose "Hardcover". Pick one of your lists (your Read, Want to Read and other status shelves are included, along with your custom lists) and click "Load List". After that it works like any other shelf.</p>
+          <p>My Bookshelf only reads your library while you're building a shelf and doesn't keep a copy of it. Logging out also disconnects Hardcover; you can reconnect from the Create tab or your Profile. You can also revoke access any time from your Hardcover account settings.</p>
+        </div>
+      )
+    },
+    {
       value: "goodreads_user_id",
       control: "Where do I find my goodreads user id?",
       panel: (

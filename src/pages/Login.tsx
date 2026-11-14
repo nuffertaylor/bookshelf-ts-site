@@ -1,16 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import { defaultProps } from '../types/interfaces';
-import { capitalizeFirstLetter, sendPostRequestToServer, setCookie, validEmail} from '../utils/utilities';
+import { sendPostRequestToServer, setCookie } from '../utils/utilities';
+import { startHardcoverAuth } from '../utils/hardcover';
 import { Profile } from './Profile';
 import { Loading } from './Loading';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { toast } from 'react-toastify';
 
-interface loginregisterRequest {
-  requestType : string, //"login" | "register",
+interface loginRequest {
+  requestType : "login",
   username : string,
-  password : string,
-  email ?: string
+  password : string
 }
 interface loginregisterResponse {
   statusCode : 200,
@@ -22,44 +22,43 @@ interface loginregisterResponse {
 }
 
 interface loginProps extends defaultProps {
-  setLoginStatus : Function,
-  startState ?: string
+  setLoginStatus : Function
 }
 
-export function Login({widgetCallback, setLoginStatus, startState = "login"} : loginProps){
-  const login_flip_text = "Don't have an account? Register one here.";
-  const register_flip_text = "Already have an account? Login here.";
-  const [currentState, setState] = useState(startState);
-  const [flip_text, set_flip_text] = useState<string>(startState === "login" ? login_flip_text : register_flip_text);
+export function Login({widgetCallback, setLoginStatus} : loginProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
 
-  const submitLoginRegister = ()=>{
+  // New accounts are created by signing in with Hardcover. This password form is for accounts made before that.
+  const signInWithHardcover = ()=>{
+    widgetCallback(<Loading />);
+    startHardcoverAuth("login", "create", ()=>{
+      widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>);
+    });
+  };
+
+  const submitLogin = ()=>{
     const clear_failed_input_css = (element_ids : string[]) => {
       element_ids.forEach(i=>document.getElementById(i)?.classList.remove("bs_failed_input"));
     };
-    clear_failed_input_css(["username", "password", "email"]);
+    clear_failed_input_css(["username", "password"]);
     let username = (document.getElementById("username") as HTMLInputElement)?.value;
     let password = (document.getElementById("password")as HTMLInputElement)?.value;
-    let email = (document.getElementById("email") as HTMLInputElement)?.value;
     let failedChecks = [];
     if(!username) { failedChecks.push("username"); }
     if(!password) { failedChecks.push("password"); }
-    if(currentState==="register" && (!email || !validEmail(email))) { failedChecks.push("email"); }
     if(failedChecks.length > 0) {
       failedChecks.forEach((s) => {
         document.getElementById(s)?.classList.add("bs_failed_input");
-        if(s === "email" && email) toast.error("Invalid email provided.");
-        else toast.error("No " + s + " provided.");
+        toast.error("No " + s + " provided.");
       });
       return;
     }
     widgetCallback(<Loading />)
-    let data : loginregisterRequest = {
-      requestType : currentState,
+    let data : loginRequest = {
+      requestType : "login",
       username : username,
       password : password,
     };
-    if(currentState==="register") data.email = email;
     sendPostRequestToServer("loginregister", data, (res : string)=>{
       const parsed_res : loginregisterResponse = JSON.parse(res);
       if(parsed_res.statusCode === 200 && typeof parsed_res.body !== 'string') {
@@ -77,22 +76,11 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
     });
   };
 
-  const flip_state = ()=>{
-    if(currentState==="login") {
-      setState("register");
-      set_flip_text(register_flip_text);
-    }
-    else {
-      setState("login");
-      set_flip_text(login_flip_text);
-    }
-  };
-
   useEffect(()=>{
     const keyDownHandler = (event : KeyboardEvent) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        submitLoginRegister();
+        submitLogin();
       }
     }
     document.addEventListener('keydown', keyDownHandler);
@@ -101,13 +89,15 @@ export function Login({widgetCallback, setLoginStatus, startState = "login"} : l
 
   return(
     <div className="bs_input_section">
-      {currentState === "register" &&
-      <input type="text" placeholder="email" id="email" className={"bs_text_input bs_text_input_".concat(colorScheme)}  />
-      }
+      <button id="bs_hardcover_signin_button" className="bs_button bs_file_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
+      <p className="bs_csv_help">
+        New here? Sign in with Hardcover and we'll make your account.<br/>
+        Already have a My Bookshelf account? Log in with your password below, then link Hardcover from your profile.
+        (Signing in with Hardcover from an existing account's login creates a second, empty account.)
+      </p>
       <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
       <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
-      <span className={"bs_registerlogin_flip a_ a_".concat(colorScheme)} onClick={flip_state}>{flip_text}</span>
-      <button id="bs_enter_button" className="bs_button" onClick={submitLoginRegister}>{capitalizeFirstLetter(currentState)}</button>
+      <button id="bs_enter_button" className="bs_button" onClick={submitLogin}>Login</button>
     </div>
   )
 }

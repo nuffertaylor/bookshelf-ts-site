@@ -95,11 +95,28 @@ export function capitalizeFirstLetter(string : string) : string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function logout() {
+export function clearSession() {
   deleteCookie("username");
   deleteCookie("authtoken");
   deleteCookie("goodreads_id");
-  document.location.reload();
+  deleteCookie("hardcover_username");
+}
+
+// Ends the session on the server too (which also revokes the Hardcover connection), then clears the cookies.
+// The cookies are cleared even if the request fails or hangs, so the user is always logged out locally.
+export function logout() {
+  const username = getCookie("username");
+  const authtoken = getCookie("authtoken");
+  let done = false;
+  const finish = () => {
+    if(done) return;
+    done = true;
+    clearSession();
+    document.location.reload();
+  };
+  if(!username || !authtoken) { finish(); return; }
+  setTimeout(finish, 4000);
+  sendPostRequestToServer("logout", { username, authtoken }, finish);
 }
 
 export function get_year_from_date_str(str : string) : number {

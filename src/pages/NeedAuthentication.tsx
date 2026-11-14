@@ -1,5 +1,7 @@
 import React from 'react';
 import { defaultProps } from '../types/interfaces';
+import { startHardcoverAuth } from '../utils/hardcover';
+import { Loading } from './Loading';
 import { Login } from './Login';
 
 interface needAuthenticationProps extends defaultProps {
@@ -8,14 +10,17 @@ interface needAuthenticationProps extends defaultProps {
 
 export default function NeedAuthentication({ widgetCallback, setLoginStatus } : needAuthenticationProps){
   const click_login_tab = ()=>{document.getElementById("login")?.click();}
-  const flip_to_login = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="login"/>)};
-  const flip_to_register = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus} startState="register"/>)};
+  const flip_to_login = ()=>{click_login_tab(); widgetCallback(<Login widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>)};
+  const sign_in_with_hardcover = ()=>{
+    widgetCallback(<Loading/>);
+    startHardcoverAuth("login", "create", ()=>{ widgetCallback(<NeedAuthentication widgetCallback={widgetCallback} setLoginStatus={setLoginStatus}/>); });
+  };
   return(
     <div className="bs_landing bs_needsauth">
-      <div className="landing_text">Login or register to contribute</div>
+      <div className="landing_text">Log in to contribute</div>
       <div>
         <button id="bs_enter_button" className="bs_button bs_half_button" onClick={flip_to_login}>login</button>
-        <button id="bs_enter_button" className="bs_button bs_half_button" onClick={flip_to_register}>register</button>
+        <button className="bs_button bs_half_button" onClick={sign_in_with_hardcover}>hardcover</button>
       </div>
   </div>
   )

@@ -691,3 +691,14 @@ a {
 .bs_button:disabled:hover{
   background:#085df8;
 }
+.bs_source_tabs{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+.bs_hardcover_status{
+  font-size:.9em;
+  text-align:center;
+  padding:0 10px;
+}

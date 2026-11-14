@@ -3,24 +3,19 @@ import {Found} from "./Found";
 import { book, defaultProps, foundBook, ShelfSource } from '../types/interfaces';
 import {Loading} from "./Loading";
 import { sendPostRequestToServer } from "../utils/utilities";
+import { fetchShelf } from "../utils/shelfSource";
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { toast } from 'react-toastify';
 import { HowTo } from './HowTo';
+import { HardcoverShelfPicker } from './HardcoverShelfPicker';
 
 interface CreateProps extends defaultProps{
   props ?: {
     userid : string,
     shelfname : string
-  }
+  },
+  initialSource ?: "csv" | "hardcover"
 }
-export interface getgrbookshelfResponse {
-  statusCode : number,
-  body : {
-    found : foundBook[][],  // array of spine options for each book
-    unfound : book[]
-  }
-}
-
 interface shelfOption {
   name : string,
   count : number
@@ -38,15 +33,7 @@ function parseResponse<T>(res : string) : T {
   catch { return { statusCode : 500, body : {} } as unknown as T; }
 }
 
-// Asks the backend for the books on one shelf of a Goodreads export and which of them have spines.
-// Also used to reload the shelf after the user uploads missing spines.
-export function fetchShelfFromCsv(source : ShelfSource, callback : (res : getgrbookshelfResponse) => void){
-  sendPostRequestToServer("importgrlibrary", source, (res : string)=>{
-    callback(parseResponse<getgrbookshelfResponse>(res));
-  });
-}
-
-export function Create({ widgetCallback, props }: CreateProps){
+function CsvShelfPicker({ widgetCallback, props }: CreateProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
   const [csv, setCsv] = useState<string>("");
   const [shelves, setShelves] = useState<shelfOption[]>([]);
@@ -99,9 +86,9 @@ export function Create({ widgetCallback, props }: CreateProps){
       toast.error("Please choose your Goodreads CSV and a shelf.");
       return;
     }
-    const source : ShelfSource = { csv, shelf };
+    const source : ShelfSource = { kind : "csv", csv, shelf };
     widgetCallback(<Loading/>);
-    fetchShelfFromCsv(source, (resObj)=>{
+    fetchShelf(source, (resObj)=>{
       if(resObj.statusCode !== 200){
         toast.error("Something went wrong, please try again later.");
         widgetCallback(<Create widgetCallback={widgetCallback} props={props}/>);
@@ -144,4 +131,31 @@ export function Create({ widgetCallback, props }: CreateProps){
     <button id="bs_enter_button" className="bs_button" onClick={loadShelf} disabled={!csv}>LOAD SHELF</button>
   </div>
   )
+}
+
+// Where the shelf comes from: a Goodreads library export, or the signed-in user's Hardcover library.
+export function Create({ widgetCallback, props, initialSource = "csv" }: CreateProps){
+  const [active, setActive] = useState<"csv" | "hardcover">(initialSource);
+  // Only mount the Hardcover picker once it's been opened, so we don't call Hardcover for people who never use it.
+  const [hardcoverOpened, setHardcoverOpened] = useState<boolean>(initialSource === "hardcover");
+  const choose = (source : "csv" | "hardcover") => {
+    setActive(source);
+    if(source === "hardcover") setHardcoverOpened(true);
+  };
+  return (
+    <div className="bs_input_section">
+      <div className="bs_source_tabs">
+        <button className={"bs_adaptive_button" + (active === "csv" ? "" : " bs_gray")} onClick={() => choose("csv")}>Goodreads CSV</button>
+        <button className={"bs_adaptive_button" + (active === "hardcover" ? "" : " bs_gray")} onClick={() => choose("hardcover")}>Hardcover</button>
+      </div>
+      <div className={active === "csv" ? "" : "hide"}>
+        <CsvShelfPicker widgetCallback={widgetCallback} props={props}/>
+      </div>
+      {hardcoverOpened &&
+        <div className={active === "hardcover" ? "" : "hide"}>
+          <HardcoverShelfPicker widgetCallback={widgetCallback}/>
+        </div>
+      }
+    </div>
+  );
 }

@@ -10,7 +10,7 @@ import { Found } from './Found';
 import { SortBy } from './SortBy';
 import { Upload } from './Upload';
 import { Loading } from './Loading';
-import { fetchShelfFromCsv } from './Create';
+import { fetchShelf } from '../utils/shelfSource';
 import { alphabetize_by_title_algo } from './SortBy';
 
 export interface SelectEditionProps extends defaultProps {
@@ -60,7 +60,7 @@ export function SelectEdition({found, foundOptions, unfound, widgetCallback, sou
     }
     const previousPicks = currentPicks();
     widgetCallback(<Loading/>);
-    fetchShelfFromCsv(source, (resObj) => {
+    fetchShelf(source, (resObj) => {
       if(resObj.statusCode !== 200) {
         toast.error("Your spine was uploaded, but something went wrong reloading your bookshelf.");
         document.location.reload();

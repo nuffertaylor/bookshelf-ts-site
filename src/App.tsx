@@ -11,6 +11,7 @@ import { FetchGoodreads } from './pages/FetchGoodreads';
 import { getCookie, logout, sendGetRequestToServer, sendPostRequestToServer } from './utils/utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
+import { HardcoverCallback } from './pages/HardcoverCallback';
 import { Profile } from './pages/Profile';
 import { leaderboard_res, validateGetResponse } from './types/interfaces';
 //@ts-ignore
@@ -37,6 +38,8 @@ function App() {
     //send visit post
     sendPostRequestToServer("visit", visit_body, ()=>{});
 
+    if(onOauthCallback) setCenterWidget(<HardcoverCallback widgetCallback={changeCenterWidget} setLoginStatus={setLoginStatus}/>);
+
     //if we have a cookie that says we're logged in, send a validation request to the server to ensure the token is still valid.
     if(authtoken) {
       sendGetRequestToServer("validate", "username="+username+"&authtoken="+authtoken, (res : string)=>{
@@ -46,7 +49,9 @@ function App() {
     }
   // eslint-disable-next-line
   }, []);
-  const [centerWidget, setCenterWidget] = useState(<Landing widgetCallback={()=>{document.getElementById("create")?.click();}} />);
+  // Hardcover sends the browser back to /oauth/callback after sign-in; that page finishes the sign-in.
+  const onOauthCallback = window.location.pathname === "/oauth/callback";
+  const [centerWidget, setCenterWidget] = useState(onOauthCallback ? <Loading/> : <Landing widgetCallback={()=>{document.getElementById("create")?.click();}} />);
 
   const fetch_leaderboard = () => {
     setCenterWidget(<Loading/>);

@@ -25,7 +25,8 @@ interface uploadForm {
 }
 interface spinePostRequest {
   title : string,
-  book_id : string | number,
+  book_id ?: string | number,       // absent for books that only exist on Hardcover
+  hardcover_book_id ?: string | number,
   authorName : string,
   dimensions : string,
   genre : string,
@@ -55,6 +56,9 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
   const validDimensions = (string : string) => { return (string.match(/^([0-9]+\.*[0-9]* *[xX] *){2}([0-9]+\.*[0-9]*)/) != null); }
   const { colorScheme } = useContext(ColorSchemeCtx);
   
+  // Books that came from a Hardcover shelf have a Hardcover id but no Goodreads id.
+  const identified = foundBook ?? prefill;
+  const hardcoverOnly = !!identified && !identified.book_id && !!identified.hardcover_book_id;
   let disable_title = false, disable_book_id = false, disable_author = false, disable_pubDate = false, disable_genre = false;
   let defaultFormState : uploadForm = {title:"", book_id:"", dimensions:"", pubDate:"", authorName:"", genre:""}
   if(prefill) {
@@ -131,7 +135,7 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
   const submit = ()=>{
     let validInput : boolean = true;
 
-    if(!onlyNumbers(formState.book_id)){
+    if(!hardcoverOnly && !onlyNumbers(formState.book_id)){
       toast.error("Invalid Goodreads book id!");
       document.getElementById("book_id")?.classList.add("bs_failed_input");
       validInput = false;
@@ -162,7 +166,6 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
     const genSpinePostRequest = (domColor : string, keep_upload : boolean) : spinePostRequest => {
       let data : spinePostRequest = {
         title : formState.title,
-        book_id : formState.book_id,
         authorName : formState.authorName ? formState.authorName : "",
         dimensions : formState.dimensions,
         genre : formState.genre ? formState.genre : "",
@@ -174,6 +177,8 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
         authtoken : getCookie("authtoken"),
         domColor : domColor
       };
+      if(hardcoverOnly) data.hardcover_book_id = identified!.hardcover_book_id!;
+      else data.book_id = formState.book_id;
       if(foundBook) {
         data.replace_img = true;
         data.upload_id = foundBook.upload_id;
@@ -256,7 +261,7 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
           <input id="imageInput" type="file" accept="image/png, image/jpg, image/jpeg" onChange={encodeImageFileAsURL} hidden />
           <label htmlFor="imageInput" className="bs_button" id="upload_img_override_btn">Choose File</label>
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
-          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="book_id" type="text" placeholder="goodreads id" defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id} />
+          <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="book_id" type="text" placeholder={hardcoverOnly ? "no goodreads id (from Hardcover)" : "goodreads id"} defaultValue={formState.book_id} onChange={handleChange} disabled={disable_book_id || hardcoverOnly} />
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} disabled={disable_author}/>
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>

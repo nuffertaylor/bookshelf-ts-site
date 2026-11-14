@@ -11,7 +11,8 @@ export interface book {
   genre ?: string,
   user_read_at? : string,
   average_rating ?: string,
-  user_rating ?: string
+  user_rating ?: string,
+  hardcover_book_id ?: string | number | null  // set for books that came from Hardcover (they have no Goodreads book_id)
 }
 export interface foundBook extends book {
   upload_id : string,
@@ -20,11 +21,12 @@ export interface foundBook extends book {
   fileName : string,
   submitter : string
 }
-// A shelf of a Goodreads library export: the CSV text plus the shelf name chosen from it.
-export interface ShelfSource {
-  csv : string,
-  shelf : string
-}
+// Where a shelf of books came from, so it can be reloaded after the user uploads a missing spine.
+//  - csv: the text of a Goodreads library export plus the shelf name chosen from it
+//  - hardcover: the id of a Hardcover status shelf or list ("status:3", "list:456") from the signed-in user's library
+export type ShelfSource =
+  | { kind : "csv", csv : string, shelf : string }
+  | { kind : "hardcover", shelf : string };
 export interface bookContainer {
   book : book
 }

@@ -10,6 +10,7 @@ import { alphabetize_by_title_algo, alphabetize_list_by_title } from './SortBy';
 import { Upload } from './Upload';
 import { YourShelf } from './YourShelf';
 import { UnfoundRow } from './UnfoundUpload';
+import { startHardcoverAuth } from '../utils/hardcover';
 
 interface setusergridRes{
   statusCode : number,
@@ -37,6 +38,8 @@ export function Profile({widgetCallback} : defaultProps){
   const [yourUnfoundArrow, setYourUnfoundArrow] = useState("arrow-right");
   const gr_id = getCookie("goodreads_id");
   const [goodreadsUserId, setGoodreadsUserId] = useState(gr_id);
+  const hardcoverUsername = getCookie("hardcover_username");
+  const [linkingHardcover, setLinkingHardcover] = useState(false);
   const loading = [<Loading/>];
   const [submissionsSection, setSubmissionsSection] = useState(loading);
   const [shelvesSection, setShelvesSection] = useState(loading);
@@ -48,6 +51,11 @@ export function Profile({widgetCallback} : defaultProps){
   const [viewSelected, setViewSelected] = useState<null | ReactElement>(null);
   const setViewSelectedCallback = (re: ReactElement) => setViewSelected(re);
   let scrollPosition = 0;
+
+  const linkHardcover = () => {
+    setLinkingHardcover(true);
+    startHardcoverAuth("link", "profile", () => setLinkingHardcover(false));
+  };
 
   //async load submissions section
   const async_load_submissions = () => {
@@ -252,6 +260,10 @@ export function Profile({widgetCallback} : defaultProps){
           </div>
           <div className={yourUnfoundArrow === "arrow-right" ? "hide" :  ""}>
             {unfoundSection}
+          </div>
+          <div className="bs_gr_id_row">
+            <span className="bs_hardcover_status">{hardcoverUsername ? "Hardcover: " + hardcoverUsername : "Link Hardcover to build shelves from your Hardcover lists."}</span>
+            <button onClick={linkHardcover} disabled={linkingHardcover} className="bs_button bs_enter_button bs_gr_id_button">{linkingHardcover ? "Opening Hardcover..." : hardcoverUsername ? "Reconnect Hardcover" : "Link Hardcover"}</button>
           </div>
           <div className="bs_gr_id_row">
             <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />

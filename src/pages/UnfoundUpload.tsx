@@ -7,7 +7,7 @@ import { Title } from './Title';
 import { getCookie, sendPostRequestToServer } from '../utils/utilities';
 import { book, defaultProps, foundBook } from '../types/interfaces';
 import { alphabetize_by_title_algo } from './SortBy';
-import { fetchShelfFromCsv } from './Create';
+import { fetchShelf } from '../utils/shelfSource';
 import { toast } from 'react-toastify';
 import { Loading } from './Loading';
 
@@ -38,7 +38,7 @@ export function UnfoundUpload({found, foundOptions, unfound, widgetCallback, sou
   const sortedUnfound = unfound.sort(alphabetize_by_title_algo);
   const originCallback = (changesMade = false)=>{
     if(changesMade){
-      fetchShelfFromCsv(source, (resObj)=>{
+      fetchShelf(source, (resObj)=>{
         if(resObj.statusCode !== 200){
           toast.error("Something went wrong reloading your bookshelf.");
           document.location.reload();
