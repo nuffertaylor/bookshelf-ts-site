@@ -87,7 +87,7 @@ export function HardcoverShelfPicker({ widgetCallback } : defaultProps){
       <div className="bs_input_section">
         {message && <p className="bs_csv_help">{message}</p>}
         <p className="bs_csv_help">Sign in with Hardcover to build a shelf from one of your Hardcover lists.</p>
-        <button className="bs_button bs_file_button" onClick={() => goToHardcover("login")}>Sign in with Hardcover</button>
+        <button className="bs_button bs_file_button bs_hardcover_button" onClick={() => goToHardcover("login")}>Sign in with Hardcover</button>
         <p className="bs_csv_help">
           Already have a My Bookshelf account?{" "}
           <span className={"a_ a_".concat(colorScheme)} onClick={() => document.getElementById("login")?.click()}>Log in with your password</span>
@@ -101,7 +101,7 @@ export function HardcoverShelfPicker({ widgetCallback } : defaultProps){
     return (
       <div className="bs_input_section">
         <p className="bs_csv_help">Connect your Hardcover account to build shelves from your Hardcover lists.</p>
-        <button className="bs_button bs_file_button" onClick={() => goToHardcover("link")}>Connect Hardcover</button>
+        <button className="bs_button bs_file_button bs_hardcover_button" onClick={() => goToHardcover("link")}>Connect Hardcover</button>
       </div>
     );
   }

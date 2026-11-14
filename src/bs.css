@@ -702,3 +702,22 @@ a {
   text-align:center;
   padding:0 10px;
 }
+
+/* Hardcover's brand color for the buttons that start or show Hardcover sign-in. Placed last so it wins over the
+   generic blue, hover and disabled-hover rules above. */
+.bs_button.bs_hardcover_button,
+.bs_adaptive_button.bs_hardcover_button{
+  background:#626ae8;
+  color:white;
+}
+.bs_button.bs_hardcover_button:hover,
+.bs_adaptive_button.bs_hardcover_button:hover{
+  background:#4f57d3;
+}
+.bs_button.bs_hardcover_button:active,
+.bs_adaptive_button.bs_hardcover_button:active{
+  background:#3f46b0;
+}
+.bs_button.bs_hardcover_button:disabled:hover{
+  background:#626ae8;
+}

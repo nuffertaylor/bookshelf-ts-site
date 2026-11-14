@@ -146,7 +146,7 @@ export function Create({ widgetCallback, props, initialSource = "csv" }: CreateP
     <div className="bs_input_section">
       <div className="bs_source_tabs">
         <button className={"bs_adaptive_button" + (active === "csv" ? "" : " bs_gray")} onClick={() => choose("csv")}>Goodreads CSV</button>
-        <button className={"bs_adaptive_button" + (active === "hardcover" ? "" : " bs_gray")} onClick={() => choose("hardcover")}>Hardcover</button>
+        <button className={"bs_adaptive_button" + (active === "hardcover" ? " bs_hardcover_button" : " bs_gray")} onClick={() => choose("hardcover")}>Hardcover</button>
       </div>
       <div className={active === "csv" ? "" : "hide"}>
         <CsvShelfPicker widgetCallback={widgetCallback} props={props}/>

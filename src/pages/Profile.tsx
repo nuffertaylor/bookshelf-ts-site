@@ -264,7 +264,7 @@ export function Profile({widgetCallback} : defaultProps){
           </div>
           <div className="bs_gr_id_row">
             <span className="bs_hardcover_status">{hardcoverUsername ? "Hardcover: " + hardcoverUsername + (hardcoverNeedsReauth ? " (needs reconnecting)" : "") : "Link Hardcover to build shelves from your Hardcover lists."}</span>
-            <button onClick={linkHardcover} disabled={linkingHardcover} className="bs_button bs_enter_button bs_gr_id_button">{linkingHardcover ? "Opening Hardcover..." : hardcoverUsername ? (hardcoverNeedsReauth ? "Reconnect Hardcover" : "Relink Hardcover") : "Link Hardcover"}</button>
+            <button onClick={linkHardcover} disabled={linkingHardcover} className="bs_button bs_enter_button bs_gr_id_button bs_hardcover_button">{linkingHardcover ? "Opening Hardcover..." : hardcoverUsername ? (hardcoverNeedsReauth ? "Reconnect Hardcover" : "Relink Hardcover") : "Link Hardcover"}</button>
           </div>
           <div className="bs_gr_id_row">
             <input type="text" placeholder="Goodreads ID" id="new_gr_id" defaultValue={goodreadsUserId} className={"bs_gr_id_input bs_text_input bs_text_input_".concat(colorScheme)} />

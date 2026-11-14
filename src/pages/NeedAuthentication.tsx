@@ -20,7 +20,7 @@ export default function NeedAuthentication({ widgetCallback, setLoginStatus } : 
       <div className="landing_text">Log in to contribute</div>
       <div>
         <button id="bs_enter_button" className="bs_button bs_half_button" onClick={flip_to_login}>login</button>
-        <button className="bs_button bs_half_button" onClick={sign_in_with_hardcover}>hardcover</button>
+        <button className="bs_button bs_half_button bs_hardcover_button" onClick={sign_in_with_hardcover}>hardcover</button>
       </div>
   </div>
   )

@@ -92,7 +92,7 @@ export function Login({widgetCallback, setLoginStatus} : loginProps){
 
   return(
     <div className="bs_input_section">
-      <button id="bs_hardcover_signin_button" className="bs_button bs_file_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
+      <button id="bs_hardcover_signin_button" className="bs_button bs_file_button bs_hardcover_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
       <p className="bs_csv_help">
         New here? Sign in with Hardcover and we'll make your account.<br/>
         Already have a My Bookshelf account? Log in with your password below, then link Hardcover from your profile.
