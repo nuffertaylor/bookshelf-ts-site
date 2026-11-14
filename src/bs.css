@@ -570,3 +570,21 @@ a {
 .text-left {
   text-align: left;
 }
+/* Label styled as a bs_button, wrapping a hidden file input (same pattern as the spine upload) */
+.bs_file_button{
+  display:grid;
+  align-items:center;
+  margin-bottom:20px;
+}
+.bs_button:disabled{
+  opacity:.5;
+  cursor:default;
+}
+.bs_csv_filename{
+  margin:0 0 20px;
+  font-size:.9em;
+}
+.bs_csv_help{
+  margin-top:0;
+  text-align:center;
+}

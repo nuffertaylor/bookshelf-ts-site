@@ -5,6 +5,7 @@ import {Loading} from "./Loading";
 import { sendPostRequestToServer } from "../utils/utilities";
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { toast } from 'react-toastify';
+import { HowTo } from './HowTo';
 
 interface CreateProps extends defaultProps{
   props ?: {
@@ -50,10 +51,12 @@ export function Create({ widgetCallback, props }: CreateProps){
   const [csv, setCsv] = useState<string>("");
   const [shelves, setShelves] = useState<shelfOption[]>([]);
   const [shelf, setShelf] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
 
   const onFileChosen = (e : React.ChangeEvent<HTMLInputElement>)=>{
     const file = e.target.files?.[0];
     if(!file) return;
+    const chosenName = file.name;
     const reader = new FileReader();
     reader.onerror = ()=>{ toast.error("Couldn't read that file."); };
     reader.onload = ()=>{
@@ -74,6 +77,7 @@ export function Create({ widgetCallback, props }: CreateProps){
           return;
         }
         setCsv(text);
+        setFileName(chosenName);
         setShelves(options);
         setShelf(options.some(s => s.name === "read") ? "read" : options[0].name);
       });
@@ -81,9 +85,9 @@ export function Create({ widgetCallback, props }: CreateProps){
     reader.readAsText(file);
   };
 
-  const generate = ()=>{
+  const loadShelf = ()=>{
     if(!csv || !shelf){
-      toast.error("Please choose your Goodreads export file and a shelf.");
+      toast.error("Please choose your Goodreads CSV and a shelf.");
       return;
     }
     const source : ShelfSource = { csv, shelf };
@@ -103,11 +107,15 @@ export function Create({ widgetCallback, props }: CreateProps){
 
   return (
   <div className="bs_input_section">
-    <p>
-      Goodreads no longer lets us read your shelves directly. Export your library instead:
-      on Goodreads go to My Books, then Import and export, then Export Library, and upload the downloaded CSV here.
-    </p>
-    <input type="file" accept=".csv,text/csv" id="bs_csv_input" onChange={onFileChosen}/>
+    <input id="bs_csv_input" type="file" accept=".csv,text/csv" onChange={onFileChosen} hidden />
+    <label htmlFor="bs_csv_input" className="bs_button bs_file_button">{csv ? "Choose a Different CSV" : "Choose CSV"}</label>
+    {csv && <p className="bs_csv_filename">{fileName}</p>}
+    {!csv &&
+      <p className="bs_csv_help">
+        Upload your Goodreads library export.{" "}
+        <span className={"a_ a_".concat(colorScheme)} onClick={()=>{widgetCallback(<HowTo openItem="goodreads_csv"/>)}}>How to get my Goodreads CSV</span>
+      </p>
+    }
     {shelves.length > 0 &&
       <select
         id="shelfname"
@@ -118,7 +126,7 @@ export function Create({ widgetCallback, props }: CreateProps){
         {shelves.map(s => <option key={s.name} value={s.name}>{s.name} ({s.count})</option>)}
       </select>
     }
-    <button id="bs_enter_button" className="bs_button" onClick={generate} disabled={!csv}>GENERATE</button>
+    <button id="bs_enter_button" className="bs_button" onClick={loadShelf} disabled={!csv}>LOAD SHELF</button>
   </div>
   )
 }
