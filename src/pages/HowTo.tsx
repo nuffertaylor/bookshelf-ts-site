@@ -4,6 +4,9 @@ import { ColorSchemeCtx } from "../ColorSchemeContext";
 import { Faq, FaqItem } from "./Faq";
 import { Title } from "./Title";
 
+// TODO: Update FAQ items now that goodreads RSS feed doesn't work. There are a couple irrelevant sections (goodreads ID, goodreads book id), and others that need updates.
+// TODO: Add section explaining contributing for hardcover
+
 interface HowToProps{ openItem ?: string }
 export function HowTo({ openItem } : HowToProps){
   const { colorScheme } = useContext(ColorSchemeCtx);

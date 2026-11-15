@@ -94,10 +94,15 @@ export function Login({widgetCallback, setLoginStatus} : loginProps){
     <div className="bs_input_section">
       <button id="bs_hardcover_signin_button" className="bs_button bs_file_button bs_hardcover_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
       <p className="bs_csv_help">
+        {/* 
+        TODO: remove this instruction block, leave only the "Login with Hardcover" button
+        Add a small blue text link that says "legacy login" which opens the legacy login inputs
+        */}
         New here? Sign in with Hardcover and we'll make your account.<br/>
         Already have a My Bookshelf account? Log in with your password below, then link Hardcover from your profile.
         (Signing in with Hardcover from an existing account's login creates a second, empty account.)
       </p>
+      
       <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
       <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
       <button id="bs_enter_button" className="bs_button" onClick={submitLogin}>Login</button>

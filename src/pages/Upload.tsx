@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { IMG_URL_PREFIX } from "../types/constants";
 const SHOW_PREVIOUSLY_UPLOAD_IMAGE : boolean = false;
 
+// TODO: Integrate an auto spine editor, in case the spine they provide isn't properly framed, perspective shifted, or cropped. (BIG JOB)
+
 interface uploadProps extends defaultProps{
   prefill ?: book,
   foundBook ?: foundBook,

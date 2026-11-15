@@ -14,6 +14,9 @@ export interface sortByProps extends defaultProps{
   booklist : Array<foundBook>
 }
 
+// TODO: Add tests to verify each sorting algorithm works
+// these tests should verify with goodreads and hardcover inputs
+
 export const alphabetize_by_title_algo = (a : book, b : book) => {
   const remove_first_article = (title : string) => {
     const articles = ["the", "a", "an"];

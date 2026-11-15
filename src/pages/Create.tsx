@@ -134,7 +134,7 @@ function CsvShelfPicker({ widgetCallback, props }: CreateProps){
 }
 
 // Where the shelf comes from: a Goodreads library export, or the signed-in user's Hardcover library.
-export function Create({ widgetCallback, props, initialSource = "csv" }: CreateProps){
+export function Create({ widgetCallback, props, initialSource = "hardcover" }: CreateProps){
   const [active, setActive] = useState<"csv" | "hardcover">(initialSource);
   // Only mount the Hardcover picker once it's been opened, so we don't call Hardcover for people who never use it.
   const [hardcoverOpened, setHardcoverOpened] = useState<boolean>(initialSource === "hardcover");
@@ -145,8 +145,8 @@ export function Create({ widgetCallback, props, initialSource = "csv" }: CreateP
   return (
     <div className="bs_input_section">
       <div className="bs_source_tabs">
-        <button className={"bs_adaptive_button" + (active === "csv" ? "" : " bs_gray")} onClick={() => choose("csv")}>Goodreads CSV</button>
         <button className={"bs_adaptive_button" + (active === "hardcover" ? " bs_hardcover_button" : " bs_gray")} onClick={() => choose("hardcover")}>Hardcover</button>
+        <button className={"bs_adaptive_button" + (active === "csv" ? "" : " bs_gray")} onClick={() => choose("csv")}>Goodreads CSV</button>
       </div>
       <div className={active === "csv" ? "" : "hide"}>
         <CsvShelfPicker widgetCallback={widgetCallback} props={props}/>

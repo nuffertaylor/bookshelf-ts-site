@@ -38,7 +38,7 @@ export function YourShelf({shelf_image, widgetCallback, from_profile, b64ShelfIm
   const { colorScheme } = useContext(ColorSchemeCtx);
 
   //TODO: If they aren't signed in, give them the opportunity to sign in without losing their generated shelf.
-  //TODO: Limit maximum number of bookshelves user can save to their profile
+  //TODO: Limit maximum number of bookshelves user can save to their profile (probably backend)
   const save_to_profile = () => {set_shelf_name(false)};
   const rename_shelf = () => {set_shelf_name(true)};
 
