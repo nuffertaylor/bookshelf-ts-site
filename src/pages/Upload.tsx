@@ -265,6 +265,9 @@ export function Upload({widgetCallback, prefill, originCallback, foundBook} : up
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="title" type="text" placeholder="title" defaultValue={formState.title} onChange={handleChange} disabled={disable_title}/>
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="book_id" type="text" placeholder="goodreads id" defaultValue={hardcoverOnly ? "Hardcover ID: " + identified!.hardcover_book_id : formState.book_id} onChange={handleChange} disabled={disable_book_id || hardcoverOnly} />
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="authorName" type="text" placeholder="author's name" defaultValue={formState.authorName} onChange={handleChange} disabled={disable_author}/>
+          {/*
+            TODO: only require the height of the image on upload - everything else can be calculated using an inch to pixel ratio on the image. That way the HxW ratio will exactly match the picture
+           */}
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="dimensions" type="text" placeholder="book dimensions (&quot;6 x 1.18 x 9&quot;)" defaultValue={formState.dimensions} onChange={handleChange} />
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="pubDate" type="text" placeholder="year published" defaultValue={formState.pubDate} onChange={handleChange} disabled={disable_pubDate}/>
           <input className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="genre" type="text" placeholder="genre" defaultValue={formState.genre} onChange={handleChange} disabled={disable_genre}/>

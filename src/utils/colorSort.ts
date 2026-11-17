@@ -14,7 +14,7 @@ interface clusterItem {
   leadColor : Array<number>,
   colors : Array<any>
 }
-const clusters : Array<clusterItem> = [
+const cluster_templates : Array<clusterItem> = [
   { name: 'red', leadColor: [255, 0, 0], colors: [] },
   { name: 'orange', leadColor: [255, 128, 0], colors: [] },
   { name: 'yellow', leadColor: [255, 255, 0], colors: [] },
@@ -46,6 +46,8 @@ function oneDimensionSorting(colors : any, dim : string) {
 }
 
 function sortWithClusters(colorsToSort : Array<string>) {
+  // fresh clusters each call, otherwise colors from earlier sorts pile up in the shared array
+  const clusters : Array<clusterItem> = cluster_templates.map(c => ({ ...c, colors: [] }));
   const mappedColors = colorsToSort.map(colorUtil.color);
   
   mappedColors.forEach((color : any) => {

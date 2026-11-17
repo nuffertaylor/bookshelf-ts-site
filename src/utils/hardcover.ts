@@ -39,6 +39,7 @@ export function apiErrorText(res : apiResponse<unknown>) : string {
 export function hardcoverAuthErrorMessage(res : apiResponse<unknown>) : string {
   const err = apiErrorText(res);
   switch(err){
+    // TODO: Let users merge accounts. A legacy user who signed in with Hardcover first has two accounts, and this error leaves them stuck. Needs backend support too (see _handle_link in the backend's hardcover_auth_callback handler).
     case "hardcover_already_linked":
       return "That Hardcover account is already linked to a different My Bookshelf account.";
     case "account_linked_to_different_hardcover":

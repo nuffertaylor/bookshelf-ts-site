@@ -142,13 +142,10 @@ export const split_dimensions_str_into_h_w_l = (dimensions : string) => {
   const int_arr : number[] = dimensions.toLowerCase().split('x').map(item => parseFloat(item.trim()));
   const h = Math.max(...int_arr);
   const w = Math.min(...int_arr);
-  let l = 0;
-  for(let i = 0; i < 3; i++) {
-    if(int_arr[i] === h) continue;
-    else if(int_arr[i] === w) continue;
-    else l = int_arr[i];
-  }
-  if(l === 0) l = h; //we have a square book
+  // the length is the middle value, which also handles ties (9 x 6 x 6 -> 6).
+  // If we don't have three usable numbers, fall back to the height (we have a square book).
+  const usable = int_arr.length === 3 && int_arr.every(n => !isNaN(n));
+  const l = usable ? [...int_arr].sort((x, y) => y - x)[1] : h;
   return { h : h, w : w, l : l };
 };
 

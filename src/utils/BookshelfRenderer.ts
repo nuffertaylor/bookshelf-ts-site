@@ -280,7 +280,8 @@ export class BookshelfRenderer {
     const NAME_PADDING_RIGHT = 10;
     const nameXPosition = heightInPx - validMeasuredNameText.width - NAME_PADDING_RIGHT;
     const nameYPosition = widthInPx - Math.ceil((widthInPx - validMeasuredNameText.fontBoundingBoxAscent) / 2);
-    spineCtx.fillStyle = "#000000"; // TODO?
+    // TODO: Text is always black (title too), unreadable on dark backgrounds. Pick the color with an algorithm for great contrast (e.g. WCAG).
+    spineCtx.fillStyle = "#000000";
     // spineCtx.fillStyle = COLORS.fg;
     spineCtx.fillText(lastName, nameXPosition, nameYPosition);
 
