@@ -86,7 +86,6 @@ export function HardcoverShelfPicker({ widgetCallback } : defaultProps){
     return (
       <div className="bs_input_section">
         {message && <p className="bs_csv_help">{message}</p>}
-        <p className="bs_csv_help">Sign in with Hardcover to build a shelf from one of your Hardcover lists.</p>
         <button className="bs_button bs_file_button bs_hardcover_button" onClick={() => goToHardcover("login")}>Sign in with Hardcover</button>
         <p className="bs_csv_help">
           Already have a My Bookshelf account?{" "}
