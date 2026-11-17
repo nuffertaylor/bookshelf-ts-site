@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { defaultProps } from '../types/interfaces';
 import { sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { setHardcoverLink, startHardcoverAuth } from '../utils/hardcover';
@@ -29,6 +29,8 @@ interface loginProps extends defaultProps {
 
 export function Login({widgetCallback, setLoginStatus} : loginProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
+  // New accounts use Hardcover. The password form is only for accounts made before that, so it starts hidden.
+  const [showLegacyLogin, setShowLegacyLogin] = useState<boolean>(false);
 
   // New accounts are created by signing in with Hardcover. This password form is for accounts made before that.
   const signInWithHardcover = ()=>{
@@ -39,6 +41,7 @@ export function Login({widgetCallback, setLoginStatus} : loginProps){
   };
 
   const submitLogin = ()=>{
+    if(!showLegacyLogin) return;
     const clear_failed_input_css = (element_ids : string[]) => {
       element_ids.forEach(i=>document.getElementById(i)?.classList.remove("bs_failed_input"));
     };
@@ -92,20 +95,23 @@ export function Login({widgetCallback, setLoginStatus} : loginProps){
 
   return(
     <div className="bs_input_section">
-      <button id="bs_hardcover_signin_button" className="bs_button bs_file_button bs_hardcover_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
-      <p className="bs_csv_help">
-        {/* 
-        TODO: remove this instruction block, leave only the "Login with Hardcover" button
-        Add a small blue text link that says "legacy login" which opens the legacy login inputs
-        */}
-        New here? Sign in with Hardcover and we'll make your account.<br/>
-        Already have a My Bookshelf account? Log in with your password below, then link Hardcover from your profile.
-        (Signing in with Hardcover from an existing account's login creates a second, empty account.)
-      </p>
-      
-      <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
-      <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
-      <button id="bs_enter_button" className="bs_button" onClick={submitLogin}>Login</button>
+      {showLegacyLogin ? (
+        <>
+          <input type="text" placeholder="username" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="username"/>
+          <input type="password" placeholder="password" className={"bs_text_input bs_text_input_".concat(colorScheme)}  id="password"/>
+          <button id="bs_enter_button" className="bs_button" onClick={submitLogin}>Login</button>
+          <p className="bs_login_switch bs_login_switch_after_login">
+            <span id="bs_hardcover_login_link" className={"a_ a_".concat(colorScheme)} onClick={()=>setShowLegacyLogin(false)}>sign in with Hardcover</span>
+          </p>
+        </>
+      ) : (
+        <>
+          <button id="bs_hardcover_signin_button" className="bs_button bs_file_button bs_hardcover_button" onClick={signInWithHardcover}>Sign in with Hardcover</button>
+          <p className="bs_login_switch bs_login_switch_after_hardcover">
+            <span id="bs_legacy_login_link" className={"a_ a_".concat(colorScheme)} onClick={()=>setShowLegacyLogin(true)}>legacy login</span>
+          </p>
+        </>
+      )}
     </div>
   )
 }

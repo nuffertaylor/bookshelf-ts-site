@@ -607,6 +607,19 @@ a {
   margin-top:0;
   text-align:center;
 }
+.bs_login_switch{
+  margin-bottom:0;
+  font-size:.8em;
+  font-style:italic;
+  text-align:center;
+}
+/* the Hardcover button above has a 20px bottom margin, pull the link closer to it */
+.bs_login_switch_after_hardcover{
+  margin-top:-10px;
+}
+.bs_login_switch_after_login{
+  margin-top:10px;
+}
 .bs_shelf_label{
   margin-bottom:6px;
   font-weight:bold;
