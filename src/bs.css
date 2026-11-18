@@ -734,3 +734,60 @@ a {
 .bs_button.bs_hardcover_button:disabled:hover{
   background:#626ae8;
 }
+
+/* Hardcover book search (Contribute) */
+.bs_search_results{
+  list-style:none;
+  margin:0 0 20px;
+  padding:0;
+  width:100%;
+  max-width:420px;
+}
+.bs_search_result{
+  display:block;
+  width:100%;
+  margin-bottom:8px;
+  padding:10px 14px;
+  border:1px solid rgba(128,128,128,.5);
+  border-radius:12px;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.bs_search_result:hover,
+.bs_search_result:focus-visible{
+  border-color:#626ae8;
+}
+.bs_search_result_light:focus-visible{
+  outline:3px solid #3f47c9;
+  outline-offset:2px;
+}
+.bs_search_result_dark:focus-visible{
+  outline:3px solid #aab0ff;
+  outline-offset:2px;
+}
+.bs_search_result_title{
+  font-weight:600;
+}
+.bs_search_result_meta{
+  font-size:.85em;
+  opacity:.75;
+}
+.bs_search_result_tag{
+  display:inline-block;
+  margin-top:4px;
+  padding:2px 10px;
+  border-radius:10px;
+  font-size:.85em;
+  font-weight:600;
+}
+.bs_search_result_tag_light{
+  background:#3f47c9;
+  color:#fff;
+}
+.bs_search_result_tag_dark{
+  background:#aab0ff;
+  color:#14153a;
+}

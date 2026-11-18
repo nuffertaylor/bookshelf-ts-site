@@ -6,15 +6,15 @@ import { Upload } from './Upload';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { toast } from 'react-toastify';
 
-// TODO: Deprecate this modal, and replace with a hardcover integration.
-// Research if we need to use the hardcover API, or if we can pull book details from hardcover once they've oauth signed in.
-// Rather than pulling via book id, hardcover is probably smart enough we can query their site directly with book titles and help users find the right one.
-
 interface getgrbookdetailsResponse{
   statusCode : number,
   body : book
 }
 
+/**
+ * @deprecated Replaced by HardcoverBookSearch, which searches Hardcover instead of asking for a Goodreads URL.
+ * The backend's getgrbookdetails route is being removed. Nothing imports or renders this anymore; the file is kept for reference.
+ */
 export function FetchGoodreads({ widgetCallback } : defaultProps){
   const { colorScheme } = useContext(ColorSchemeCtx);
 

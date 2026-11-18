@@ -4,6 +4,7 @@ import { defaultProps } from '../types/interfaces';
 import { apiErrorText, hardcoverAuthErrorMessage, parseApiResponse, setHardcoverLink, takePendingHardcoverAuth } from '../utils/hardcover';
 import { sendPostRequestToServer, setCookie } from '../utils/utilities';
 import { Create } from './Create';
+import { HardcoverBookSearch } from './HardcoverBookSearch';
 import { Landing } from './Landing';
 import { Loading } from './Loading';
 import { Login } from './Login';
@@ -78,6 +79,7 @@ export function HardcoverCallback({ widgetCallback, setLoginStatus } : Hardcover
           setHardcoverLink(linked.hardcover_username);
           toast.success("Hardcover linked" + (linked.hardcover_username ? " as " + linked.hardcover_username : "") + ".");
           if(pending.returnTo === "profile") widgetCallback(<Profile widgetCallback={widgetCallback}/>);
+          else if(pending.returnTo === "contribute") widgetCallback(<HardcoverBookSearch widgetCallback={widgetCallback}/>);
           else widgetCallback(<Create widgetCallback={widgetCallback} initialSource="hardcover"/>);
           return;
         }
@@ -93,7 +95,8 @@ export function HardcoverCallback({ widgetCallback, setLoginStatus } : Hardcover
         setHardcoverLink(session.hardcover_username);
         setLoginStatus("profile");
         toast.success((session.is_new_account ? "Welcome, " : "Welcome back, ") + session.username + "!");
-        widgetCallback(<Create widgetCallback={widgetCallback} initialSource="hardcover"/>);
+        if(pending.returnTo === "contribute") widgetCallback(<HardcoverBookSearch widgetCallback={widgetCallback}/>);
+        else widgetCallback(<Create widgetCallback={widgetCallback} initialSource="hardcover"/>);
       });
   // eslint-disable-next-line
   }, []);

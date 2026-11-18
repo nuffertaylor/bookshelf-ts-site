@@ -87,7 +87,7 @@ export function HowTo({ openItem } : HowToProps){
         <div key={nextId()}>
 				  <p>Every edition of every book has a unique numeric Book ID. You can find this by going to the page of the specific edition you're looking for. The Book ID will be contained in the URL.</p>
           <img className="bs_faq_img" src="https://i.imgur.com/LKcdcca.png" alt="where the bookid is in the url"/>
-          <p>For the purposes of the “My Bookshelf” website, you'll only need the URL. You can paste that into the website, and it will parse out the book id for you.</p>
+          <p>You no longer need a Goodreads book id to contribute a spine, since contributing now uses a Hardcover search.</p>
           <p>You can also find this ID on the mobile app. Just go to the book edition you want, click the “share” icon, and click copy. This will copy the URL to your clipboard. You can then paste it somewhere and extract that numeric book id. Or, if you're using the bookshelf website, just paste that url directly.</p>
           <p>Fun fact: The book with the lowest Book ID on Goodreads (1, it is 1 not 0 indexed) is <a href="https://www.goodreads.com/book/show/1" className={"a_".concat(colorScheme)}>Harry Potter #6</a>. This seems to imply that this specific book was the first one added to the service. If you keep going up 1-7, you'll find the rest of the Harry Potter series, in a seemingly random order. So at its roots, Goodreads was created by and for Harry Potter fans. Or perhaps they were just using one of the most popular series of all time to start with, who knows? 🤔</p>
 			</div>
@@ -101,16 +101,15 @@ export function HowTo({ openItem } : HowToProps){
           <ol>
             <li>Login to or Create a My Bookshelf Account</li>
             <li><span className={"a_ a_".concat(colorScheme)} onClick={()=>document.getElementById("contribute")?.click()}>Click on the “Contribute” tab</span></li>
-            <li>Find the book (and the matching edition) you want to upload a spine for on Goodreads.</li>
-            <li>Copy the Goodreads URL for that book (You can also do this on mobile by clicking the share icon, then “Copy”)</li>
-            <li>Paste that URL into the textbox on the contribute page</li>
-            <li>Click “Get Book Data”</li>
+            <li>Sign in with a Hardcover account, or link Hardcover from your profile. Contributing searches Hardcover's catalog.</li>
+            <li>Type the book's title into the search box. Results appear when you pause typing (press Enter to search right away). If there are too many results, add more of the title or the author.</li>
+            <li>Click the book (and the matching edition) you want to upload a spine for. Books you've already uploaded a spine for are tagged.</li>
             <li>Most of the data should be filled out on this page - things like the title, the author, the publication date, etc. These prefilled values need to be exact, so the website won’t let you alter them. Some fields might be empty, and you’ll need to manually provide that data. The one piece you’ll always need to provide is the book dimensions, given in inches.</li>
             <li>Provide the book dimensions, following the format 1x2x3. The order of height, width, and length, doesn’t matter. They just need to be separated by an “x”. For a guide on finding the book dimensions online, see the other FAQ item. If the dimensions you provide don’t match the actual book spine image, when the image is applied to a virtual bookshelf, it will look stretched/shrunk/bad.</li>
             <li>Click “Choose File” and upload a png or jpg of your book spine. The site restricts the maximum file size to 5mb, so if your image is too big, use a website like <a href="https://tinypng.com" className={"a_".concat(colorScheme)}>tinypng.com</a> to compress it.</li>
             <li>Click “Upload”. The website will notify you if anything is wrong with your data, or if the upload fails. If everything works as expected, you will be notified that the upload was successful, and the website will return you to where you were last.</li>
           </ol>
-          <p>If you’re trying to create a virtual bookshelf and some spines are missing, you can also upload them on that page. The website will tell you how many spines are missing, from there click “Upload Missing Spines”. This will show all the missing books in alphabetical order. If you click “Upload” here, it will jump automatically to step 7 above and you can repeat the same process. I found this method was faster than searching goodreads for each individual book, if I already had images for spines on a given shelf.</p>
+          <p>If you’re trying to create a virtual bookshelf and some spines are missing, you can also upload them on that page. The website will tell you how many spines are missing, from there click “Upload Missing Spines”. This will show all the missing books in alphabetical order. If you click “Upload” here, it will jump automatically to the form that shows the book's details above and you can repeat the same process. I found this method was faster than searching for each individual book, if I already had images for spines on a given shelf.</p>
           <p>For every book spine you upload, your tally on the site leaderboard will go up.</p>
 			  </div>
       )

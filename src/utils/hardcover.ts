@@ -9,7 +9,7 @@ const RETURN_KEY = "hardcover_oauth_return";
 
 export type HardcoverAuthMode = "login" | "link";
 // Where to land after Hardcover sends the user back to the site.
-export type HardcoverReturn = "create" | "profile";
+export type HardcoverReturn = "create" | "profile" | "contribute";
 
 export interface hardcoverShelfOption {
   id : string,    // "status:3" or "list:456"
@@ -80,7 +80,8 @@ export function startHardcoverAuth(mode : HardcoverAuthMode, returnTo : Hardcove
 export function takePendingHardcoverAuth() : { state : string, mode : HardcoverAuthMode, returnTo : HardcoverReturn } | null {
   const state = sessionStorage.getItem(STATE_KEY);
   const mode = sessionStorage.getItem(MODE_KEY);
-  const returnTo = sessionStorage.getItem(RETURN_KEY) === "profile" ? "profile" : "create";
+  const storedReturn = sessionStorage.getItem(RETURN_KEY);
+  const returnTo : HardcoverReturn = storedReturn === "profile" || storedReturn === "contribute" ? storedReturn : "create";
   sessionStorage.removeItem(STATE_KEY);
   sessionStorage.removeItem(MODE_KEY);
   sessionStorage.removeItem(RETURN_KEY);
@@ -150,4 +151,54 @@ export function hardcoverShelfErrorMessage(res : hardcoverShelfResponse) : { mes
   if(f.kind === "session_expired") return { message : "Your session expired, please log in again.", needsConnect : false };
   if(f.kind === "error") return { message : f.message, needsConnect : false };
   return { message : "Something went wrong, please try again later.", needsConnect : false };
+}
+
+export interface hardcoverSearchResult {
+  hardcover_book_id : number,
+  title : string,
+  subtitle ?: string,
+  author ?: string,
+  pubDate ?: string,
+  isbn ?: string,
+  isbn13 ?: string,
+  already_uploaded : boolean
+}
+
+export type hardcoverSearchOutcome =
+  | { kind : "ok", results : hardcoverSearchResult[] }
+  | { kind : "needs_connect" }
+  | { kind : "session_expired" }
+  | { kind : "error", message : string, rateLimited ?: boolean };
+
+const optionalText = (v : unknown) => (typeof v === "string" || typeof v === "number") ? String(v) : undefined;
+// Drops anything that isn't a usable book and coerces the rest, so an odd item can't crash the list.
+function cleanSearchResult(item : unknown) : hardcoverSearchResult[] {
+  if(!item || typeof item !== "object") return [];
+  const r = item as Record<string, unknown>;
+  if(typeof r.hardcover_book_id !== "number" || !Number.isFinite(r.hardcover_book_id) || typeof r.title !== "string") return [];
+  return [{
+    hardcover_book_id : r.hardcover_book_id, title : r.title,
+    subtitle : optionalText(r.subtitle), author : optionalText(r.author), pubDate : optionalText(r.pubDate),
+    isbn : optionalText(r.isbn), isbn13 : optionalText(r.isbn13), already_uploaded : r.already_uploaded === true
+  }];
+}
+
+// Searches Hardcover's catalog for books matching the query, to contribute a spine for.
+export function searchHardcoverBooks(query : string, callback : (r : hardcoverSearchOutcome) => void){
+  const data = { username : getCookie("username"), authtoken : getCookie("authtoken"), query };
+  sendPostRequestToServer("hardcover/search", data, (res : string) => {
+    const parsed = parseApiResponse<{ results : hardcoverSearchResult[] }>(res);
+    const body = parsed.body;
+    if(parsed.statusCode === 200){
+      if(body && typeof body === 'object' && 'results' in body && Array.isArray(body.results)){
+        callback({ kind : "ok", results : (body.results as unknown[]).flatMap(cleanSearchResult) });
+      }
+      else callback({ kind : "error", message : "Got an unexpected response from the search, please try again." });
+      return;
+    }
+    const f = libraryFailure(parsed);
+    if(f.kind === "error" && parsed.statusCode === 429) callback({ ...f, rateLimited : true });
+    else if(f.kind === "ok") callback({ kind : "error", message : "Something went wrong talking to Hardcover, please try again." });
+    else callback(f);
+  });
 }

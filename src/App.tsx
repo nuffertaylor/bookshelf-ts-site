@@ -7,7 +7,7 @@ import {Landing} from './pages/Landing';
 import {Leaderboard} from './pages/Leaderboard';
 import {Login} from './pages/Login';
 import './bs.css'
-import { FetchGoodreads } from './pages/FetchGoodreads';
+import { HardcoverBookSearch } from './pages/HardcoverBookSearch';
 import { getCookie, logout, sendGetRequestToServer, sendPostRequestToServer } from './utils/utilities';
 import NeedAuthentication from './pages/NeedAuthentication';
 import { Loading } from './pages/Loading';
@@ -71,7 +71,7 @@ function App() {
         setCenterWidget(<Create widgetCallback={changeCenterWidget} />);
         break;
       case "/contribute":
-        if(loginStatus === "profile") setCenterWidget(<FetchGoodreads widgetCallback={changeCenterWidget} />);
+        if(loginStatus === "profile") setCenterWidget(<HardcoverBookSearch widgetCallback={changeCenterWidget} />);
         else setCenterWidget(<NeedAuthentication widgetCallback={changeCenterWidget}  setLoginStatus={setLoginStatus}/>);
         break;
       case "/curate":
