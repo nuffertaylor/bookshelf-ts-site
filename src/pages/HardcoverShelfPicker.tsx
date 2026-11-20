@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Select } from '@mantine/core';
 import { toast } from 'react-toastify';
 import { ColorSchemeCtx } from '../ColorSchemeContext';
 import { book, defaultProps, foundBook, ShelfSource } from '../types/interfaces';
@@ -117,14 +118,17 @@ export function HardcoverShelfPicker({ widgetCallback } : defaultProps){
   return (
     <div className="bs_input_section">
       <label htmlFor="hardcover_shelfname" className="bs_shelf_label">Available Lists</label>
-      <select
+      <Select
         id="hardcover_shelfname"
-        className={"bs_text_input bs_text_input_".concat(colorScheme)}
+        data={shelves.map(s => ({ value: s.id, label: `${s.name} (${s.count})` }))}
         value={shelf}
-        onChange={e => setShelf(e.target.value)}
-      >
-        {shelves.map(s => <option key={s.id} value={s.id}>{s.name} ({s.count})</option>)}
-      </select>
+        onChange={value => { if(value !== null) setShelf(value); }}
+        allowDeselect={false}
+        size="md"
+        radius="xl"
+        style={{ width: 265 }}
+        mb={20}
+      />
       <button className="bs_button" onClick={loadShelf}>LOAD LIST</button>
     </div>
   );

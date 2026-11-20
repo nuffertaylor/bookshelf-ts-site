@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { Select } from '@mantine/core';
 import {Found} from "./Found";
 import { book, defaultProps, foundBook, ShelfSource } from '../types/interfaces';
 import {Loading} from "./Loading";
@@ -118,14 +119,17 @@ function CsvShelfPicker({ widgetCallback, props }: CreateProps){
     {shelves.length > 0 &&
       <>
         <label htmlFor="shelfname" className="bs_shelf_label">Available Shelves</label>
-        <select
+        <Select
           id="shelfname"
-          className={"bs_text_input bs_text_input_".concat(colorScheme)}
+          data={shelves.map(s => ({ value: s.name, label: `${s.name} (${s.count})` }))}
           value={shelf}
-          onChange={e => setShelf(e.target.value)}
-        >
-          {shelves.map(s => <option key={s.name} value={s.name}>{s.name} ({s.count})</option>)}
-        </select>
+          onChange={value => { if(value !== null) setShelf(value); }}
+          allowDeselect={false}
+          size="md"
+          radius="xl"
+          style={{ width: 265 }}
+          mb={20}
+        />
       </>
     }
     <button id="bs_enter_button" className="bs_button" onClick={loadShelf} disabled={!csv}>LOAD SHELF</button>
