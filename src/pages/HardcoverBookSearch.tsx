@@ -8,9 +8,7 @@ import { Upload } from './Upload';
 
 type searchStatus = "signin" | "expired" | "connect" | "idle" | "searching" | "results" | "empty" | "error";
 
-export const SEARCH_DEBOUNCE_MS = 500;
 export const SEARCH_MIN_CHARS = 3;
-export const RATE_LIMIT_PAUSE_MS = 15000;
 export const CACHE_TTL_MS = 60000;
 const CACHE_LIMIT = 20;
 export const CONNECT_ATTEMPT_KEY = "hardcover_search_connect_attempt";
@@ -60,14 +58,8 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
   const [redirecting, setRedirecting] = useState<boolean>(false);
   const requestId = useRef<number>(0);
   const lastQuery = useRef<string>("");
-  const pausedUntil = useRef<number>(0);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const canSearch = signedIn && linked;
-
-  const clearDebounce = () => {
-    if(debounceTimer.current){ clearTimeout(debounceTimer.current); debounceTimer.current = null; }
-  };
 
   const showResults = (list : hardcoverSearchResult[]) => {
     setResults(list);
@@ -78,7 +70,6 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
     const q = raw.trim();
     if(q.length < SEARCH_MIN_CHARS) return;
     if(!force && q === lastQuery.current && (status === "results" || status === "empty" || status === "searching")) return;
-    clearDebounce();   // a pending timer must not send a duplicate of this search
     lastQuery.current = q;
     setNeedsReconnect(false);
     const cached = cacheGet(q);
@@ -117,43 +108,21 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
           return;
         default:
           lastQuery.current = "";
-          if(r.rateLimited) pausedUntil.current = Date.now() + RATE_LIMIT_PAUSE_MS;
           setMessage(r.message);
           setStatus("error");
       }
     });
   };
 
-  // Returning from Upload: show the same query's results straight away (served from the cache).
+  // Restore cached results when returning from Upload.
   useEffect(() => {
-    if(canSearch && initialQuery.trim().length >= SEARCH_MIN_CHARS) runSearch(initialQuery);
-  // eslint-disable-next-line
-  }, []);
-
-  // Search once the user stops typing.
-  useEffect(() => {
-    if(!canSearch) return;
-    const q = query.trim();
-    if(q.length < SEARCH_MIN_CHARS){
-      requestId.current++;   // drop anything in flight
-      lastQuery.current = "";
-      setStatus("idle");
-      setNeedsReconnect(false);
-      return;
+    if(!canSearch || !initialQuery) return;
+    const cached = cacheGet(initialQuery.trim());
+    if(cached){
+      lastQuery.current = initialQuery.trim();
+      showResults(cached);
     }
-    if(q === lastQuery.current) return;
-    clearDebounce();
-    // While rate limited, wait out the rest of the pause rather than dropping the search.
-    const fire = () => {
-      debounceTimer.current = null;
-      const remaining = pausedUntil.current - Date.now();
-      if(remaining > 0){ debounceTimer.current = setTimeout(fire, remaining); return; }
-      runSearch(q);
-    };
-    debounceTimer.current = setTimeout(fire, SEARCH_DEBOUNCE_MS);
-    return clearDebounce;
-  // eslint-disable-next-line
-  }, [query]);
+  }, [canSearch, initialQuery]);
 
   const goToHardcover = (mode : "login" | "link") => {
     setRedirecting(true);
@@ -165,7 +134,7 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
   };
 
   const pick = (r : hardcoverSearchResult) => {
-    const q = query.trim();
+    const q = lastQuery.current;
     // Upload calls originCallback(true, id) after a successful upload.
     const originCallback = (uploaded ?: boolean) => {
       if(uploaded === true) markUploaded(r.hardcover_book_id);
@@ -227,22 +196,24 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
         placeholder="Search by title"
         className={"bs_text_input bs_text_input_".concat(colorScheme)}
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={e => {
+          setQuery(e.target.value);
+          requestId.current++;
+          lastQuery.current = "";
+          setStatus("idle");
+          setNeedsReconnect(false);
+        }}
         onKeyDown={e => {
-          if(e.key === "Enter") runSearch(query, status === "error");
-          else if(e.key === "ArrowDown" && status === "results"){ e.preventDefault(); focusResult(0); }
+          if(e.key === "ArrowDown" && status === "results"){ e.preventDefault(); focusResult(0); }
         }}
       />
-      <button className="bs_button" onClick={() => runSearch(query, status === "error")}>Search</button>
-      {status === "idle" && <p className="bs_csv_help" role="status" aria-live="polite">Type at least {SEARCH_MIN_CHARS} characters of the title to search Hardcover.</p>}
+      <button type="button" className="bs_button" onClick={() => runSearch(query, status === "error")}>Search</button>
       {status === "searching" && <div role="status" aria-live="polite" aria-label="Searching"><Loading/></div>}
       {status === "empty" && <p className="bs_csv_help" role="status" aria-live="polite">No matches. Try adding the author or more of the title.</p>}
       {status === "error" && (
         <div className="bs_input_section">
           <p className="bs_csv_help" role="status" aria-live="polite">{message}</p>
-          {needsReconnect
-            ? <button className="bs_button bs_file_button bs_hardcover_button" onClick={() => goToHardcover("link")}>Connect Hardcover</button>
-            : <button className="bs_button bs_file_button" onClick={() => runSearch(query, true)}>Try Again</button>}
+          {needsReconnect && <button className="bs_button bs_file_button bs_hardcover_button" onClick={() => goToHardcover("link")}>Connect Hardcover</button>}
         </div>
       )}
       {status === "results" && (

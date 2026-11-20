@@ -25,6 +25,7 @@ const setCookies = (cookies : Record<string, string>) => {
 };
 const input = () => screen.getByPlaceholderText("Search by title");
 const type = (text : string) => fireEvent.change(input(), { target : { value : text } });
+const search = () => fireEvent.click(screen.getByRole("button", { name : "Search" }));
 const advance = (ms : number) => act(() => { jest.advanceTimersByTime(ms); });
 const resolve = (i : number, r : hardcoverSearchOutcome) => act(() => { pending[i].cb(r); });
 // Renders the search, and re-renders whatever it hands to widgetCallback (like App does).
@@ -65,55 +66,25 @@ describe("prompts", () => {
   });
 });
 
-describe("debounce and triggers", () => {
-  it("doesn't search below 3 characters", () => {
-    renderSearch();
+describe("manual search", () => {
+  it("only submits a valid query when the Search button is clicked", () => {
+    renderSearch("prefilled");
     type("ab");
-    advance(2000);
-    expect(mockedSearch).not.toHaveBeenCalled();
+    search();
+    type("  dune  ");
     fireEvent.keyDown(input(), { key : "Enter" });
+    advance(20000);
     expect(mockedSearch).not.toHaveBeenCalled();
-    expect(screen.getByText(/at least 3 characters/)).toBeInTheDocument();
-  });
-
-  it("searches once, 500 ms after the last keystroke", () => {
-    renderSearch();
-    type("pro"); advance(200);
-    type("proj"); advance(200);
-    type("proje"); advance(499);
-    expect(mockedSearch).not.toHaveBeenCalled();
-    advance(1);
+    search();
     expect(mockedSearch).toHaveBeenCalledTimes(1);
-    expect(mockedSearch.mock.calls[0][0]).toBe("proje");
-  });
-
-  it("trims the query and cancels the pending search when it drops below 3 characters", () => {
-    renderSearch();
-    type("  abc  "); advance(300);
-    type("ab"); advance(1000);
-    expect(mockedSearch).not.toHaveBeenCalled();
-    type("  abc  "); advance(500);
-    expect(mockedSearch.mock.calls[0][0]).toBe("abc");
-  });
-
-  it("searches immediately on Enter and on the Search button", () => {
-    renderSearch();
-    type("hail mary");
-    fireEvent.keyDown(input(), { key : "Enter" });
-    expect(mockedSearch).toHaveBeenCalledTimes(1);
-    type("dune");
-    fireEvent.click(screen.getByText("Search"));
-    expect(mockedSearch).toHaveBeenCalledTimes(2);
-    expect(mockedSearch.mock.calls[1][0]).toBe("dune");
-    advance(1000);   // the pending debounce doesn't fire a duplicate
-    expect(mockedSearch).toHaveBeenCalledTimes(2);
+    expect(pending[0].q).toBe("dune");
   });
 });
 
-describe("responses", () => {
+describe("search results", () => {
   it("renders title, subtitle, author, year and the already-uploaded tag", () => {
     renderSearch();
-    type("project"); advance(500);
+    type("project"); search();
     resolve(0, ok(book(1, "Project Hail Mary", { subtitle : "A Novel", already_uploaded : true }), book(2, "Other Book")));
     expect(screen.getByText("Project Hail Mary")).toBeInTheDocument();
     expect(screen.getByText(": A Novel")).toBeInTheDocument();
@@ -123,8 +94,8 @@ describe("responses", () => {
 
   it("ignores a stale response that arrives after a newer one", () => {
     renderSearch();
-    type("first"); advance(500);
-    type("second"); advance(500);
+    type("first"); search();
+    type("second"); search();
     expect(pending.map(p => p.q)).toEqual(["first", "second"]);
     resolve(1, ok(book(2, "Second Result")));
     resolve(0, ok(book(1, "First Result")));
@@ -134,7 +105,7 @@ describe("responses", () => {
 
   it("ignores a response that arrives after the query was cleared", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     type("");
     resolve(0, ok(book(1, "First Result")));
     expect(screen.queryByText("First Result")).toBeNull();
@@ -142,11 +113,11 @@ describe("responses", () => {
 
   it("serves a repeat query from the cache without a request", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, ok(book(1, "First Result")));
-    type("firs"); advance(500);
+    type("firs"); search();
     resolve(1, ok(book(3, "Firs Result")));
-    type("first"); advance(500);
+    type("first"); search();
     expect(mockedSearch).toHaveBeenCalledTimes(2);
     expect(screen.getByText("First Result")).toBeInTheDocument();
   });
@@ -154,22 +125,22 @@ describe("responses", () => {
   it("doesn't re-run a query identical to the last one", () => {
     renderSearch();
     type("first");
-    fireEvent.keyDown(input(), { key : "Enter" });
+    search();
     resolve(0, ok(book(1, "First Result")));
-    fireEvent.keyDown(input(), { key : "Enter" });
+    search();
     expect(mockedSearch).toHaveBeenCalledTimes(1);
   });
 
   it("shows the empty message", () => {
     renderSearch();
-    type("zzzz"); advance(500);
+    type("zzzz"); search();
     resolve(0, ok());
     expect(screen.getByText("No matches. Try adding the author or more of the title.")).toBeInTheDocument();
   });
 
   it("shows the reconnect prompt on needs_connect", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, { kind : "needs_connect" });
     expect(screen.getByText("Your Hardcover connection needs to be refreshed to search.")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Connect Hardcover"));
@@ -178,7 +149,7 @@ describe("responses", () => {
 
   it("shows the session expired text with a login action and no Try Again", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, { kind : "session_expired" });
     expect(screen.getByText("Your session expired. Please log in again.")).toBeInTheDocument();
     expect(screen.queryByText("Try Again")).toBeNull();
@@ -190,31 +161,22 @@ describe("responses", () => {
   it("labels the input and announces messages politely", () => {
     renderSearch();
     expect(screen.getByLabelText("Search Hardcover by title")).toBe(input());
-    expect(screen.getByText(/at least 3 characters/)).toHaveAttribute("role", "status");
-    type("zzzz"); advance(500);
+    type("zzzz"); search();
     resolve(0, ok());
     expect(screen.getByText(/No matches/)).toHaveAttribute("aria-live", "polite");
   });
 
-  it("doesn't send a duplicate when the debounce timer is still pending after a fast failure", () => {
-    renderSearch();
-    type("first");
-    fireEvent.keyDown(input(), { key : "Enter" });
-    resolve(0, { kind : "error", message : "boom" });
-    advance(1000);
-    expect(mockedSearch).toHaveBeenCalledTimes(1);
-  });
 
   it("shows a distinct message, with no connect button, when search still needs_connect after a connect attempt", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, { kind : "needs_connect" });
     fireEvent.click(screen.getByText("Connect Hardcover"));
     expect(sessionStorage.getItem("hardcover_search_connect_attempt")).toBe("1");
     // back from Hardcover: the page is mounted again
     cleanup();
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(1, { kind : "needs_connect" });
     expect(screen.getByText("Hardcover didn't grant search access. Please try again later or contact support.")).toBeInTheDocument();
     expect(screen.queryByText("Connect Hardcover")).toBeNull();
@@ -223,67 +185,28 @@ describe("responses", () => {
   it("clears the connect-attempt flag after a successful search", () => {
     sessionStorage.setItem("hardcover_search_connect_attempt", "1");
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, ok(book(1, "First Result")));
     expect(sessionStorage.getItem("hardcover_search_connect_attempt")).toBeNull();
   });
 
-  it("shows other errors with a Try Again button that searches again", () => {
+  it("shows other errors and allows retrying with Search", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, { kind : "error", message : "Hardcover is down" });
     expect(screen.getByText("Hardcover is down")).toBeInTheDocument();
-    fireEvent.click(screen.getByText("Try Again"));
+    search();
     expect(mockedSearch).toHaveBeenCalledTimes(2);
   });
 
-  it("pauses auto-search for 15 seconds after a 429 but still allows Enter", () => {
-    renderSearch();
-    type("first"); advance(500);
-    resolve(0, { kind : "error", message : "Slow down", rateLimited : true });
-    expect(screen.getByText("Slow down")).toBeInTheDocument();
-    type("second"); advance(1000);
-    expect(mockedSearch).toHaveBeenCalledTimes(1);   // paused
-    fireEvent.keyDown(input(), { key : "Enter" });
-    expect(mockedSearch).toHaveBeenCalledTimes(2);   // Enter bypasses the pause
-    resolve(1, ok(book(2, "Second Result")));
-    advance(15000);
-    type("third"); advance(500);
-    expect(mockedSearch).toHaveBeenCalledTimes(3);   // pause over
-  });
 
-  it("reschedules a typing-triggered search for when the pause ends instead of dropping it", () => {
-    renderSearch();
-    type("first"); advance(500);
-    resolve(0, { kind : "error", message : "Slow down", rateLimited : true });
-    type("second"); advance(14000);
-    expect(mockedSearch).toHaveBeenCalledTimes(1);
-    advance(1000);   // pause (15 s after the 429) is over
-    expect(mockedSearch).toHaveBeenCalledTimes(2);
-    expect(mockedSearch.mock.calls[1][0]).toBe("second");
-    resolve(1, ok(book(2, "Second Result")));
-    expect(screen.getByText("Second Result")).toBeInTheDocument();
-  });
 
-  it("pauses typing-triggered searches until 15 seconds have passed", () => {
-    renderSearch();
-    type("first"); advance(500);
-    resolve(0, { kind : "error", message : "Slow down", rateLimited : true });
-    advance(10000);
-    type("third"); advance(500);
-    expect(mockedSearch).toHaveBeenCalledTimes(1);
-    advance(5000);   // the rescheduled search for "third" runs as the pause ends
-    expect(mockedSearch).toHaveBeenCalledTimes(2);
-    expect(mockedSearch.mock.calls[1][0]).toBe("third");
-    type("fourth"); advance(500);
-    expect(mockedSearch).toHaveBeenCalledTimes(3);
-  });
 });
 
 describe("picking a result", () => {
   it("opens Upload prefilled for a Hardcover-only book, and going back restores the same query", () => {
     const { widgetCallback, showWidget } = renderSearch();
-    type("hail"); advance(500);
+    type("hail"); search();
     resolve(0, ok(book(77, "Project Hail Mary")));
     fireEvent.click(screen.getByText("Project Hail Mary"));
 
@@ -303,7 +226,7 @@ describe("picking a result", () => {
 
   it("passes only the 4-digit year, and tolerates a numeric pubDate and missing isbns", () => {
     const { widgetCallback } = renderSearch();
-    type("odd"); advance(500);
+    type("odd"); search();
     resolve(0, ok({ hardcover_book_id : 5, title : "Odd", pubDate : 1999 as any, already_uploaded : false }));
     expect(screen.getByText("1999")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Odd"));
@@ -312,7 +235,7 @@ describe("picking a result", () => {
 
   it("shows the already-uploaded tag when coming back after a successful upload", () => {
     const { widgetCallback, showWidget } = renderSearch();
-    type("hail"); advance(500);
+    type("hail"); search();
     resolve(0, ok(book(77, "Project Hail Mary")));
     expect(screen.queryByText("You've uploaded this")).toBeNull();
     fireEvent.click(screen.getByText("Project Hail Mary"));
@@ -325,7 +248,7 @@ describe("picking a result", () => {
 
   it("doesn't tag the book when coming back without an upload", () => {
     const { widgetCallback, showWidget } = renderSearch();
-    type("hail"); advance(500);
+    type("hail"); search();
     resolve(0, ok(book(77, "Project Hail Mary")));
     fireEvent.click(screen.getByText("Project Hail Mary"));
     showWidget();
@@ -336,34 +259,34 @@ describe("picking a result", () => {
 
   it("expires cached results after 60 seconds", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, ok(book(1, "First Result")));
-    type("second"); advance(500);
+    type("second"); search();
     resolve(1, ok(book(2, "Second Result")));
     advance(CACHE_TTL_MS - 2000);
-    type("first"); advance(500);
+    type("first"); search();
     expect(mockedSearch).toHaveBeenCalledTimes(2);   // still cached
     advance(CACHE_TTL_MS);
-    type("second"); advance(500);
-    type("first"); advance(500);
+    type("second"); search();
+    type("first"); search();
     expect(mockedSearch).toHaveBeenCalledTimes(4);   // both expired
   });
 
   it("doesn't serve one user's cached results to another user", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, ok(book(1, "First Result", { already_uploaded : true })));
     cleanup();
     setCookies({ authtoken : "t2", username : "other", hardcover_username : "h" });
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     expect(mockedSearch).toHaveBeenCalledTimes(2);
     expect(screen.queryByText("You've uploaded this")).toBeNull();
   });
 
   it("moves focus through the results with the arrow keys", () => {
     renderSearch();
-    type("first"); advance(500);
+    type("first"); search();
     resolve(0, ok(book(1, "Alpha"), book(2, "Beta")));
     fireEvent.keyDown(input(), { key : "ArrowDown" });
     const alpha = screen.getByText("Alpha").closest("button")!;
