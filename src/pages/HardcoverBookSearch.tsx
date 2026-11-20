@@ -204,6 +204,10 @@ export function HardcoverBookSearch({ widgetCallback, initialQuery = "" } : hard
           setNeedsReconnect(false);
         }}
         onKeyDown={e => {
+          if(e.key === "Enter" && !e.nativeEvent.isComposing){
+            e.preventDefault();
+            runSearch(query, status === "error");
+          }
           if(e.key === "ArrowDown" && status === "results"){ e.preventDefault(); focusResult(0); }
         }}
       />

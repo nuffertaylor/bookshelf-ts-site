@@ -67,15 +67,14 @@ describe("prompts", () => {
 });
 
 describe("manual search", () => {
-  it("only submits a valid query when the Search button is clicked", () => {
+  it("submits a valid query when Enter is pressed", () => {
     renderSearch("prefilled");
     type("ab");
     search();
     type("  dune  ");
-    fireEvent.keyDown(input(), { key : "Enter" });
     advance(20000);
     expect(mockedSearch).not.toHaveBeenCalled();
-    search();
+    fireEvent.keyDown(input(), { key : "Enter" });
     expect(mockedSearch).toHaveBeenCalledTimes(1);
     expect(pending[0].q).toBe("dune");
   });
